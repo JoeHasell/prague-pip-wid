@@ -11076,6 +11076,50 @@
       "notes": ""
     },
     {
+      "id": "slide-q2rawcmp",
+      "layout": "default",
+      "notes": "The raw comparison, before any bridging adjustments. Top: P10/P90/mean for three countries on a shared log scale - WID (pre-tax national income, per adult) left, PIP (disposable income/consumption, per capita) right. Bottom: MLD level decomposition (between vs within) computed on just these three countries. Data pipeline: data/scripts/10_fig_raw_comparison.py",
+      "blocks": [
+        {
+          "id": "b-q2raw-k",
+          "type": "html",
+          "html": "<p class=\"kicker\"><span style=\"letter-spacing: 0.12em;\">Q2: Which is bigger: inequality between countries, or within countries?</span></p>"
+        },
+        {
+          "id": "b-q2raw-c",
+          "type": "component",
+          "component": "fig-raw-comparison",
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "slide-q2bridge",
+      "layout": "default",
+      "notes": "Build-up: two bridging steps between the raw WID series and PIP. Step 1: per-adult -> per-capita basis. Step 2: pre-tax -> post-tax national income. Between-country share of MLD climbs 28% -> 36% -> 49%, vs PIP's 76%. Same component and data as the previous slide - the sources prop selects the columns (data/scripts/10_fig_raw_comparison.py).",
+      "blocks": [
+        {
+          "id": "b-q2bridge-k",
+          "type": "html",
+          "html": "<p class=\"kicker\"><span style=\"letter-spacing: 0.12em;\">Q2: Which is bigger: inequality between countries, or within countries?</span></p>"
+        },
+        {
+          "id": "b-q2bridge-c",
+          "type": "component",
+          "component": "fig-raw-comparison",
+          "props": {
+            "title": "Two bridging steps: per capita, then post-tax",
+            "sources": [
+              "WID_pretax_per_adult",
+              "WID_pretax_per_capita",
+              "WID_posttax_per_capita",
+              "PIP"
+            ]
+          }
+        }
+      ]
+    },
+    {
       "id": "slide-tjof1k",
       "layout": "default",
       "blocks": [

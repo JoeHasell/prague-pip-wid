@@ -50,6 +50,26 @@ python data/scripts/99_verify.py
 Each script's docstring documents exactly what it does and why — read those
 before changing anything.
 
+## Figure scripts (10+): one script per deck figure
+
+Scripts numbered `10_fig_*.py` and up each produce the data behind ONE deck
+figure, written as a small JSON to `data/figures/`. The matching chart
+component in `components/` fetches that JSON at runtime — **no numbers are
+hard-coded in component JS**. So the provenance chain for any figure is:
+
+```
+slide → component (components/fig-*.js) → data/figures/fig_*.json → data/scripts/10+_fig_*.py → processed/ → raw/
+```
+
+Method choices that affect a figure's numbers (e.g. zero-income handling for
+MLD) are made and documented in the figure script, and echoed in the JSON's
+`meta.notes`. After a raw-data refresh, re-run steps 02–03 and then the
+figure scripts to regenerate every figure.
+
+| script | figure | slide component |
+|---|---|---|
+| `10_fig_raw_comparison.py` | Raw WID-vs-PIP comparison, 3 countries: P10/P90/mean lollipops + between/within MLD stacked bars | `fig-raw-comparison` |
+
 ## The raw WID data (and how to refresh it)
 
 `raw/wid/` is a **committed cache** of a WID API pull (fetched 2026-02-20,

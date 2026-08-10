@@ -1,0 +1,286 @@
+{
+  "meta": {
+    "title": "Raw comparison: WID vs PIP, three countries, 2023",
+    "countries": [
+      "United States",
+      "Indonesia",
+      "Nigeria"
+    ],
+    "sources": {
+      "WID_pretax_per_adult": "WID (pre-tax national income, per adult)",
+      "WID_pretax_per_capita": "WID (pre-tax national income, per capita)",
+      "WID_posttax_per_adult": "WID (post-tax national income, per adult)",
+      "WID_posttax_per_capita": "WID (post-tax national income, per capita)",
+      "PIP": "PIP (disposable income or consumption, per capita)"
+    },
+    "year": 2023,
+    "units": "international-$ per day (PIP: 2021 PPPs; WID: 2023 PPPs)",
+    "zero_replacement_usd_per_day": 0.01,
+    "notes": [
+      "Raw published concepts \u2014 no bridging adjustments applied.",
+      "P10/P90 are the bin averages of p10p11 / p90p91.",
+      "MLD computed on the full 109-bin distributions of the three countries only; zeros replaced with $0.01/day for the MLD only.",
+      "WID weights are adults; PIP weights are total population."
+    ],
+    "generated_by": "data/scripts/10_fig_raw_comparison.py"
+  },
+  "lollipop": [
+    {
+      "source": "WID_pretax_per_adult",
+      "country": "United States",
+      "p10": 27.110410958904108,
+      "p90": 464.5630136986301,
+      "mean": 247.289235890411
+    },
+    {
+      "source": "WID_pretax_per_adult",
+      "country": "Indonesia",
+      "p10": 4.370688574125905,
+      "p90": 97.67025820870558,
+      "mean": 51.08084086432133
+    },
+    {
+      "source": "WID_pretax_per_adult",
+      "country": "Nigeria",
+      "p10": 4.245899347550818,
+      "p90": 74.34211625721814,
+      "mean": 36.917103679149115
+    },
+    {
+      "source": "WID_pretax_per_capita",
+      "country": "United States",
+      "p10": 20.555862201711893,
+      "p90": 352.2445051857324,
+      "mean": 187.50152716738455
+    },
+    {
+      "source": "WID_pretax_per_capita",
+      "country": "Indonesia",
+      "p10": 2.9221759662892257,
+      "p90": 65.30085049947114,
+      "mean": 34.151874007956835
+    },
+    {
+      "source": "WID_pretax_per_capita",
+      "country": "Nigeria",
+      "p10": 2.012928483500506,
+      "p90": 35.2446798872378,
+      "mean": 17.501943273093843
+    },
+    {
+      "source": "WID_posttax_per_adult",
+      "country": "United States",
+      "p10": 54.0972602739726,
+      "p90": 423.83178082191785,
+      "mean": 247.2892336986301
+    },
+    {
+      "source": "WID_posttax_per_adult",
+      "country": "Indonesia",
+      "p10": 9.36505546826877,
+      "p90": 95.35647506314518,
+      "mean": 51.08084086608199
+    },
+    {
+      "source": "WID_posttax_per_adult",
+      "country": "Nigeria",
+      "p10": 7.764660961756378,
+      "p90": 73.16531665132541,
+      "mean": 36.91710366593439
+    },
+    {
+      "source": "WID_posttax_per_capita",
+      "country": "United States",
+      "p10": 41.01803655310118,
+      "p90": 321.360959687705,
+      "mean": 187.50152550551576
+    },
+    {
+      "source": "WID_posttax_per_capita",
+      "country": "Indonesia",
+      "p10": 6.261333780298791,
+      "p90": 63.75389024721526,
+      "mean": 34.151874009133984
+    },
+    {
+      "source": "WID_posttax_per_capita",
+      "country": "Nigeria",
+      "p10": 3.6811299409769576,
+      "p90": 34.686773716560424,
+      "mean": 17.501943266828913
+    },
+    {
+      "source": "PIP",
+      "country": "United States",
+      "p10": 26.4170599,
+      "p90": 182.261983,
+      "mean": 91.89783874960001
+    },
+    {
+      "source": "PIP",
+      "country": "Indonesia",
+      "p10": 3.34528378,
+      "p90": 14.893308,
+      "mean": 8.160535391599998
+    },
+    {
+      "source": "PIP",
+      "country": "Nigeria",
+      "p10": 1.6498302,
+      "p90": 7.523275360000001,
+      "mean": 4.163186534660001
+    }
+  ],
+  "mld": [
+    {
+      "between": 0.33428458962224833,
+      "within": 0.8510194589698457,
+      "total": 1.185304048592094,
+      "between_share": 0.28202433799100923,
+      "grand_mean": 140.15894709654324,
+      "zero_bins_replaced": 10,
+      "countries": [
+        {
+          "country": "United States",
+          "pop": 260434000.00000006,
+          "mean": 247.289235890411,
+          "mld_within": 0.7409136934511676
+        },
+        {
+          "country": "Indonesia",
+          "pop": 187999405.99999997,
+          "mean": 51.08134086432133,
+          "mld_within": 1.004829560894744
+        },
+        {
+          "country": "Nigeria",
+          "pop": 108036492.00000001,
+          "mean": 36.9176036791491,
+          "mld_within": 0.8487894452297754
+        }
+      ],
+      "source": "WID_pretax_per_adult",
+      "label": "WID (pre-tax national income, per adult)"
+    },
+    {
+      "between": 0.4779218865096049,
+      "within": 0.8401851774521736,
+      "total": 1.3181070639617787,
+      "between_share": 0.36258199320557105,
+      "grand_mean": 91.48356080976154,
+      "zero_bins_replaced": 10,
+      "countries": [
+        {
+          "country": "United States",
+          "pop": 343477334.9999998,
+          "mean": 187.50152716738455,
+          "mld_within": 0.7409136934511689
+        },
+        {
+          "country": "Indonesia",
+          "pop": 281190066.9999998,
+          "mean": 34.15237400795684,
+          "mld_within": 0.9847048112922339
+        },
+        {
+          "country": "Nigeria",
+          "pop": 227882945.0,
+          "mean": 17.502443273093842,
+          "mld_within": 0.8114863173591489
+        }
+      ],
+      "source": "WID_pretax_per_capita",
+      "label": "WID (pre-tax national income, per capita)"
+    },
+    {
+      "between": 0.3342886250847336,
+      "within": 0.4977896757269632,
+      "total": 0.832078300811697,
+      "between_share": 0.40175140339392723,
+      "grand_mean": 140.158680074265,
+      "zero_bins_replaced": 0,
+      "countries": [
+        {
+          "country": "United States",
+          "pop": 260434000.00000006,
+          "mean": 247.2892336986301,
+          "mld_within": 0.45893844258408556
+        },
+        {
+          "country": "Indonesia",
+          "pop": 187999405.99999997,
+          "mean": 51.08084086608199,
+          "mld_within": 0.5652353529304982
+        },
+        {
+          "country": "Nigeria",
+          "pop": 108036492.00000001,
+          "mean": 36.91710366593439,
+          "mld_within": 0.47407949084609785
+        }
+      ],
+      "source": "WID_posttax_per_adult",
+      "label": "WID (post-tax national income, per adult)"
+    },
+    {
+      "between": 0.4779310840833711,
+      "within": 0.49804466326401886,
+      "total": 0.9759757473473901,
+      "between_share": 0.4896956562520561,
+      "grand_mean": 91.48326158002358,
+      "zero_bins_replaced": 0,
+      "countries": [
+        {
+          "country": "United States",
+          "pop": 343477334.9999998,
+          "mean": 187.50152550551576,
+          "mld_within": 0.45893844258408656
+        },
+        {
+          "country": "Indonesia",
+          "pop": 281190066.9999998,
+          "mean": 34.151874009133984,
+          "mld_within": 0.5652353529304988
+        },
+        {
+          "country": "Nigeria",
+          "pop": 227882945.0,
+          "mean": 17.501943266828913,
+          "mld_within": 0.4740794908460986
+        }
+      ],
+      "source": "WID_posttax_per_capita",
+      "label": "WID (post-tax national income, per capita)"
+    },
+    {
+      "between": 0.8173459075279363,
+      "within": 0.2525099322205129,
+      "total": 1.0698558397484492,
+      "between_share": 0.7639776100302593,
+      "grand_mean": 40.4255651305036,
+      "zero_bins_replaced": 0,
+      "countries": [
+        {
+          "country": "United States",
+          "pop": 336806250.0,
+          "mean": 91.89783874960001,
+          "mld_within": 0.3271110592369111
+        },
+        {
+          "country": "Indonesia",
+          "pop": 281190060.0000001,
+          "mean": 8.160535391599998,
+          "mld_within": 0.2120010057514998
+        },
+        {
+          "country": "Nigeria",
+          "pop": 227882949.99999994,
+          "mean": 4.163186534660001,
+          "mld_within": 0.19223592588607946
+        }
+      ],
+      "source": "PIP",
+      "label": "PIP (disposable income or consumption, per capita)"
+    }
+  ]
+}

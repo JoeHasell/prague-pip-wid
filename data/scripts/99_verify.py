@@ -148,11 +148,14 @@ def main():
         check(f"{src} pop sums to {col}",
               np.allclose(got, wpop.loc[got.index, col], rtol=1e-6))
 
-    # Zeros are documented, not dropped: the harmonized file must still
-    # contain them (dropping zeros silently biases MLD later).
-    n_zero = (h[h.source == "WID_pretax_per_adult"]["average"] == 0).sum()
-    check("zero incomes retained in harmonized data (921 expected pre-tax)",
-          n_zero == 921, f"found {n_zero}")
+    # Zeros are documented, not dropped: every zero-income bin in the raw
+    # data must survive into the harmonized file (dropping zeros silently
+    # would bias MLD later). Compared against the raw file, not a hardcoded
+    # count, so this stays valid across data refreshes.
+    n_zero_raw = int((raw["avg_pretax"] == 0).sum())
+    n_zero_h = int((h[h.source == "WID_pretax_per_adult"]["average"] == 0).sum())
+    check("zero incomes retained in harmonized data (== raw count)",
+          n_zero_h == n_zero_raw, f"raw {n_zero_raw}, harmonized {n_zero_h}")
 
     # ------------------------------------------------------------------
     print("\n7. Cross-source coverage")
