@@ -61,6 +61,13 @@
         <button data-act="block-text" title="Add a text block">+ Text</button>
         <button data-act="block-comp" title="Add an interactive component">+ Component</button>
       </div>
+      <div class="bar-group">
+        <span class="bar-label">List</span>
+        <button data-fmt="bullets" title="Bulleted list (turn the current line into a bullet)">&bull; List</button>
+        <button data-fmt="numbers" title="Numbered list">1. List</button>
+        <button data-fmt="indent" title="Indent / nest (or press Tab in a list)">&#8677;</button>
+        <button data-fmt="outdent" title="Outdent (or press Shift+Tab in a list)">&#8676;</button>
+      </div>
       <div class="bar-group bar-right">
         <span class="save-status" id="save-status">All changes saved</span>
         <button data-act="save" class="primary" title="Save to content/slides.json (or download if no save server)">Save</button>
@@ -86,6 +93,64 @@
       };
       actions[act] && actions[act]();
     });
+
+    // Formatting buttons act on the focused text block. Use mousedown +
+    // preventDefault so the caret/selection in the editable is not lost
+    // when the button takes the click.
+    bar.addEventListener('mousedown', (e) => {
+      const btn = e.target.closest && e.target.closest('[data-fmt]');
+      if (!btn) return;
+      e.preventDefault();
+      applyFormat(btn.dataset.fmt);
+    });
+  }
+
+  /* ----------------------------------------------------------
+   * List / indent formatting inside editable text blocks
+   * -------------------------------------------------------- */
+  let lastEditable = null;
+
+  function activeEditable() {
+    const a = document.activeElement;
+    if (a && a.classList && a.classList.contains('block-html')) return a;
+    // Fall back to the most recently focused editable (covers the moment
+    // right after a toolbar button is pressed).
+    return lastEditable && document.body.contains(lastEditable) ? lastEditable : null;
+  }
+
+  function caretInListItem() {
+    const sel = window.getSelection();
+    if (!sel || !sel.anchorNode) return false;
+    let n = sel.anchorNode;
+    while (n && n !== document.body) {
+      if (n.nodeType === 1 && n.tagName === 'LI') return true;
+      n = n.parentNode;
+    }
+    return false;
+  }
+
+  function applyFormat(fmt) {
+    const el = activeEditable();
+    if (!el) { toast('Click into a text block first, then use the List buttons.'); return; }
+    const cmd = {
+      bullets: 'insertUnorderedList',
+      numbers: 'insertOrderedList',
+      indent: 'indent',
+      outdent: 'outdent',
+    }[fmt];
+    if (!cmd) return;
+    document.execCommand(cmd, false, null);
+    syncEditable(el);
+  }
+
+  // Write an editable block's current HTML back into the data model.
+  function syncEditable(el) {
+    const block = findBlock(el.dataset.blockId, currentBlocks());
+    if (!block) return;
+    const clone = el.cloneNode(true);
+    clone.querySelectorAll('.block-controls').forEach(c => c.remove());
+    block.html = clone.innerHTML;
+    markDirty();
   }
 
   /* ----------------------------------------------------------
@@ -301,13 +366,26 @@
     document.addEventListener('input', (e) => {
       const el = e.target.closest && e.target.closest('.block-html[contenteditable]');
       if (!el) return;
-      const block = findBlock(el.dataset.blockId, currentBlocks());
-      if (!block) return;
-      const clone = el.cloneNode(true);
-      clone.querySelectorAll('.block-controls').forEach(c => c.remove());
-      block.html = clone.innerHTML;
-      markDirty();
+      syncEditable(el);
     });
+
+    // Remember the focused editable so the List buttons know their target.
+    document.addEventListener('focusin', (e) => {
+      const el = e.target.closest && e.target.closest('.block-html[contenteditable]');
+      if (el) lastEditable = el;
+    });
+
+    // Tab / Shift+Tab nest and un-nest, but only inside a list — elsewhere
+    // Tab keeps its normal behaviour. Capture phase so we act before the
+    // browser moves focus.
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Tab') return;
+      const el = e.target.closest && e.target.closest('.block-html[contenteditable]');
+      if (!el || !caretInListItem()) return;
+      e.preventDefault();
+      document.execCommand(e.shiftKey ? 'outdent' : 'indent', false, null);
+      syncEditable(el);
+    }, true);
   }
 
   /* ----------------------------------------------------------

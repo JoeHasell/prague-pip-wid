@@ -8,19 +8,102 @@
       "id": "slide-title",
       "layout": "title",
       "blocks": [
-        { "id": "b-t1", "type": "html", "html": "<p class=\"kicker\">Deck framework</p>" },
-        { "id": "b-t2", "type": "html", "html": "<h1>Data-driven slides,<br>editable two ways</h1>" },
-        { "id": "b-t3", "type": "html", "html": "<p class=\"muted\">Claude writes content and components into files. You point, click, and polish in the browser. Everything publishes as a static site.</p>" }
+        {
+          "id": "b-t1",
+          "type": "html",
+          "html": "<p class=\"kicker\">Prague presentation [DRAFT]</p>"
+        },
+        {
+          "id": "b-t2",
+          "type": "html",
+          "html": "<h1>What do we know about global income inequality?</h1>"
+        },
+        {
+          "id": "b-t3",
+          "type": "html",
+          "html": "<p class=\"muted\">Triangulating between the two main data sources: the World Bank's <i style=\"\">Poverty and Inequality Platform</i>, and the&nbsp;<i>World Inequality Database</i>.</p>"
+        }
       ],
       "notes": "Press N to toggle these speaker notes. Arrow keys or the buttons bottom-right to navigate. Add ?edit to the URL to enter edit mode."
+    },
+    {
+      "id": "slide-rmm9en",
+      "layout": "default",
+      "blocks": [
+        {
+          "id": "b-l4udbc",
+          "type": "html",
+          "html": "<p class=\"kicker\">What do we know about global income inequality?</p>"
+        },
+        {
+          "id": "b-zadmok",
+          "type": "html",
+          "html": "<h2>Overview</h2>"
+        },
+        {
+          "id": "b-iynvhm",
+          "type": "html",
+          "html": "<ul><li>Three basic questions<ul><li>Is income inequality rising basically everywhere?</li></ul></li><li>About the two sources: PIP and WID</li></ul>"
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "slide-cl7jpk",
+      "layout": "default",
+      "blocks": [
+        {
+          "id": "b-na6ezl",
+          "type": "html",
+          "html": "<p class=\"kicker\">How to edit</p>"
+        },
+        {
+          "id": "b-zz09tn",
+          "type": "html",
+          "html": "<h2>How to edit these slides....</h2>"
+        },
+        {
+          "id": "b-coq4f5",
+          "type": "html",
+          "html": "<p></p>"
+        },
+        {
+          "id": "b-84q7tp",
+          "type": "html",
+          "html": "<p></p>"
+        },
+        {
+          "id": "b-opxasi",
+          "type": "html",
+          "html": "<p></p>"
+        },
+        {
+          "id": "b-5knmbf",
+          "type": "html",
+          "html": "<p></p>"
+        }
+      ],
+      "notes": ""
     },
     {
       "id": "slide-model",
       "layout": "default",
       "blocks": [
-        { "id": "b-m1", "type": "html", "html": "<p class=\"kicker\">The model</p>" },
-        { "id": "b-m2", "type": "html", "html": "<h2>Slides are data, not markup</h2>" },
-        { "id": "b-m3", "type": "html", "html": "<ul><li>Every slide lives in <code>content/slides.json</code> — the single source of truth.</li><li>Text blocks hold HTML; component blocks reference interactive modules by name.</li><li>Claude edits the JSON and drops component files into <code>components/</code>; you edit the same JSON through the point-and-click editor.</li><li>Both authoring paths converge on one file, so nothing gets clobbered.</li></ul>" }
+        {
+          "id": "b-m1",
+          "type": "html",
+          "html": "<p class=\"kicker\">HOW TO EDIT</p>"
+        },
+        {
+          "id": "b-m2",
+          "type": "html",
+          "html": "<h2>Slides are data, not markup</h2>"
+        },
+        {
+          "id": "b-m3",
+          "type": "html",
+          "html": "<ul><li>Every slide lives in <code>content/slides.json</code> — the single source of truth.</li><li>Text blocks hold HTML; component blocks reference interactive modules by name.</li><li>Claude edits the JSON and drops component files into <code>components/</code>; you edit the same JSON through the point-and-click editor.</li><li>Both authoring paths converge on one file, so nothing gets clobbered.</li></ul>"
+        }
       ],
       "notes": "The key architectural idea: because slides are data, programmatic edits (Claude) and manual edits (the inline editor) are just two writers of the same JSON."
     },
@@ -28,8 +111,16 @@
       "id": "slide-chart",
       "layout": "default",
       "blocks": [
-        { "id": "b-c1", "type": "html", "html": "<p class=\"kicker\">Interactive components &middot; 1 of 3</p>" },
-        { "id": "b-c2", "type": "html", "html": "<h2>A chart with hover inspection</h2>" },
+        {
+          "id": "b-c1",
+          "type": "html",
+          "html": "<p class=\"kicker\">HOW TO EDIT</p>"
+        },
+        {
+          "id": "b-c2",
+          "type": "html",
+          "html": "<h2>A chart with hover inspection</h2>"
+        },
         {
           "id": "b-c3",
           "type": "component",
@@ -43,11 +134,41 @@
       "notes": "Move the mouse across the chart. This is a ~150-line vanilla SVG component; a real one could wrap d3, Plotly, or anything else loaded from components/."
     },
     {
+      "id": "slide-1kotk6",
+      "layout": "default",
+      "blocks": [
+        {
+          "id": "b-awgy39",
+          "type": "html",
+          "html": "<p class=\"kicker\">Section</p>"
+        },
+        {
+          "id": "b-rr22wf",
+          "type": "html",
+          "html": "<h2>New slide</h2>"
+        },
+        {
+          "id": "b-dae7zz",
+          "type": "html",
+          "html": "<p>Click any text to edit it.</p>"
+        }
+      ],
+      "notes": ""
+    },
+    {
       "id": "slide-table",
       "layout": "default",
       "blocks": [
-        { "id": "b-tb1", "type": "html", "html": "<p class=\"kicker\">Interactive components &middot; 2 of 3</p>" },
-        { "id": "b-tb2", "type": "html", "html": "<h2>A sortable table</h2>" },
+        {
+          "id": "b-tb1",
+          "type": "html",
+          "html": "<p class=\"kicker\">HOW to edit</p>"
+        },
+        {
+          "id": "b-tb2",
+          "type": "html",
+          "html": "<h2>A sortable table</h2>"
+        },
         {
           "id": "b-tb3",
           "type": "component",
@@ -63,8 +184,16 @@
       "id": "slide-row",
       "layout": "default",
       "blocks": [
-        { "id": "b-r1", "type": "html", "html": "<p class=\"kicker\">Interactive components &middot; 3 of 3</p>" },
-        { "id": "b-r2", "type": "html", "html": "<h2>Side-by-side layouts</h2>" },
+        {
+          "id": "b-r1",
+          "type": "html",
+          "html": "<p class=\"kicker\">How to edit</p>"
+        },
+        {
+          "id": "b-r2",
+          "type": "html",
+          "html": "<h2>Side-by-side layouts</h2>"
+        },
         {
           "id": "b-r3",
           "type": "row",
@@ -98,9 +227,21 @@
       "id": "slide-editing",
       "layout": "default",
       "blocks": [
-        { "id": "b-e1", "type": "html", "html": "<p class=\"kicker\">Editing</p>" },
-        { "id": "b-e2", "type": "html", "html": "<h2>Add <code>?edit</code> to the URL</h2>" },
-        { "id": "b-e3", "type": "html", "html": "<ul><li><strong>Click any text</strong> to edit it in place. <strong>Hover a block</strong> for move, delete, and component-props controls.</li><li>The toolbar adds, duplicates, reorders, and deletes slides and blocks.</li><li><strong>Save</strong> writes straight to <code>content/slides.json</code> when the dev server is running — otherwise it downloads the file for you to drop in.</li><li>A draft is kept in your browser, so nothing is lost between sessions.</li></ul>" }
+        {
+          "id": "b-e1",
+          "type": "html",
+          "html": "<p class=\"kicker\">Editing</p>"
+        },
+        {
+          "id": "b-e2",
+          "type": "html",
+          "html": "<h2>Add <code>?edit</code> to the URL</h2>"
+        },
+        {
+          "id": "b-e3",
+          "type": "html",
+          "html": "<ul><li><strong>Click any text</strong> to edit it in place. <strong>Hover a block</strong> for move, delete, and component-props controls.</li><li>The toolbar adds, duplicates, reorders, and deletes slides and blocks.</li><li><strong>Save</strong> writes straight to <code>content/slides.json</code> when the dev server is running — otherwise it downloads the file for you to drop in.</li><li>A draft is kept in your browser, so nothing is lost between sessions.</li></ul>"
+        }
       ],
       "notes": "Try it now: add ?edit to the URL and change this very sentence."
     },
@@ -108,9 +249,21 @@
       "id": "slide-publish",
       "layout": "default",
       "blocks": [
-        { "id": "b-p1", "type": "html", "html": "<p class=\"kicker\">Publishing</p>" },
-        { "id": "b-p2", "type": "html", "html": "<h2>Git push &rarr; live deck</h2>" },
-        { "id": "b-p3", "type": "html", "html": "<p>The whole deck is static files — no build step. Connect the repo to Netlify once, and every push publishes. Viewers see a clean presentation; <code>?edit</code> stays your secret door.</p><p class=\"muted\">See the README for the two-minute setup, and for the conventions Claude follows when adding slides and components in your content projects.</p>" }
+        {
+          "id": "b-p1",
+          "type": "html",
+          "html": "<p class=\"kicker\">Publishing</p>"
+        },
+        {
+          "id": "b-p2",
+          "type": "html",
+          "html": "<h2>Git push &rarr; live deck</h2>"
+        },
+        {
+          "id": "b-p3",
+          "type": "html",
+          "html": "<p>The whole deck is static files — no build step. Connect the repo to Netlify once, and every push publishes. Viewers see a clean presentation; <code>?edit</code> stays your secret door.</p><p class=\"muted\">See the README for the two-minute setup, and for the conventions Claude follows when adding slides and components in your content projects.</p>"
+        }
       ],
       "notes": "End of the demo deck. This deck itself is the dummy content — replace it wholesale in real projects."
     }
