@@ -1,0 +1,7 @@
+{
+  "components": [
+    "demo-line-chart.js",
+    "demo-sortable-table.js",
+    "demo-scrubber.js"
+  ]
+}

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deck</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Lato:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="src/deck.css">
+</head>
+<body>
+  <div id="app">
+    <div class="viewport" id="viewport">
+      <div class="stage" id="stage"><!-- slides render here --></div>
+    </div>
+    <div class="hud">
+      <button class="nav-btn" id="nav-prev" aria-label="Previous slide">&#8592;</button>
+      <span class="slide-counter" id="slide-counter">– / –</span>
+      <button class="nav-btn" id="nav-next" aria-label="Next slide">&#8594;</button>
+    </div>
+    <div class="progress"><div class="progress-fill" id="progress-fill"></div></div>
+    <aside class="notes-panel" id="notes-panel" hidden>
+      <div class="notes-label">Speaker notes</div>
+      <div class="notes-body" id="notes-body"></div>
+    </aside>
+  </div>
+
+  <script src="src/deck.js"></script>
+  <script>
+    // Edit mode is opt-in via ?edit — viewers of the published deck never see it.
+    if (new URLSearchParams(location.search).has('edit')) {
+      const css = document.createElement('link');
+      css.rel = 'stylesheet';
+      css.href = 'src/editor.css';
+      document.head.appendChild(css);
+      const js = document.createElement('script');
+      js.src = 'src/editor.js';
+      js.defer = true;
+      document.body.appendChild(js);
+    }
+    Deck.boot();
+  </script>
+</body>
+</html>

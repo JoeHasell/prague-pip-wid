@@ -1,0 +1,10 @@
+# No build step — the repo root is the site.
+[build]
+  publish = "."
+
+# Don't deploy the dev server, backups, or docs as part of anything
+# (they're harmless as static files, but slides.json.bak is noise).
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"

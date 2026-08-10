@@ -1,0 +1,324 @@
+/* ============================================================
+ * deck.css — presentation theme (Our World in Data styling)
+ *
+ * Colors and fonts follow ourworldindata.org: Playfair Display
+ * display headings, Lato text, the OWID navy text palette, and
+ * the signature 4px red stripe (here: the progress bar).
+ * Slides are laid out on a fixed 1280x720 stage and scaled to
+ * fit the window. Per-deck accent: meta.accent in slides.json.
+ * ============================================================ */
+
+:root {
+  --paper: #FFFFFF;              /* slide surface — OWID pages are white */
+  --backdrop: rgb(0, 33, 71);    /* around the slide — OWID deep header navy */
+  --ink: rgb(29, 61, 99);        /* OWID body text navy */
+  --muted: rgb(87, 114, 145);    /* OWID secondary blue-gray */
+  --mid: rgb(63, 96, 138);       /* OWID mid blue (borders, sub-accents) */
+  --line: rgb(235, 238, 242);    /* OWID hairline */
+  --wash: rgb(245, 247, 250);    /* OWID light blue-gray background */
+  --accent: rgb(16, 89, 229);    /* OWID link blue — overridable per deck */
+  --owid-red: rgb(206, 38, 30);  /* OWID nav-stripe red */
+  --owid-yellow: rgb(247, 192, 32);
+
+  --font-display: "Playfair Display", Georgia, "Times New Roman", serif;
+  --font-body: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, Menlo, Consolas, monospace;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--backdrop);
+  font-family: var(--font-body);
+  color: var(--ink);
+}
+
+#app { height: 100%; display: flex; flex-direction: column; }
+
+/* ---------- viewport + fixed-size stage ---------- */
+
+.viewport {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+}
+
+.stage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1280px;
+  height: 720px;
+  transform: translate(-50%, -50%);
+  transform-origin: center center;
+}
+
+/* ---------- slides ---------- */
+
+.slide {
+  position: absolute;
+  inset: 0;
+  background: var(--paper);
+  display: none;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 12, 28, 0.5);
+}
+
+.slide.active { display: block; }
+
+.slide-body {
+  position: absolute;
+  inset: 64px 80px 72px 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.layout-title .slide-body {
+  justify-content: center;
+  text-align: left;
+  inset: 64px 120px 96px 120px;
+}
+
+/* ---------- slide typography (OWID: Playfair display, Lato text) ---------- */
+
+.slide h1 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 66px;
+  line-height: 1.12;
+  letter-spacing: 0;
+  margin: 0;
+}
+
+.slide h2 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 44px;
+  line-height: 1.15;
+  margin: 0;
+}
+
+.slide h3 {
+  font-family: var(--font-body);
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.slide p {
+  font-size: 22px;
+  line-height: 1.55;
+  margin: 0;
+  max-width: 62ch;
+}
+
+.slide ul, .slide ol {
+  font-size: 22px;
+  line-height: 1.6;
+  margin: 0;
+  padding-left: 1.2em;
+}
+
+.slide li { margin-bottom: 0.35em; }
+
+.slide a { color: var(--accent); text-underline-offset: 2px; }
+
+.slide strong { font-weight: 700; }
+
+.slide .kicker {
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.slide .kicker::before {
+  content: "";
+  display: inline-block;
+  width: 26px;
+  height: 4px;
+  background: var(--owid-red);
+  margin-right: 12px;
+  vertical-align: middle;
+}
+
+.slide .muted { color: var(--muted); }
+
+.slide code {
+  font-family: var(--font-mono);
+  font-size: 0.82em;
+  background: var(--wash);
+  border-radius: 4px;
+  padding: 0.1em 0.35em;
+}
+
+/* ---------- blocks ---------- */
+
+.block-component {
+  position: relative;
+  flex: 1;
+  min-height: 120px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: #FFFFFF;
+  overflow: hidden;
+}
+
+.block-component[style*="height"] { flex: 0 0 auto; }
+
+.component-pending,
+.component-missing {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--muted);
+  text-align: center;
+  padding: 20px;
+  background: var(--wash);
+}
+
+.component-missing { color: var(--owid-red); }
+
+.block-row {
+  display: flex;
+  gap: 32px;
+  flex: 1;
+  min-height: 0;
+}
+
+.row-cell {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.row-cell > .block { flex: 1; min-height: 0; }
+.row-cell > .block-html { flex: 0 1 auto; }
+
+.block-unknown {
+  font-family: var(--font-mono);
+  color: var(--owid-red);
+  font-size: 15px;
+}
+
+/* ---------- HUD: nav buttons + counter ---------- */
+
+.hud {
+  position: fixed;
+  right: 20px;
+  bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 40;
+}
+
+.nav-btn {
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.nav-btn:hover { background: rgba(255, 255, 255, 0.15); }
+.nav-btn:focus-visible { outline: 2px solid var(--owid-yellow); outline-offset: 2px; }
+
+.slide-counter {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  letter-spacing: 0.1em;
+}
+
+/* ---------- progress: homage to OWID's 4px red nav stripe ---------- */
+
+.progress {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0;
+  background: var(--owid-red);
+  transition: width 0.25s ease;
+}
+
+/* ---------- speaker notes (press N) ---------- */
+
+.notes-panel {
+  position: fixed;
+  left: 20px;
+  bottom: 36px;
+  width: 340px;
+  max-height: 40vh;
+  overflow: auto;
+  background: rgba(0, 24, 52, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 6px;
+  padding: 14px 16px;
+  color: rgba(255, 255, 255, 0.92);
+  z-index: 40;
+}
+
+.notes-label {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--owid-yellow);
+  margin-bottom: 8px;
+}
+
+.notes-body {
+  font-size: 14px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+/* ---------- boot error ---------- */
+
+.boot-error {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: var(--paper);
+  font-size: 20px;
+  line-height: 1.7;
+  text-align: center;
+  padding: 60px;
+}
+
+.boot-error code {
+  font-family: var(--font-mono);
+  background: var(--wash);
+  padding: 0.1em 0.4em;
+  border-radius: 4px;
+}
+
+.boot-error small { color: var(--muted); font-family: var(--font-mono); }
+
+@media (prefers-reduced-motion: reduce) {
+  .progress-fill { transition: none; }
+}
