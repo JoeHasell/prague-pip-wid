@@ -1,6 +1,16 @@
 # No build step — the repo root is the site.
+#
+# The `command` below is NOT a build: it just prunes the data pipeline's
+# heavy files from the deploy. It runs inside Netlify's temporary build
+# clone, so it never touches the actual repo — data/raw/ and data/processed/
+# (~18 MB of CSVs) stay in git but are not served on the published site.
+#
+# What still deploys from data/: scripts/ and README.md (tiny text files,
+# kept public for transparency), and any future small deck-facing figure
+# files (e.g. a data/figures/ folder that chart components fetch from).
 [build]
   publish = "."
+  command = "rm -rf data/raw data/processed"
 
 # Don't deploy the dev server, backups, or docs as part of anything
 # (they're harmless as static files, but slides.json.bak is noise).

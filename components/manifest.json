@@ -1,5 +1,7 @@
 {
   "components": [
+    "gini-pip-wid-scatter.js",
+    "ineq-trend.js",
     "demo-line-chart.js",
     "demo-sortable-table.js",
     "demo-scrubber.js"

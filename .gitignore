@@ -1,3 +1,8 @@
 .DS_Store
 node_modules/
 content/slides.json.bak
+
+# Data pipeline: transient WID fetch state (see data/README.md)
+data/raw/wid/temp_country_data/
+data/raw/wid/fetch_progress.json
+data/scripts/__pycache__/

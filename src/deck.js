@@ -115,6 +115,72 @@ window.Deck = (() => {
     return el;
   }
 
+  /* ----------------------------------------------------------
+   * Annotation overlay (freehand pen, lines/arrows, movable text).
+   * Stored per-slide in slide.annotations, positioned in the fixed
+   * 1280x720 stage coordinate space, rendered above the blocks in
+   * both view and edit modes.
+   * -------------------------------------------------------- */
+  const SVG_NS = 'http://www.w3.org/2000/svg';
+
+  function penPath(pts) {
+    if (!pts || !pts.length) return '';
+    if (pts.length < 3) return 'M' + pts.map(p => `${p[0]},${p[1]}`).join(' L');
+    let d = `M${pts[0][0]},${pts[0][1]}`;
+    for (let i = 1; i < pts.length - 1; i++) {
+      const mx = (pts[i][0] + pts[i + 1][0]) / 2, my = (pts[i][1] + pts[i + 1][1]) / 2;
+      d += ` Q${pts[i][0]},${pts[i][1]} ${mx},${my}`;
+    }
+    const last = pts[pts.length - 1];
+    return d + ` L${last[0]},${last[1]}`;
+  }
+
+  function arrowHead(x1, y1, x2, y2, width, color) {
+    const ang = Math.atan2(y2 - y1, x2 - x1);
+    const h = 10 + width * 1.7;
+    const a1 = ang + Math.PI - 0.42, a2 = ang + Math.PI + 0.42;
+    const px1 = (x2 + h * Math.cos(a1)).toFixed(1), py1 = (y2 + h * Math.sin(a1)).toFixed(1);
+    const px2 = (x2 + h * Math.cos(a2)).toFixed(1), py2 = (y2 + h * Math.sin(a2)).toFixed(1);
+    return `<polygon points="${x2},${y2} ${px1},${py1} ${px2},${py2}" fill="${color}"/>`;
+  }
+
+  function annotMarkup(list) {
+    return (list || []).map(a => {
+      const color = a.color || 'rgb(29, 61, 99)', width = a.width || 3.5;
+      if (a.type === 'pen') {
+        return `<path class="annot annot-pen" data-aid="${a.id}" d="${penPath(a.pts)}" fill="none" `
+          + `stroke="${color}" stroke-width="${width}" stroke-linecap="round" stroke-linejoin="round"/>`;
+      }
+      if (a.type === 'line') {
+        return `<g class="annot annot-line" data-aid="${a.id}">`
+          + `<line x1="${a.x1}" y1="${a.y1}" x2="${a.x2}" y2="${a.y2}" stroke="${color}" stroke-width="${width}" stroke-linecap="round"/>`
+          + (a.arrow ? arrowHead(a.x1, a.y1, a.x2, a.y2, width, color) : '') + `</g>`;
+      }
+      if (a.type === 'text') {
+        return `<text class="annot annot-text" data-aid="${a.id}" x="${a.x}" y="${a.y}" `
+          + `font-size="${a.size || 28}" font-weight="${a.weight || 700}" fill="${color}" `
+          + `dominant-baseline="hanging" style="font-family:var(--font-body);white-space:pre">${escapeHtml(a.text || '')}</text>`;
+      }
+      return '';
+    }).join('');
+  }
+
+  function makeAnnotLayer(slide) {
+    const svg = document.createElementNS(SVG_NS, 'svg');
+    svg.setAttribute('class', 'slide-annot');
+    svg.setAttribute('viewBox', `0 0 ${STAGE_W} ${STAGE_H}`);
+    svg.setAttribute('preserveAspectRatio', 'none');
+    svg.innerHTML = annotMarkup(slide.annotations);
+    return svg;
+  }
+
+  function renderAnnotations() {
+    const activeEl = document.querySelector('.slide.active');
+    if (!activeEl) return;
+    const svg = activeEl.querySelector('.slide-annot');
+    if (svg) svg.innerHTML = annotMarkup(data.slides[current].annotations);
+  }
+
   function renderSlide(slide, index) {
     const el = document.createElement('section');
     el.className = `slide layout-${slide.layout || 'default'}`;
@@ -126,6 +192,7 @@ window.Deck = (() => {
     body.className = 'slide-body';
     for (const block of slide.blocks || []) body.appendChild(renderBlock(block));
     el.appendChild(body);
+    el.appendChild(makeAnnotLayer(slide));
     return el;
   }
 
@@ -322,8 +389,11 @@ window.Deck = (() => {
     fitStage,
     renderAll,
     remountCurrentSlide,
+    renderAnnotations,
+    penPath,
     onChange,
     escapeHtml,
+    SVG_NS,
     get data() { return data; },
     get current() { return current; },
     get registry() { return registry; },

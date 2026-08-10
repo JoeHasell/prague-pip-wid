@@ -1,5 +1,10 @@
 # Deck framework
 
+> **Working on the Prague income-inequality deck?** Read **[`PROJECT_NOTES.md`](PROJECT_NOTES.md)**
+> first — it covers what's been built, how the assistant and Joe work together
+> (the edit/commit protocol and the two-writer caveat), the data provenance, and
+> the next steps. This README below documents the generic framework mechanics.
+
 A static, no-build-step slide deck with interactive components and two authoring paths that converge on the same file:
 
 1. **Programmatic** — Claude (or you) edits `content/slides.json` and drops component modules into `components/`. This is how data analysis, visualizations, and tables get into slides.

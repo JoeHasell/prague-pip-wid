@@ -22,9 +22,12 @@
    * Boot: wait until the deck has rendered once
    * -------------------------------------------------------- */
   function whenReady(fn) {
-    if (Deck.data) { fn(); return; }
+    // Always defer to a later tick so the rest of this module (its const/let
+    // state declared further down) is fully initialized before init runs —
+    // otherwise a ready Deck.data would run fn synchronously and hit a TDZ.
+    if (Deck.data) { setTimeout(fn, 0); return; }
     const poll = setInterval(() => {
-      if (Deck.data) { clearInterval(poll); fn(); }
+      if (Deck.data) { clearInterval(poll); setTimeout(fn, 0); }
     }, 50);
   }
 
@@ -32,10 +35,12 @@
     document.body.classList.add('editing');
     buildToolbar();
     buildModal();
+    buildAnnotPalette();
     Deck.onChange((event) => {
       if (event === 'render' || event === 'navigate') decorateCurrentSlide();
     });
     bindContentEditing();
+    bindAnnotations();
     offerDraftRestore();
     decorateCurrentSlide();
     Deck.fitStage();
@@ -68,6 +73,15 @@
         <button data-fmt="indent" title="Indent / nest (or press Tab in a list)">&#8677;</button>
         <button data-fmt="outdent" title="Outdent (or press Shift+Tab in a list)">&#8676;</button>
       </div>
+      <div class="bar-group">
+        <span class="bar-label">Draw</span>
+        <button data-tool="select" title="Select, move or delete a mark">&#9673;</button>
+        <button data-tool="pen" title="Freehand pen">&#9998;</button>
+        <button data-tool="line" title="Line / arrow">&#8599;</button>
+        <button data-tool="text" title="Text label — click to place, then drag">T</button>
+        <button data-act="annot-undo" title="Undo last mark on this slide">&#8630;</button>
+        <button data-act="annot-clear" class="danger" title="Clear all marks on this slide">Clear</button>
+      </div>
       <div class="bar-group bar-right">
         <span class="save-status" id="save-status">All changes saved</span>
         <button data-act="save" class="primary" title="Save to content/slides.json (or download if no save server)">Save</button>
@@ -77,6 +91,8 @@
     document.body.appendChild(bar);
 
     bar.addEventListener('click', (e) => {
+      const toolBtn = e.target.closest && e.target.closest('[data-tool]');
+      if (toolBtn) { setTool(toolBtn.dataset.tool); return; }
       const act = e.target.dataset && e.target.dataset.act;
       if (!act) return;
       const actions = {
@@ -87,6 +103,8 @@
         'slide-del': deleteSlide,
         'block-text': addTextBlock,
         'block-comp': addComponentBlock,
+        'annot-undo': annotUndo,
+        'annot-clear': annotClear,
         'save': save,
         'export': exportFile,
         'exit': exitEditMode,
@@ -103,6 +121,301 @@
       e.preventDefault();
       applyFormat(btn.dataset.fmt);
     });
+  }
+
+  /* ==========================================================
+   * Annotation tools: freehand pen, line/arrow, movable text.
+   * Marks live in slide.annotations (stage coords) and render
+   * through Deck; here we handle the drawing/selection UX.
+   * ======================================================== */
+  const AN_COLORS = ['rgb(29, 61, 99)', 'rgb(206, 38, 30)', 'rgb(87, 114, 145)', 'rgb(87, 129, 69)', 'rgb(230, 159, 0)'];
+  let tool = null;                       // null | 'select' | 'pen' | 'line' | 'text'
+  let anStyle = { color: AN_COLORS[0], width: 3.5, size: 28, arrow: true };
+  let selectedAid = null;
+  let drawState = null;                  // transient pen/line drawing
+  let dragState = null;                  // transient select-drag
+  const anId = () => 'a-' + Math.random().toString(36).slice(2, 8);
+
+  function activeSvg() { return document.querySelector('.slide.active .slide-annot'); }
+  function annots() {
+    const s = Deck.data.slides[Deck.current];
+    if (!s.annotations) s.annotations = [];
+    return s.annotations;
+  }
+  function findAnnot(id) { return annots().find(a => a.id === id); }
+
+  // client coords -> stage (1280x720) coords via the SVG's screen matrix
+  function toStage(e, svg) {
+    const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
+    const m = svg.getScreenCTM(); if (!m) return null;
+    const p = pt.matrixTransform(m.inverse());
+    return { x: p.x, y: p.y };
+  }
+  function toScreen(x, y, svg) {
+    const pt = svg.createSVGPoint(); pt.x = x; pt.y = y;
+    const m = svg.getScreenCTM();
+    const p = pt.matrixTransform(m);
+    return { x: p.x, y: p.y, scale: m.a };
+  }
+
+  function setTool(t) {
+    commitTextEdit();
+    tool = (tool === t) ? null : t;      // clicking the active tool turns it off
+    selectedAid = null;
+    document.querySelectorAll('.editor-bar [data-tool]').forEach(b =>
+      b.classList.toggle('tool-on', b.dataset.tool === tool));
+    applyToolToActiveSvg();
+    updatePalette();
+    if (tool && tool !== 'select') blurEditable();
+  }
+
+  function blurEditable() { const a = document.activeElement; if (a && a.blur) a.blur(); }
+
+  function applyToolToActiveSvg() {
+    document.querySelectorAll('.slide-annot').forEach(s => {
+      s.classList.remove('tool-active', 't-pen', 't-line', 't-text', 't-select');
+    });
+    const svg = activeSvg();
+    if (svg && tool) { svg.classList.add('tool-active', 't-' + tool); }
+    drawSelection();
+  }
+
+  /* ---- palette (colours / width / text size / arrow) ---- */
+  function buildAnnotPalette() {
+    const p = document.createElement('div');
+    p.className = 'annot-palette';
+    p.hidden = true;
+    p.innerHTML = `
+      <div class="ap-row ap-colors">${AN_COLORS.map(c =>
+        `<button class="ap-sw" data-color="${c}" style="background:${c}"></button>`).join('')}</div>
+      <div class="ap-row ap-widths" data-group="width">
+        <button data-width="2">&#183;</button><button data-width="3.5">&#8226;</button><button data-width="6">&#9679;</button>
+      </div>
+      <div class="ap-row ap-sizes" data-group="size">
+        <button data-size="20">S</button><button data-size="28">M</button><button data-size="40">L</button>
+      </div>
+      <div class="ap-row ap-arrow" data-group="arrow">
+        <label><input type="checkbox" id="ap-arrow-cb" checked> arrowhead</label>
+      </div>`;
+    document.body.appendChild(p);
+    p.addEventListener('click', (e) => {
+      const sw = e.target.closest('[data-color]');
+      if (sw) { anStyle.color = sw.dataset.color; applyStyleToSelection('color', sw.dataset.color); updatePalette(); return; }
+      const w = e.target.closest('[data-width]');
+      if (w) { anStyle.width = parseFloat(w.dataset.width); applyStyleToSelection('width', anStyle.width); updatePalette(); return; }
+      const s = e.target.closest('[data-size]');
+      if (s) { anStyle.size = parseInt(s.dataset.size, 10); applyStyleToSelection('size', anStyle.size); updatePalette(); return; }
+    });
+    p.querySelector('#ap-arrow-cb').addEventListener('change', (e) => {
+      anStyle.arrow = e.target.checked; applyStyleToSelection('arrow', anStyle.arrow);
+    });
+  }
+
+  function applyStyleToSelection(key, val) {
+    if (!selectedAid) return;
+    const a = findAnnot(selectedAid); if (!a) return;
+    if (key === 'size' && a.type !== 'text') return;
+    if (key === 'arrow' && a.type !== 'line') return;
+    a[key] = val; Deck.renderAnnotations(); drawSelection(); markDirty();
+  }
+
+  function updatePalette() {
+    const p = $('.annot-palette'); if (!p) return;
+    const show = tool === 'pen' || tool === 'line' || tool === 'text';
+    p.hidden = !show;
+    if (!show) return;
+    p.querySelector('.ap-widths').style.display = (tool === 'pen' || tool === 'line') ? '' : 'none';
+    p.querySelector('.ap-sizes').style.display = (tool === 'text') ? '' : 'none';
+    p.querySelector('.ap-arrow').style.display = (tool === 'line') ? '' : 'none';
+    p.querySelectorAll('.ap-sw').forEach(b => b.classList.toggle('on', b.dataset.color === anStyle.color));
+    p.querySelectorAll('[data-width]').forEach(b => b.classList.toggle('on', parseFloat(b.dataset.width) === anStyle.width));
+    p.querySelectorAll('[data-size]').forEach(b => b.classList.toggle('on', parseInt(b.dataset.size, 10) === anStyle.size));
+    p.querySelector('#ap-arrow-cb').checked = anStyle.arrow;
+  }
+
+  /* ---- pointer handling for drawing / selecting ---- */
+  function bindAnnotations() {
+    document.addEventListener('pointerdown', onAnnotDown);
+    document.addEventListener('pointermove', onAnnotMove);
+    document.addEventListener('pointerup', onAnnotUp);
+    document.addEventListener('dblclick', onAnnotDblClick);
+    document.addEventListener('keydown', (e) => {
+      if (!tool) return;
+      if (e.key === 'Escape') { setTool(tool); }               // toggle off
+      if ((e.key === 'Delete' || e.key === 'Backspace') && selectedAid
+        && !/^(INPUT|TEXTAREA)$/.test(e.target.tagName) && !e.target.isContentEditable) {
+        e.preventDefault(); deleteSelected();
+      }
+    });
+  }
+
+  function onAnnotDown(e) {
+    if (!tool) return;
+    const svg = activeSvg(); if (!svg) return;
+    if (e.target.closest('.editor-bar') || e.target.closest('.annot-palette') || e.target.closest('.annot-textedit')) return;
+    const p = toStage(e, svg); if (!p || p.x < 0 || p.x > Deck.STAGE_W || p.y < 0 || p.y > Deck.STAGE_H) return;
+    e.preventDefault();
+
+    if (tool === 'pen') {
+      drawState = { type: 'pen', pts: [[r1(p.x), r1(p.y)]], el: mkTemp('path') };
+      drawState.el.setAttribute('fill', 'none');
+      strokeTemp(drawState.el);
+    } else if (tool === 'line') {
+      drawState = { type: 'line', x1: r1(p.x), y1: r1(p.y), x2: r1(p.x), y2: r1(p.y), el: mkTemp('line') };
+      strokeTemp(drawState.el);
+      setLine(drawState.el, drawState);
+    } else if (tool === 'text') {
+      openTextEditor(null, r1(p.x), r1(p.y));
+    } else if (tool === 'select') {
+      const hit = e.target.closest('[data-aid]');
+      if (hit) {
+        selectedAid = hit.dataset.aid;
+        const a = findAnnot(selectedAid);
+        if (a) { syncStyleFrom(a); updatePalette(); }
+        dragState = { last: p };
+      } else { selectedAid = null; }
+      drawSelection();
+    }
+  }
+
+  function onAnnotMove(e) {
+    if (!drawState && !dragState) return;
+    const svg = activeSvg(); if (!svg) return;
+    const p = toStage(e, svg); if (!p) return;
+    if (drawState && drawState.type === 'pen') {
+      drawState.pts.push([r1(p.x), r1(p.y)]);
+      drawState.el.setAttribute('d', Deck.penPath(drawState.pts));
+    } else if (drawState && drawState.type === 'line') {
+      drawState.x2 = r1(p.x); drawState.y2 = r1(p.y); setLine(drawState.el, drawState);
+    } else if (dragState && selectedAid) {
+      const dx = p.x - dragState.last.x, dy = p.y - dragState.last.y;
+      translateAnnot(findAnnot(selectedAid), dx, dy);
+      dragState.last = p;
+      Deck.renderAnnotations(); drawSelection();
+    }
+  }
+
+  function onAnnotUp() {
+    if (drawState) {
+      if (drawState.type === 'pen' && drawState.pts.length > 1) {
+        annots().push({ id: anId(), type: 'pen', pts: drawState.pts, color: anStyle.color, width: anStyle.width });
+        commitAnnot();
+      } else if (drawState.type === 'line' && Math.hypot(drawState.x2 - drawState.x1, drawState.y2 - drawState.y1) > 4) {
+        annots().push({ id: anId(), type: 'line', x1: drawState.x1, y1: drawState.y1, x2: drawState.x2, y2: drawState.y2, arrow: anStyle.arrow, color: anStyle.color, width: anStyle.width });
+        commitAnnot();
+      }
+      if (drawState.el && drawState.el.parentNode) drawState.el.parentNode.removeChild(drawState.el);
+      drawState = null;
+    }
+    if (dragState) { dragState = null; markDirty(); }
+  }
+
+  function onAnnotDblClick(e) {
+    if (tool !== 'select') return;
+    const t = e.target.closest('.annot-text[data-aid]');
+    if (!t) return;
+    const a = findAnnot(t.dataset.aid); if (!a) return;
+    openTextEditor(a.id, a.x, a.y);
+  }
+
+  // temp elements for live preview
+  function mkTemp(tag) { const svg = activeSvg(); const el = document.createElementNS(Deck.SVG_NS, tag); svg.appendChild(el); return el; }
+  function strokeTemp(el) {
+    el.setAttribute('stroke', anStyle.color); el.setAttribute('stroke-width', anStyle.width);
+    el.setAttribute('stroke-linecap', 'round'); el.setAttribute('stroke-linejoin', 'round'); el.setAttribute('fill', 'none');
+  }
+  function setLine(el, s) { el.setAttribute('x1', s.x1); el.setAttribute('y1', s.y1); el.setAttribute('x2', s.x2); el.setAttribute('y2', s.y2); }
+  function r1(v) { return Math.round(v * 10) / 10; }
+
+  function translateAnnot(a, dx, dy) {
+    if (!a) return;
+    if (a.type === 'text') { a.x = r1(a.x + dx); a.y = r1(a.y + dy); }
+    else if (a.type === 'line') { a.x1 = r1(a.x1 + dx); a.y1 = r1(a.y1 + dy); a.x2 = r1(a.x2 + dx); a.y2 = r1(a.y2 + dy); }
+    else if (a.type === 'pen') { a.pts = a.pts.map(pt => [r1(pt[0] + dx), r1(pt[1] + dy)]); }
+  }
+  function syncStyleFrom(a) {
+    if (a.color) anStyle.color = a.color;
+    if (a.type !== 'text' && a.width) anStyle.width = a.width;
+    if (a.type === 'text' && a.size) anStyle.size = a.size;
+    if (a.type === 'line') anStyle.arrow = !!a.arrow;
+  }
+
+  function commitAnnot() { Deck.renderAnnotations(); drawSelection(); markDirty(); }
+
+  function deleteSelected() {
+    const i = annots().findIndex(a => a.id === selectedAid);
+    if (i >= 0) { annots().splice(i, 1); selectedAid = null; commitAnnot(); }
+  }
+  function annotUndo() {
+    const list = annots(); if (!list.length) { toast('No marks to undo on this slide.'); return; }
+    list.pop(); selectedAid = null; commitAnnot();
+  }
+  function annotClear() {
+    if (!annots().length) { toast('No marks on this slide.'); return; }
+    confirmDialog('Clear all drawn marks on this slide?', () => {
+      Deck.data.slides[Deck.current].annotations = []; selectedAid = null; commitAnnot();
+    });
+  }
+
+  // dashed selection box around the selected mark
+  function drawSelection() {
+    const svg = activeSvg(); if (!svg) return;
+    const old = svg.querySelector('.annot-selbox'); if (old) old.remove();
+    if (!selectedAid || tool !== 'select') return;
+    const el = svg.querySelector(`[data-aid="${selectedAid}"]`); if (!el) return;
+    let b; try { b = el.getBBox(); } catch (_) { return; }
+    const pad = 6;
+    const rect = document.createElementNS(Deck.SVG_NS, 'rect');
+    rect.setAttribute('class', 'annot-selbox');
+    rect.setAttribute('x', b.x - pad); rect.setAttribute('y', b.y - pad);
+    rect.setAttribute('width', b.width + pad * 2); rect.setAttribute('height', b.height + pad * 2);
+    svg.appendChild(rect);
+  }
+
+  /* ---- text place / edit via a positioned input ---- */
+  let textEdit = null;   // { input, aid, isNew }
+  function openTextEditor(aid, x, y) {
+    commitTextEdit();
+    const svg = activeSvg(); if (!svg) return;
+    let a = aid ? findAnnot(aid) : null;
+    let isNew = false;
+    if (!a) { a = { id: anId(), type: 'text', x, y, text: '', color: anStyle.color, size: anStyle.size }; annots().push(a); isNew = true; Deck.renderAnnotations(); }
+    const scr = toScreen(a.x, a.y, svg);
+    const input = document.createElement('input');
+    input.className = 'annot-textedit'; input.type = 'text'; input.value = a.text || '';
+    input.style.left = scr.x + 'px'; input.style.top = scr.y + 'px';
+    input.style.font = `${a.size * scr.scale}px/1.1 Lato, sans-serif`;
+    input.style.color = a.color;
+    document.body.appendChild(input);
+    input.focus();
+    textEdit = { input, aid: a.id, isNew };
+    // hide the SVG copy while editing to avoid double image
+    const svgEl = svg.querySelector(`[data-aid="${a.id}"]`); if (svgEl) svgEl.style.opacity = '0';
+    input.addEventListener('keydown', (ev) => {
+      if (ev.key === 'Enter') { ev.preventDefault(); commitTextEdit(); }
+      else if (ev.key === 'Escape') { ev.preventDefault(); cancelTextEdit(); }
+    });
+    input.addEventListener('blur', commitTextEdit);
+  }
+  function commitTextEdit() {
+    if (!textEdit) return;
+    const { input, aid, isNew } = textEdit; textEdit = null;
+    const a = findAnnot(aid);
+    const val = input.value.trim();
+    input.remove();
+    if (a) {
+      if (!val) { const i = annots().findIndex(x => x.id === aid); if (i >= 0) annots().splice(i, 1); }
+      else { a.text = val; }
+    }
+    Deck.renderAnnotations();
+    if (a && input.value.trim()) { selectedAid = aid; if (tool === 'text') setTool('select'); else drawSelection(); }
+    markDirty();
+  }
+  function cancelTextEdit() {
+    if (!textEdit) return;
+    const { input, aid, isNew } = textEdit; textEdit = null;
+    if (isNew) { const i = annots().findIndex(x => x.id === aid); if (i >= 0) annots().splice(i, 1); }
+    input.remove(); Deck.renderAnnotations(); markDirty();
   }
 
   /* ----------------------------------------------------------
@@ -342,6 +655,8 @@
       strip.innerHTML = `<button data-bact="props" title="Edit component props">Props</button>`;
       el.appendChild(strip);
     });
+
+    applyToolToActiveSvg();
   }
 
   document.addEventListener('click', (e) => {

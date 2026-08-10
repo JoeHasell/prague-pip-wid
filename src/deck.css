@@ -68,6 +68,17 @@ html, body {
 
 .slide.active { display: block; }
 
+/* ---------- annotation overlay (pen / lines / movable text) ---------- */
+.slide-annot {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;   /* transparent to clicks in view mode */
+  z-index: 5;
+}
+
 .slide-body {
   position: absolute;
   inset: 64px 80px 72px 80px;
@@ -210,6 +221,49 @@ html, body {
   color: var(--owid-red);
   font-size: 15px;
 }
+
+/* ---------- tables in html blocks (class="deck-table") ----------
+ * A plain <table class="deck-table"> in a text block renders in the
+ * OWID style and stays click-to-edit in ?edit mode. Add "small" for a
+ * compact font when cells hold a lot of text: class="deck-table small".
+ */
+
+.slide table.deck-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-family: var(--font-body);
+  font-size: 19px;
+  line-height: 1.45;
+  color: var(--ink);
+}
+
+.slide table.deck-table.small { font-size: 15px; line-height: 1.4; }
+
+.slide table.deck-table th,
+.slide table.deck-table td {
+  text-align: left;
+  vertical-align: top;
+  padding: 9px 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.slide table.deck-table thead th {
+  font-weight: 700;
+  font-size: 0.72em;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-bottom: 2px solid var(--mid);
+}
+
+.slide table.deck-table tbody th {
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.slide table.deck-table tbody tr:last-child > th,
+.slide table.deck-table tbody tr:last-child > td { border-bottom: none; }
 
 /* ---------- HUD: nav buttons + counter ---------- */
 
