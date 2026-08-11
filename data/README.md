@@ -45,6 +45,7 @@ python data/scripts/01_fetch_pip.py     # re-downloads the PIP extract (network)
 python data/scripts/02_process_wid.py   # runs off committed raw files
 python data/scripts/03_harmonize.py
 python data/scripts/99_verify.py
+python data/scripts/04_fit_consinc.py  # consumption->income model (network: OWID catalog)
 ```
 
 Each script's docstring documents exactly what it does and why — read those
@@ -61,6 +62,26 @@ hard-coded in component JS**. So the provenance chain for any figure is:
 slide → component (components/fig-*.js) → data/figures/fig_*.json → data/scripts/10+_fig_*.py → processed/ → raw/
 ```
 
+**MLD weighting convention (project-wide, decided 2026-08-11):** every MLD
+decomposition — for every series, including PIP — weights countries by
+**WID's demography, matched to the series' basis**: adult populations for
+per-adult series, total populations for per-capita series (`data/scripts/
+mld.py`, the single module all MLD calculations go through). Rationale: WID
+and PIP disagree about population levels (e.g. the US: 343.5M vs 336.8M),
+and per-series weights would leak that demographic disagreement into the
+between-country component — while weighting a per-adult income distribution
+by whole-population counts would be an incoherent object. Within-country MLD
+is unaffected by the yardstick. `mld_decomposition(..., weights="pip")`
+exists for sensitivity reporting only (the yardstick choice moves the
+3-country PIP between-share by ~0.1pp).
+
+Derived-series methods shared by several figures live in their own modules
+(`topadj.py` — the top-adjusted PIP series; `rescale.py` — WID post-tax
+rescaled to the ADJUSTED PIP country means (`mean_source="PIP_topadj"`, so
+the WID-side and PIP-side ladders meet at identical country means — and
+therefore identical between components); `consinc.py` — PIP adjusted to an income
+basis via the dual-country regression fitted by `04_fit_consinc.py`) so
+each definition exists once.
 Method choices that affect a figure's numbers (e.g. zero-income handling for
 MLD) are made and documented in the figure script, and echoed in the JSON's
 `meta.notes`. After a raw-data refresh, re-run steps 02–03 and then the
@@ -69,11 +90,30 @@ figure scripts to regenerate every figure.
 | script | figure | slide component |
 |---|---|---|
 | `10_fig_raw_comparison.py` | Raw WID-vs-PIP comparison, 3 countries: P10/P90/mean lollipops + between/within MLD stacked bars | `fig-raw-comparison` |
+| `11_fig_topadj_explainer.py` | Interactive explainer of the top-adjusted PIP series (per-country quantile curves, dropdown) | `fig-topadj-explainer` |
+| `12_fig_mld_decomp_explainer.py` | Pedagogical anatomy of the MLD decomposition (log-distance gaps, 3 countries, WID pre-tax vs PIP) | `fig-mld-decomp` |
+| `13_fig_consinc_explainer.py` | Consumption→income mapping per country: observed consumption, predicted income, actual income for dual countries | `fig-consinc-explainer` |
+| `14_fig_bridging_all.py` | The bridging-steps MLD bars over the FULL common sample (all 211 PIP∩WID countries; empty `lollipop` puts the shared component in bars-only mode) | `fig-raw-comparison` |
+| `15_fig_top_thresholds.py` | Entry income for the global top 10% / 1% / 0.1% across the seven scenarios (basis-matched populations; marginal-bin threshold) | `fig-top-thresholds` |
+| `16_fig_top1_treemap.py` | Country-quantile composition of the global top 1%, per scenario (treemap; box area = population inside the top 1%; regions from `raw/regions/`) | `fig-top1-treemap` |
+
+The seven displayed scenarios (and the shared "build the derived series"
+chain) are defined once in `scenarios.py`; the two Q3 scripts import from it.
+
+**Display unit (decided 2026-08-11): the deck shows incomes PER MONTH.** The
+pipeline's internal unit remains international-$ **per day** end to end (the
+sources arrive daily; the consinc regression is fitted on daily values and
+its alpha is unit-specific; the MLD is scale-invariant either way). The
+×365/12 conversion (`config.DAILY_TO_MONTHLY`) is applied only inside the
+figure scripts, at the point where values are written to `data/figures/`.
+`raw/regions/country_region_mapping.csv` is the modified World Bank region
+scheme carried over from the old project (Western Europe split out of Europe
+& Central Asia; Afghanistan and Pakistan grouped with MENA).
 
 ## The raw WID data (and how to refresh it)
 
-`raw/wid/` is a **committed cache** of a WID API pull (fetched 2026-02-20,
-China re-fetched 2026-03-01). Refreshing it requires **Stata** with the `wid`
+`raw/wid/` is a **committed cache** of a WID API pull (last full refresh:
+2026-08-11). Refreshing it requires **Stata** with the `wid`
 package (`ssc install wid`) and takes ~1–2 hours:
 
 ```bash
@@ -86,11 +126,6 @@ The fetch is country-by-country with progress tracking, because the WID API
 is unreliable for large requests. Per-country temp files and progress state
 live in `raw/wid/temp_country_data/` and `raw/wid/fetch_progress.json`
 (gitignored). After a refresh, re-run steps 02–03 and `99_verify.py`.
-
-**Optional for the next re-fetch:** WID also has post-tax **disposable/cash**
-income (`cainc`) — conceptually closer to what PIP measures than post-tax
-national income. Adding `acainc scainc` to the `indicators()` call in
-`00_fetch_wid.py` would fetch it in the same pull.
 
 ## Known caveats (read before interpreting results)
 
@@ -109,13 +144,17 @@ national income. Adding `acainc scainc` to the `indicators()` call in
    the income distribution within each country.
 3. **PPP vintages differ.** PIP uses 2021 PPPs; the WID conversion factors
    (`xlcusp`) are for 2023. Level comparisons between sources inherit this.
-4. **Zero incomes.** WID has 921 pre-tax and 184 post-tax bins with exactly
-   zero income (bottom ~5 percentiles in most countries); PIP has none. They
+4. **Zero incomes.** WID has some bins with exactly zero income (as of the
+   2026-08 pull: 921 pre-tax, 187 post-tax — bottom percentiles in most
+   countries); PIP has none. They
    are **retained** in the harmonized file. Any log-based measure (e.g. MLD)
    must decide how to treat them — that's an analysis-stage decision. The old
    project's convention was to replace zeros with $0.01/day and its
    sensitivity analysis found the choice shifts the between-country share by
    ~3 pp; whatever convention an analysis uses must be stated in its script.
+   Note the floor is a single nominal constant ($0.01), so it interacts
+   slightly with derived series that rescale incomes (see rescale.py's
+   "known, accepted artifact" note).
 5. **Top-end resolution.** Both sources are on the same 109-bin structure:
    99 one-percent bins, nine 0.1% bins across p99–p99.9, and the top 0.1%.
    PIP's 1000 equal bins nest exactly into this, so the aggregation

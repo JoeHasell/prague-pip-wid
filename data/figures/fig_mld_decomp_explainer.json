@@ -1,0 +1,162 @@
+{
+  "meta": {
+    "title": "Anatomy of the MLD decomposition",
+    "countries": [
+      "United States",
+      "Indonesia",
+      "Nigeria"
+    ],
+    "decile_bins": [
+      "p10p11",
+      "p20p21",
+      "p30p31",
+      "p40p41",
+      "p50p51",
+      "p60p61",
+      "p70p71",
+      "p80p81",
+      "p90p91"
+    ],
+    "units": "international-$ per month (converted from daily at 365/12; MLD terms are unit-free and unconverted)",
+    "notes": [
+      "Dots are decile bin averages (p10p11 ... p90p91).",
+      "Identity: ln(mu/x) = ln(mu/mu_c) + ln(mu_c/x); MLD is the population-weighted average of these gaps.",
+      "Conventions (weights, zeros) as per data/scripts/mld.py."
+    ],
+    "generated_by": "data/scripts/12_fig_mld_decomp_explainer.py"
+  },
+  "sources": [
+    {
+      "source": "WID_pretax_per_adult",
+      "label": "WID \u2014 pre-tax national income, per adult",
+      "weight_basis": "adults",
+      "mu": 4562.3927,
+      "between": 0.2811,
+      "within": 0.8561,
+      "total": 1.1372,
+      "between_share": 0.2472,
+      "countries": [
+        {
+          "country": "United States",
+          "mean": 7848.3946,
+          "within_mld": 0.7409,
+          "pop_share": 0.468,
+          "pop": 260434000,
+          "deciles": {
+            "p10p11": 860.3917,
+            "p20p21": 1850.8417,
+            "p30p31": 2480.8333,
+            "p40p41": 3415.0833,
+            "p50p51": 4406.225,
+            "p60p61": 5701.3417,
+            "p70p71": 7318.125,
+            "p80p81": 9725.925,
+            "p90p91": 14744.175
+          }
+        },
+        {
+          "country": "Indonesia",
+          "mean": 1599.1863,
+          "within_mld": 1.0063,
+          "pop_share": 0.3378,
+          "pop": 187999406,
+          "deciles": {
+            "p10p11": 136.8317,
+            "p20p21": 373.1774,
+            "p30p31": 491.2326,
+            "p40p41": 645.4816,
+            "p50p51": 841.7732,
+            "p60p61": 1115.5389,
+            "p70p71": 1522.0992,
+            "p80p81": 2094.0027,
+            "p90p91": 3057.7306
+          }
+        },
+        {
+          "country": "Nigeria",
+          "mean": 1797.5347,
+          "within_mld": 0.8723,
+          "pop_share": 0.1941,
+          "pop": 108036492,
+          "deciles": {
+            "p10p11": 206.7358,
+            "p20p21": 563.8248,
+            "p30p31": 736.1595,
+            "p40p41": 917.2949,
+            "p50p51": 1131.8994,
+            "p60p61": 1391.9613,
+            "p70p71": 1739.6796,
+            "p80p81": 2280.3834,
+            "p90p91": 3619.7694
+          }
+        }
+      ]
+    },
+    {
+      "source": "PIP",
+      "label": "PIP \u2014 disposable income or consumption, per capita",
+      "weight_basis": "people",
+      "mu": 1241.8617,
+      "between": 0.8144,
+      "within": 0.2531,
+      "total": 1.0675,
+      "between_share": 0.7629,
+      "countries": [
+        {
+          "country": "United States",
+          "mean": 2795.2259,
+          "within_mld": 0.3271,
+          "pop_share": 0.4029,
+          "pop": 343477335,
+          "deciles": {
+            "p10p11": 803.5189,
+            "p20p21": 1121.564,
+            "p30p31": 1443.5612,
+            "p40p41": 1768.4386,
+            "p50p51": 2143.2249,
+            "p60p61": 2610.0578,
+            "p70p71": 3176.9011,
+            "p80p81": 4001.4831,
+            "p90p91": 5543.802
+          }
+        },
+        {
+          "country": "Indonesia",
+          "mean": 248.2163,
+          "within_mld": 0.212,
+          "pop_share": 0.3298,
+          "pop": 281190067,
+          "deciles": {
+            "p10p11": 101.7524,
+            "p20p21": 124.7722,
+            "p30p31": 144.5652,
+            "p40p41": 165.0615,
+            "p50p51": 188.9287,
+            "p60p61": 217.8944,
+            "p70p71": 256.159,
+            "p80p81": 316.4052,
+            "p90p91": 453.0048
+          }
+        },
+        {
+          "country": "Nigeria",
+          "mean": 126.6303,
+          "within_mld": 0.1922,
+          "pop_share": 0.2673,
+          "pop": 227882945,
+          "deciles": {
+            "p10p11": 50.1823,
+            "p20p21": 64.417,
+            "p30p31": 76.8367,
+            "p40p41": 89.4082,
+            "p50p51": 104.0097,
+            "p60p61": 120.9776,
+            "p70p71": 142.6771,
+            "p80p81": 173.4465,
+            "p90p91": 228.833
+          }
+        }
+      ]
+    }
+  ]
+}

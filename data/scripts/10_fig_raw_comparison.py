@@ -26,24 +26,18 @@ script and one JSON:
 
 METHOD NOTES
 ------------
-MLD and its decomposition (population-weighted, over bins i in country c):
-    MLD_total   = sum_i w_i * ln(mu / x_i)          w_i = pop_i / total_pop
-    within_c    = sum_i in c  (pop_i/pop_c) * ln(mu_c / x_i)
-    MLD_within  = sum_c (pop_c/total_pop) * within_c
-    MLD_between = sum_c (pop_c/total_pop) * ln(mu / mu_c)
-    (identity MLD_total = MLD_within + MLD_between is asserted below)
-
-ZERO INCOMES: WID has zero-income bins at the bottom of the distribution
-(here: 5 bins each for Indonesia and Nigeria; PIP has none). ln(0) is
-undefined, so — following the convention established in the original research
-project, whose sensitivity analysis found the choice moves the between-share
-by ~3pp at global scale — zeros are replaced with $0.01/day FOR THE MLD ONLY.
-The lollipop values (P10/P90/mean) are unaffected (no zero bins at those
-points; means computed on raw values).
-
-The 'pop' weights are each series' own basis: adults for the per-adult WID
-series, total population for PIP — this is part of what makes the raw
-comparison "unfair", which is the point of the figure.
+All MLD decompositions go through data/scripts/mld.py, which bakes in the
+two project-wide conventions (see its docstring for the formulas and the
+full rationale):
+  1. POPULATION WEIGHTS COME FROM WID for every series (incl. PIP), matched
+     to each series' basis: adult populations for per-adult series, total
+     populations for per-capita series. The sources' demographic
+     disagreements never enter the comparison. A sensitivity line comparing
+     against PIP weights is printed on each run.
+  2. ZERO INCOMES are replaced with $0.01/day inside the MLD only.
+The lollipop values (P10/P90/mean) are unaffected by either convention:
+no zero bins at those points, and within a country the mean is invariant
+to which source's population total is used.
 
 INPUT   data/processed/pip_wid_harmonized_2023.csv
 OUTPUT  data/figures/fig_raw_comparison.json   (fetched by the component)
@@ -55,7 +49,7 @@ import json
 import numpy as np
 import pandas as pd
 
-from config import HARMONIZED_FILE, DATA_DIR
+from config import HARMONIZED_FILE, DATA_DIR, DAILY_TO_MONTHLY
 
 FIGURES_DIR = DATA_DIR / "figures"
 OUTPUT_FILE = FIGURES_DIR / "fig_raw_comparison.json"
@@ -67,119 +61,55 @@ SOURCES = {
     "WID_posttax_per_adult": "WID (post-tax national income, per adult)",
     "WID_posttax_per_capita": "WID (post-tax national income, per capita)",
     "PIP": "PIP (disposable income or consumption, per capita)",
-    "PIP_topadj": "PIP, top-adjusted (WID post-tax shape grafted above the splice bin)",
+    "PIP_topadj": "PIP on an income basis, top-adjusted (WID post-tax shape grafted above the splice bin, applied ON TOP of the consumption->income adjustment)",
+    "WID_posttax_rescaled": "WID post-tax, rescaled to the ADJUSTED PIP country means (shape from WID, level from PIP_topadj — the far end of the PIP-side chain — so the bridge meets in the middle)",
+    "PIP_consinc": "PIP adjusted to an income basis (consumption countries mapped via the dual-country regression)",
 }
 ZERO_REPLACEMENT = 0.01  # $/day, applied ONLY inside the MLD calculation
+
+# MLD decomposition with the project-wide conventions (WID population
+# weights, zero replacement) — defined once in mld.py.
+from mld import mld_decomposition
 
 # ---------------------------------------------------------------------------
 # The top-adjusted PIP series ("PIP_topadj")
 # ---------------------------------------------------------------------------
-# Idea: below the splice point, the series IS PIP. From the splice point
-# upward, rebuild the top using the SHAPE of the WID post-tax (national
-# income, diinc) distribution, anchored at PIP's own level:
-#
-#     PIP_adj(Py) = PIP(Px) * WID(Py) / WID(Px)      for bins above Px
-#     PIP_adj(Py) = PIP(Py)                          for bins up to Px
-#
-# CONVENTION (per Joe): the splice parameter names a percentile boundary.
-# SPLICE_PERCENTILE = 99 ("Px = P99") means the ANCHOR bin (Px) is the bin
-# just below the boundary — p98p99 — and p99p99.1 is the FIRST bin whose
-# value differs. For SPLICE_PERCENTILE = 95, the anchor is p94p95 and p95p96
-# is the first adjusted bin. So the whole top (100 - SPLICE_PERCENTILE)% of
-# the distribution takes WID's shape.
-#
-# Notes:
-#   - The anchor bin keeps its PIP value (ratio = 1 there): continuous splice.
-#   - The WID ratio is basis-invariant (per-adult vs per-capita cancels), so
-#     the per-capita WID series is used but the choice does not matter.
-#   - The graft raises the country mean (WID's top tail is fatter than
-#     PIP's); the mean and income shares are recomputed from adjusted values.
-SPLICE_PERCENTILE = 99            # try 95 as the natural alternative
-ANCHOR_BIN = f"p{SPLICE_PERCENTILE - 1}p{SPLICE_PERCENTILE}"
-WID_SHAPE_SOURCE = "WID_posttax_per_capita"
+# The method (graft WID's post-tax top-tail shape onto PIP above a splice
+# point) is defined ONCE, in topadj.py — see that module's docstring for the
+# formula and the splice convention. This script only chooses the parameter.
+from topadj import build_pip_topadj, anchor_bin_label, WID_SHAPE_SOURCE
+# The mean-rescaled WID series (WID post-tax shapes, ADJUSTED-PIP means:
+# mean_source="PIP_topadj") is likewise defined once, in rescale.py.
+from rescale import build_wid_rescaled
+# The income-basis-adjusted PIP series is defined in consinc.py, using the
+# regression + welfare lookup produced by 04_fit_consinc.py.
+from consinc import build_pip_consinc
+from config import PROCESSED_DIR, RAW_PIP_DIR
 
-
-def build_pip_topadj(h):
-    """Return a DataFrame shaped like the harmonized file, containing the
-    top-adjusted PIP series (source = 'PIP_topadj') for COUNTRIES."""
-    out = []
-    for c in COUNTRIES:
-        pip = h[(h.source == "PIP") & (h.country == c)].sort_values("p_low").copy()
-        wid = h[(h.source == WID_SHAPE_SOURCE) & (h.country == c)].sort_values("p_low")
-        assert len(pip) == 109 and len(wid) == 109, f"missing bins for {c}"
-        # Align WID values to PIP's bins by percentile label
-        wid_avg = wid.set_index("percentile")["average"]
-        anchor_p_low = float(pip.loc[pip.percentile == ANCHOR_BIN, "p_low"].iloc[0])
-        pip_at_anchor = float(pip.loc[pip.percentile == ANCHOR_BIN, "average"].iloc[0])
-        wid_at_anchor = float(wid_avg[ANCHOR_BIN])
-        assert wid_at_anchor > 0, f"WID anchor-bin value is zero for {c}"
-
-        # Bins strictly above the anchor bin get WID's shape; the anchor bin
-        # and everything below keep their PIP values.
-        above = pip["p_low"] > anchor_p_low
-        ratio = pip["percentile"].map(wid_avg) / wid_at_anchor
-        pip["average"] = np.where(above, pip_at_anchor * ratio, pip["average"])
-        # Sanity: continuous and monotone from the anchor up
-        adj = pip.loc[pip["p_low"] >= anchor_p_low, "average"].to_numpy()
-        assert (np.diff(adj) >= 0).all(), f"non-monotone top after graft for {c}"
-
-        # Recompute income shares from the adjusted values
-        pip["share"] = (pip["average"] * pip["pop"]) / (pip["average"] * pip["pop"]).sum()
-        pip["source"] = "PIP_topadj"
-        out.append(pip)
-    return pd.concat(out, ignore_index=True)
-
-
-def mld_decomposition(df):
-    """Between/within MLD decomposition over the countries present in df.
-
-    df columns: country, average (income $/day), pop (bin population).
-    Returns dict with between, within, total and per-country details.
-    """
-    x = df["average"].to_numpy(dtype=float)
-    w = df["pop"].to_numpy(dtype=float)
-    country = df["country"].to_numpy()
-
-    # Zero handling — documented convention, stated in the output meta.
-    n_replaced = int((x == 0).sum())
-    x = np.where(x == 0, ZERO_REPLACEMENT, x)
-
-    total_pop = w.sum()
-    mu = np.average(x, weights=w)
-
-    within_total = 0.0
-    between_total = 0.0
-    details = []
-    for c in COUNTRIES:
-        m = country == c
-        pop_c = w[m].sum()
-        mu_c = np.average(x[m], weights=w[m])
-        mld_c = np.average(np.log(mu_c / x[m]), weights=w[m])   # within-country MLD
-        within_total += (pop_c / total_pop) * mld_c
-        between_total += (pop_c / total_pop) * np.log(mu / mu_c)
-        details.append({"country": c, "pop": pop_c, "mean": mu_c, "mld_within": mld_c})
-
-    total = float(np.average(np.log(mu / x), weights=w))
-    # Exact decomposition identity — if this trips, the code is wrong.
-    assert abs(total - (within_total + between_total)) < 1e-9, \
-        f"decomposition identity violated: {total} != {within_total} + {between_total}"
-
-    return {
-        "between": float(between_total),
-        "within": float(within_total),
-        "total": total,
-        "between_share": float(between_total / total),
-        "grand_mean": float(mu),
-        "zero_bins_replaced": n_replaced,
-        "countries": details,
-    }
+SPLICE_PERCENTILE = 95            # anchor bin p94p95; first adjusted bin p95p96
 
 
 def main():
     h = pd.read_csv(HARMONIZED_FILE)
-    # Append the derived top-adjusted PIP series so it flows through the
-    # same lollipop/MLD computations as every other source.
-    h = pd.concat([h, build_pip_topadj(h)], ignore_index=True)
+    # Append the derived series so they flow through the same lollipop/MLD
+    # computations as every other source.
+    consinc_model = pd.read_csv(PROCESSED_DIR / "consinc_model.csv")
+    welfare = pd.read_csv(RAW_PIP_DIR / "pip_welfare_types.csv")
+    consinc, rep = build_pip_consinc(h, consinc_model, welfare, countries=COUNTRIES)
+    print(f"PIP_consinc: {rep['consumption_adjusted']} adjusted, "
+          f"{rep['income_passthrough']} pass-through, "
+          f"not in lookup: {rep['not_in_lookup'] or 'none'}")
+    # The PIP-side chain: consinc first, then the top adjustment ON TOP of it
+    h = pd.concat([h, consinc], ignore_index=True)
+    h = pd.concat([h, build_pip_topadj(h, countries=COUNTRIES,
+                                       splice_percentile=SPLICE_PERCENTILE,
+                                       base_source="PIP_consinc")],
+                  ignore_index=True)
+    # The rescaled WID series takes its means from PIP_topadj (the far end
+    # of the PIP-side chain), so it must be built AFTER topadj is appended.
+    h = pd.concat([h, build_wid_rescaled(h, countries=COUNTRIES,
+                                         mean_source="PIP_topadj")],
+                  ignore_index=True)
 
     lollipop = []
     mld = []
@@ -189,15 +119,24 @@ def main():
 
         for c in COUNTRIES:
             g = d[d.country == c]
+            # Displayed values are PER MONTH (config.DAILY_TO_MONTHLY); the
+            # pipeline is daily internally.
+            k = DAILY_TO_MONTHLY
             lollipop.append({
                 "source": source,
                 "country": c,
-                "p10": float(g.loc[g.percentile == "p10p11", "average"].iloc[0]),
-                "p90": float(g.loc[g.percentile == "p90p91", "average"].iloc[0]),
-                "mean": float(np.average(g["average"], weights=g["pop"])),
+                "p10": float(g.loc[g.percentile == "p10p11", "average"].iloc[0]) * k,
+                "p90": float(g.loc[g.percentile == "p90p91", "average"].iloc[0]) * k,
+                "mean": float(np.average(g["average"], weights=g["pop"])) * k,
+                # The extreme bins (optionally shown as hollow circles via the
+                # component's `extremes` prop). NOTE: p0p1 can be exactly 0 in
+                # WID series — the component pins those at the axis floor.
+                "p0": float(g.loc[g.percentile == "p0p1", "average"].iloc[0]) * k,
+                "p999": float(g.loc[g.percentile == "p99.9p100", "average"].iloc[0]) * k,
             })
 
-        res = mld_decomposition(d)
+        res = mld_decomposition(h, source, COUNTRIES,
+                                 zero_replacement=ZERO_REPLACEMENT)
         res["source"] = source
         res["label"] = label
         mld.append(res)
@@ -206,23 +145,38 @@ def main():
               f"(between share {res['between_share']:.1%}, "
               f"{res['zero_bins_replaced']} zero bins replaced)")
 
+    # Weight-yardstick sensitivity (printed only, not plotted): how much the
+    # headline PIP decomposition moves if PIP's own populations are used.
+    alt = mld_decomposition(h, "PIP", COUNTRIES,
+                            zero_replacement=ZERO_REPLACEMENT, weights="pip")
+    base = next(m for m in mld if m["source"] == "PIP")
+    print(f"\n[sensitivity] PIP between-share: {base['between_share']:.1%} "
+          f"(WID weights, the convention) vs {alt['between_share']:.1%} "
+          f"(PIP weights) — delta "
+          f"{abs(base['between_share'] - alt['between_share']) * 100:.2f}pp")
+
     out = {
         "meta": {
             "title": "Raw comparison: WID vs PIP, three countries, 2023",
             "countries": COUNTRIES,
             "sources": SOURCES,
             "year": 2023,
-            "units": "international-$ per day (PIP: 2021 PPPs; WID: 2023 PPPs)",
+            "units": "international-$ PER MONTH (PIP: 2021 PPPs; WID: 2023 "
+                     "PPPs); converted from daily values at 365/12",
             "zero_replacement_usd_per_day": ZERO_REPLACEMENT,
             "topadj_splice_percentile": SPLICE_PERCENTILE,
-            "topadj_anchor_bin": ANCHOR_BIN,
+            "topadj_anchor_bin": anchor_bin_label(SPLICE_PERCENTILE),
             "topadj_shape_source": WID_SHAPE_SOURCE,
+            "topadj_base_source": "PIP_consinc",
+            "rescale_mean_source": "PIP_topadj",
             "notes": [
-                "Raw published concepts — no bridging adjustments applied.",
                 "P10/P90 are the bin averages of p10p11 / p90p91.",
                 "MLD computed on the full 109-bin distributions of the three "
                 "countries only; zeros replaced with $0.01/day for the MLD only.",
-                "WID weights are adults; PIP weights are total population.",
+                "MLD weighting convention: ALL series are weighted by WID's "
+                "demography, matched to each series' basis (adults for "
+                "per-adult, total population otherwise) — see "
+                "data/scripts/mld.py.",
             ],
             "generated_by": "data/scripts/10_fig_raw_comparison.py",
         },

@@ -192,7 +192,7 @@
         <button data-width="2">&#183;</button><button data-width="3.5">&#8226;</button><button data-width="6">&#9679;</button>
       </div>
       <div class="ap-row ap-sizes" data-group="size">
-        <button data-size="20">S</button><button data-size="28">M</button><button data-size="40">L</button>
+        <button data-size="14">XS</button><button data-size="20">S</button><button data-size="28">M</button><button data-size="40">L</button>
       </div>
       <div class="ap-row ap-arrow" data-group="arrow">
         <label><input type="checkbox" id="ap-arrow-cb" checked> arrowhead</label>

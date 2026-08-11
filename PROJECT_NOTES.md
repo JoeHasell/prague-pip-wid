@@ -306,6 +306,26 @@ concepts, and six known caveats. Key facts for a fresh session:
 - **Always run `python data/scripts/99_verify.py` after touching the
   pipeline** (19 checks; encodes two historical bugs: missing PPP conversion,
   wrong bin population weights).
+- **MLD weighting convention:** ALL MLD decompositions weight countries by
+  WID's demography, MATCHED TO THE SERIES' BASIS (adults for per-adult
+  series, total population otherwise — incl. for PIP) — via the single
+  shared module `data/scripts/mld.py`. Never compute an MLD decomposition
+  without it (per-source population weights leak WID-vs-PIP demographic
+  disagreements into the between component; decided 2026-08-11).
+- **IMPLEMENTED bridging step "PIP_consinc"** (2026-08-11): PIP adjusted to
+  an income basis — consumption countries mapped via per-percentile OLS
+  ln(y_p)=alpha_p+beta_p ln(c_p) fitted on PIP's 88 dual country-years
+  (04_fit_consinc.py -> processed/consinc_model.csv + raw/pip/
+  pip_welfare_types.csv; series built in consinc.py; explainer slide with
+  per-country fit charts via 13_fig_consinc_explainer.py). CAVEAT: the
+  estimation sample has no SSA/South Asia — out-of-sample transfer. Source
+  data verified (2026-08-11):
+  `garden/wb/2026-06-26/world_bank_pip/percentiles` in the OWID catalog —
+  100 percentiles (avg/thr/share/pop) per country-year-welfare_type, with
+  88 national country-years having both income & consumption at 2021 PPPs
+  (19 countries; Albania 2016-18 confirmed; Philippines has a long panel).
+  Also available: `garden/wb/*/world_bank_pip_legacy/percentiles_income_consumption_*`
+  and LIS percentile tables (`garden/lis/2026-06-12/luxembourg_income_study/percentiles`).
 - **Zeros are retained** in the harmonized file (921 pre-tax WID bins);
   zero-handling is an analysis-stage decision that each analysis script must
   state explicitly (old convention: replace with $0.01/day; sensitivity ≈3pp

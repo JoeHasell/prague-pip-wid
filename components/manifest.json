@@ -2,7 +2,12 @@
   "components": [
     "gini-pip-wid-scatter.js",
     "ineq-trend.js",
+    "fig-mld-decomp.js",
     "fig-raw-comparison.js",
+    "fig-topadj-explainer.js",
+    "fig-consinc-explainer.js",
+    "fig-top-thresholds.js",
+    "fig-top1-treemap.js",
     "demo-line-chart.js",
     "demo-sortable-table.js",
     "demo-scrubber.js"

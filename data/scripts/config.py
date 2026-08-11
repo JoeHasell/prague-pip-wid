@@ -39,6 +39,14 @@ PROCESSED_DIR = DATA_DIR / "processed"
 # to match. When we extend to a time series this becomes a list.)
 TARGET_YEAR = 2023
 
+# DISPLAY UNIT (decided 2026-08-11): the deck shows incomes PER MONTH.
+# The pipeline's INTERNAL unit remains $/day throughout (the sources arrive
+# daily; the consinc regression is fitted on daily values and its alpha would
+# change under a unit change; the MLD is scale-invariant so it is unaffected
+# either way). The conversion is applied ONLY at the figure-script layer,
+# when values are written to data/figures/*.json.
+DAILY_TO_MONTHLY = 365 / 12
+
 # PIP source: World Bank PIP "thousand bins" dataset, republished in the
 # Our World in Data catalog. 1000 quantile bins (0.1% of population each) per
 # country-year; `avg` = mean DAILY income/consumption within the bin, in 2021
