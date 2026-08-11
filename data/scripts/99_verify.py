@@ -93,12 +93,13 @@ def main():
     # ------------------------------------------------------------------
     # DINA post-tax national income redistributes all taxes & spending, so
     # each country's bin-width-weighted mean must equal the pre-tax mean.
-    w = wid.assign(width=wid.p_high - wid.p_low)
-    tot = w.groupby("country").apply(
-        lambda d: pd.Series({
-            "pre": (d.avg_pretax_per_adult * d.width).sum(),
-            "post": (d.avg_posttax_per_adult * d.width).sum()}),
-        include_groups=False)
+    # (Plain column-wise groupby sums — avoids groupby.apply, whose keyword
+    # signature differs across pandas versions.)
+    width = wid["p_high"] - wid["p_low"]
+    tot = pd.DataFrame({
+        "pre": (wid["avg_pretax_per_adult"] * width).groupby(wid["country"]).sum(),
+        "post": (wid["avg_posttax_per_adult"] * width).groupby(wid["country"]).sum(),
+    })
     rel_gap = ((tot.post - tot.pre).abs() / tot.pre)
     check("post-tax total == pre-tax total in every country (tol 0.1%)",
           (rel_gap < 1e-3).all(), f"max gap {rel_gap.max():.2e}")

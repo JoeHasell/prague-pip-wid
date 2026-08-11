@@ -67,8 +67,67 @@ SOURCES = {
     "WID_posttax_per_adult": "WID (post-tax national income, per adult)",
     "WID_posttax_per_capita": "WID (post-tax national income, per capita)",
     "PIP": "PIP (disposable income or consumption, per capita)",
+    "PIP_topadj": "PIP, top-adjusted (WID post-tax shape grafted above the splice bin)",
 }
 ZERO_REPLACEMENT = 0.01  # $/day, applied ONLY inside the MLD calculation
+
+# ---------------------------------------------------------------------------
+# The top-adjusted PIP series ("PIP_topadj")
+# ---------------------------------------------------------------------------
+# Idea: below the splice point, the series IS PIP. From the splice point
+# upward, rebuild the top using the SHAPE of the WID post-tax (national
+# income, diinc) distribution, anchored at PIP's own level:
+#
+#     PIP_adj(Py) = PIP(Px) * WID(Py) / WID(Px)      for bins above Px
+#     PIP_adj(Py) = PIP(Py)                          for bins up to Px
+#
+# CONVENTION (per Joe): the splice parameter names a percentile boundary.
+# SPLICE_PERCENTILE = 99 ("Px = P99") means the ANCHOR bin (Px) is the bin
+# just below the boundary — p98p99 — and p99p99.1 is the FIRST bin whose
+# value differs. For SPLICE_PERCENTILE = 95, the anchor is p94p95 and p95p96
+# is the first adjusted bin. So the whole top (100 - SPLICE_PERCENTILE)% of
+# the distribution takes WID's shape.
+#
+# Notes:
+#   - The anchor bin keeps its PIP value (ratio = 1 there): continuous splice.
+#   - The WID ratio is basis-invariant (per-adult vs per-capita cancels), so
+#     the per-capita WID series is used but the choice does not matter.
+#   - The graft raises the country mean (WID's top tail is fatter than
+#     PIP's); the mean and income shares are recomputed from adjusted values.
+SPLICE_PERCENTILE = 99            # try 95 as the natural alternative
+ANCHOR_BIN = f"p{SPLICE_PERCENTILE - 1}p{SPLICE_PERCENTILE}"
+WID_SHAPE_SOURCE = "WID_posttax_per_capita"
+
+
+def build_pip_topadj(h):
+    """Return a DataFrame shaped like the harmonized file, containing the
+    top-adjusted PIP series (source = 'PIP_topadj') for COUNTRIES."""
+    out = []
+    for c in COUNTRIES:
+        pip = h[(h.source == "PIP") & (h.country == c)].sort_values("p_low").copy()
+        wid = h[(h.source == WID_SHAPE_SOURCE) & (h.country == c)].sort_values("p_low")
+        assert len(pip) == 109 and len(wid) == 109, f"missing bins for {c}"
+        # Align WID values to PIP's bins by percentile label
+        wid_avg = wid.set_index("percentile")["average"]
+        anchor_p_low = float(pip.loc[pip.percentile == ANCHOR_BIN, "p_low"].iloc[0])
+        pip_at_anchor = float(pip.loc[pip.percentile == ANCHOR_BIN, "average"].iloc[0])
+        wid_at_anchor = float(wid_avg[ANCHOR_BIN])
+        assert wid_at_anchor > 0, f"WID anchor-bin value is zero for {c}"
+
+        # Bins strictly above the anchor bin get WID's shape; the anchor bin
+        # and everything below keep their PIP values.
+        above = pip["p_low"] > anchor_p_low
+        ratio = pip["percentile"].map(wid_avg) / wid_at_anchor
+        pip["average"] = np.where(above, pip_at_anchor * ratio, pip["average"])
+        # Sanity: continuous and monotone from the anchor up
+        adj = pip.loc[pip["p_low"] >= anchor_p_low, "average"].to_numpy()
+        assert (np.diff(adj) >= 0).all(), f"non-monotone top after graft for {c}"
+
+        # Recompute income shares from the adjusted values
+        pip["share"] = (pip["average"] * pip["pop"]) / (pip["average"] * pip["pop"]).sum()
+        pip["source"] = "PIP_topadj"
+        out.append(pip)
+    return pd.concat(out, ignore_index=True)
 
 
 def mld_decomposition(df):
@@ -118,6 +177,9 @@ def mld_decomposition(df):
 
 def main():
     h = pd.read_csv(HARMONIZED_FILE)
+    # Append the derived top-adjusted PIP series so it flows through the
+    # same lollipop/MLD computations as every other source.
+    h = pd.concat([h, build_pip_topadj(h)], ignore_index=True)
 
     lollipop = []
     mld = []
@@ -152,6 +214,9 @@ def main():
             "year": 2023,
             "units": "international-$ per day (PIP: 2021 PPPs; WID: 2023 PPPs)",
             "zero_replacement_usd_per_day": ZERO_REPLACEMENT,
+            "topadj_splice_percentile": SPLICE_PERCENTILE,
+            "topadj_anchor_bin": ANCHOR_BIN,
+            "topadj_shape_source": WID_SHAPE_SOURCE,
             "notes": [
                 "Raw published concepts — no bridging adjustments applied.",
                 "P10/P90 are the bin averages of p10p11 / p90p91.",

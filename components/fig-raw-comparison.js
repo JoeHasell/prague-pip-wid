@@ -68,6 +68,16 @@ Deck.registerComponent('fig-raw-comparison', (el, props, ctx) => {
       WID_posttax_per_adult: ['WID — post-tax national income', 'per adult'],
       WID_posttax_per_capita: ['WID — post-tax national income', 'per capita'],
       PIP: ['PIP — disposable income or consumption', 'per capita'],
+      PIP_topadj: ['PIP — top-adjusted with WID shape', 'per capita'],
+    };
+    // Compact headers for narrow columns (5+ sources)
+    const GROUP_LABEL_SM = {
+      WID_pretax_per_adult: ['WID pre-tax', 'per adult'],
+      WID_pretax_per_capita: ['WID pre-tax', 'per capita'],
+      WID_posttax_per_adult: ['WID post-tax', 'per adult'],
+      WID_posttax_per_capita: ['WID post-tax', 'per capita'],
+      PIP: ['PIP', 'per capita'],
+      PIP_topadj: ['PIP top-adjusted', 'per capita'],
     };
     const missing = SOURCES.filter(s => !data.mld.some(m => m.source === s));
     if (missing.length) {
@@ -89,9 +99,11 @@ Deck.registerComponent('fig-raw-comparison', (el, props, ctx) => {
     const groupX = {};
     SOURCES.forEach((s, k) => { groupX[s] = ML + k * (halfW + 2 * midGap); });
     const slotX = (src, i) => groupX[src] + (i + 0.5) * (halfW / countries.length);
-    // Short country labels when columns are narrow
+    // Short country labels when columns are narrow; 3-letter codes when tight
     const SHORT = { 'United States': 'USA' };
-    const cLabel = c => (nG > 2 ? (SHORT[c] || c) : c);
+    const ISO3 = { 'United States': 'USA', 'Indonesia': 'IDN', 'Nigeria': 'NGA' };
+    const cLabel = c => (nG >= 5 ? (ISO3[c] || c.slice(0, 3).toUpperCase())
+      : nG > 2 ? (SHORT[c] || c) : c);
 
     // Row-1 log scale
     const lo = 1, hi = 600;
@@ -135,7 +147,7 @@ Deck.registerComponent('fig-raw-comparison', (el, props, ctx) => {
       `<line x1="${groupX[s] - midGap}" x2="${groupX[s] - midGap}" y1="${r1Top - 34}" y2="${r2Bot}" class="frc-divider"/>`
     ).join('');
     const groupHeads = SOURCES.map(s => {
-      const [l1, l2] = GROUP_LABEL[s] || [s, ''];
+      const [l1, l2] = (nG >= 5 ? GROUP_LABEL_SM[s] : GROUP_LABEL[s]) || [s, ''];
       const cx = groupX[s] + halfW / 2;
       return `<text x="${cx}" y="${r1Top - 24}" text-anchor="middle" class="frc-group${nG > 2 ? ' frc-group-sm' : ''}">${l1}</text>` +
              `<text x="${cx}" y="${r1Top - 9}" text-anchor="middle" class="frc-group-sub">${l2}</text>`;

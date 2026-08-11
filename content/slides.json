@@ -11096,7 +11096,7 @@
     {
       "id": "slide-q2bridge",
       "layout": "default",
-      "notes": "Build-up: two bridging steps between the raw WID series and PIP. Step 1: per-adult -> per-capita basis. Step 2: pre-tax -> post-tax national income. Between-country share of MLD climbs 28% -> 36% -> 49%, vs PIP's 76%. Same component and data as the previous slide - the sources prop selects the columns (data/scripts/10_fig_raw_comparison.py).",
+      "notes": "Build-up: two bridging steps between the raw WID series and PIP. Step 1: per-adult -> per-capita basis. Step 2: pre-tax -> post-tax national income. Between-country share of MLD climbs 28% -> 36% -> 49%, vs PIP's 76%. Same component and data as the previous slide - the sources prop selects the columns (data/scripts/10_fig_raw_comparison.py). Added: PIP top-adjusted (WID post-tax shape grafted above the p99-99.1 bin, anchored at PIP's level there; splice point parameterized in data/scripts/10_fig_raw_comparison.py).",
       "blocks": [
         {
           "id": "b-q2bridge-k",
@@ -11113,6 +11113,7 @@
               "WID_pretax_per_adult",
               "WID_pretax_per_capita",
               "WID_posttax_per_capita",
+              "PIP_topadj",
               "PIP"
             ]
           }

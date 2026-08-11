@@ -97,8 +97,9 @@ def aggregate_pip(pip):
     ).reset_index()
     g["average"] = g["income_total"] / g["pop"]
 
-    # p_low / p_high from the bin label (single source of truth: the label)
-    bounds = g["percentile"].str.removeprefix("p").str.split("p", expand=True).astype(float) / 100
+    # p_low / p_high from the bin label (single source of truth: the label).
+    # .str[1:] strips the leading "p" (version-proof, unlike removeprefix).
+    bounds = g["percentile"].str[1:].str.split("p", expand=True).astype(float) / 100
     g["p_low"], g["p_high"] = bounds[0], bounds[1]
 
     # Income share of each bin within its country

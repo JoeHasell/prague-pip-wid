@@ -1,0 +1,92 @@
+
+  ___  ____  ____  ____  ____ (R)
+ /__    /   ____/   /   ____/
+___/   /   /___/   /   /___/   15.1   Copyright 1985-2017 StataCorp LLC
+  Statistics/Data Analysis            StataCorp
+                                      4905 Lakeway Drive
+     Special Edition                  College Station, Texas 77845 USA
+                                      800-STATA-PC        http://www.stata.com
+                                      979-696-4600        stata@stata.com
+                                      979-696-4601 (fax)
+
+Single-user Stata perpetual license:
+       Serial number:  401506354559
+         Licensed to:  Joe Hasell
+                       Oxford University
+
+Notes:
+      1.  Stata is running in batch mode.
+      2.  Unicode is supported; see help unicode_advice.
+      3.  Maximum number of variables is set to 5000; see help set_maxvar.
+
+. do /Users/joehasell/Documents/Claude/Projects/prague-pip-wid/data/scripts/fet
+> ch_population.do 
+
+. *******************************************************
+. * fetch_population.do — adult & total population from WID
+. *
+. * Run by 00_fetch_wid.py with Stata's working directory
+. * set to data/raw/wid/, so the output path is relative.
+. * Fast: one API call, all countries.
+. *
+. * npopul, ages 992 (adults, 20+) and 999 (all ages),
+. * population(i) = individuals. Used in 02_process_wid.py
+. * for the per-adult -> per-capita adjustment and for
+. * bin population weights.
+. *******************************************************
+. 
+. clear all
+
+. set more off
+
+. 
+. local target_year = 2023
+
+. 
+. wid, indicators(npopul) ///
+>     areas(_all)          ///
+>     years(`target_year') ///
+>     ages(992 999)        ///
+>     population(i)        ///
+>     clear
+
+* Get variables associated to your selection... DONE
+(found 1 variable for 285 areas, 1 percentile, 2 age categories, 1 population c
+> ategory)
+
+* Downloading the data
+
+| 0% ---+--- 20% ---+--- 40% ---+--- 60% ---+--- 80% ---+--- 100% |
+===================================================================
+
+
+. 
+. keep country year value variable
+
+. reshape wide value, i(country year) j(variable) string
+(note: j = npopul992i npopul999i)
+
+Data                               long   ->   wide
+-----------------------------------------------------------------------------
+Number of obs.                      564   ->     282
+Number of variables                   4   ->       4
+j variable (2 values)          variable   ->   (dropped)
+xij variables:
+                                  value   ->   valuenpopul992i valuenpopul999i
+-----------------------------------------------------------------------------
+
+. 
+. rename valuenpopul992i adult_pop
+
+. rename valuenpopul999i total_pop
+
+. 
+. export delimited using "WID_aggregate_population.csv", replace delim(",")
+file WID_aggregate_population.csv saved
+
+. 
+. *******************************************************
+. * End of do-file
+. *******************************************************
+. 
+end of do-file
