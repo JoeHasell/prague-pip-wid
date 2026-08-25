@@ -5,6 +5,72 @@
   },
   "slides": [
     {
+      "id": "slide-title-short",
+      "layout": "title",
+      "blocks": [
+        {
+          "id": "b-ts1",
+          "type": "html",
+          "html": "<p class=\"kicker\">Prague &middot; short presentation (15 min) [DRAFT]</p>"
+        },
+        {
+          "id": "b-ts2",
+          "type": "html",
+          "html": "<h1>Where does global inequality lie: between or within countries?</h1>"
+        },
+        {
+          "id": "b-ts3",
+          "type": "html",
+          "html": "<p class=\"muted\">Triangulating between the two main data sources: the World Bank's <i>Poverty and Inequality Platform</i>, and the&nbsp;<i>World Inequality Database</i>.</p>"
+        }
+      ],
+      "notes": "SHORT TALK — 15 min, academic audience (inequality researchers). Aim to talk for 12-13 min so Q&A can happen.\n\nAbstract / opening framing:\n\nWhere does global inequality lie: between or within countries? Despite a new wealth of data, we're still in the dark: PIP survey data says 'mostly between', WID/DINA says 'mostly within'.\n\nThe divergence mixes known measurement problems with differing methodological choices. That has left unexplored what is arguably the most attractive vantage point of all, lying between these two worlds of measurement: one anchored to a traditional ‘survey income’ concept, while allowing for underestimation at the top. Recent expansion of both datasets makes such bridging far more feasible than it used to be. Seen from such a triangulated vantage point, the between/within split looks close to even.\n\nRunning order: framing → why now (coverage + DINA) → Q2 walkthrough (between/within) → one ask for the room about OWID."
+    },
+    {
+      "id": "slide-short-summary",
+      "layout": "default",
+      "blocks": [
+        {
+          "id": "b-ss1",
+          "type": "html",
+          "html": "<p class=\"kicker\">Where does global inequality lie: between or within countries?</p>"
+        },
+        {
+          "id": "b-ss2",
+          "type": "html",
+          "html": "<h2>Summary</h2>"
+        },
+        {
+          "id": "b-ss3",
+          "type": "html",
+          "html": "<ul><li>Despite a new wealth of data, we&rsquo;re still in the dark: PIP survey data says <i>mostly between</i>, WID/DINA says <i>mostly within</i>.</li><li>The divergence mixes known measurement problems with differing methodological choices.</li><li>That has left unexplored what is arguably the most attractive vantage point of all, lying between these two worlds of measurement: one anchored to a traditional &lsquo;survey income&rsquo; concept, while allowing for underestimation at the top.</li><li>Recent expansion of both datasets makes such bridging far more feasible than it used to be.</li><li>Seen from such a triangulated vantage point, the between/within split looks close to even.</li></ul>"
+        }
+      ],
+      "notes": "Roadmap slide for the short talk. ~90 seconds: read the shape of the argument, do not elaborate here — each bullet gets its own slide later.\n\nThe last bullet is the sentence you want them to leave with. Say it slowly, then move on."
+    },
+    {
+      "id": "slide-title-full",
+      "layout": "title",
+      "blocks": [
+        {
+          "id": "b-tf1",
+          "type": "html",
+          "html": "<p class=\"kicker\">Prague &middot; full presentation (60 min) [DRAFT]</p>"
+        },
+        {
+          "id": "b-tf2",
+          "type": "html",
+          "html": "<h1>What do we know about global income inequality?</h1>"
+        },
+        {
+          "id": "b-tf3",
+          "type": "html",
+          "html": "<p class=\"muted\">Triangulating between the two main data sources: the World Bank's <i>Poverty and Inequality Platform</i>, and the&nbsp;<i>World Inequality Database</i>.</p>"
+        }
+      ],
+      "notes": "FULL TALK — 60 min. Covers all three questions: Q1 (is inequality rising everywhere?), Q2 (between vs within), Q3 (who are the global top 1%?)."
+    },
+    {
       "id": "slide-title",
       "layout": "title",
       "blocks": [
@@ -28932,7 +28998,7 @@
         {
           "id": "b-ua0jlu",
           "type": "html",
-          "html": "<p><ul><li>Bouguignon &amp; Morrisson</li><li>Van Zanden et al</li><li>Milanovic &amp; Lakner \"Since the fall of the Berlin Wall...\"</li><li>WID:</li><ul><li>Chancel &amp; Piketty 2021. Global Income Inequality, 1820–2020: the Persistence and Mutation of Extreme Inequality (https://academic.oup.com/jeea/article-abstract/19/6/3025/6408467)</li><li>&nbsp;WID reports</li></ul><li>Kanbur, Ortiz-Juarez, Sumner 2024. Is the era of declining global income inequality over? (https://www.sciencedirect.com/science/article/pii/S0954349X2400002X)</li><li>Gradín 2024. Revisiting the trends in global inequality. World Development 179<br>(https://www.sciencedirect.com/science/article/pii/S0305750X24000779)</li></ul></p>"
+          "html": "<p></p><ul><li>Segal &amp; Anand (Handbook chapter) (old!)</li><li>Bouguignon &amp; Morrisson</li><li>Van Zanden et al</li><li>Milanovic &amp; Lakner \"Since the fall of the Berlin Wall...\"</li><li>WID:</li><ul><li>Chancel &amp; Piketty 2021. Global Income Inequality, 1820–2020: the Persistence and Mutation of Extreme Inequality (https://academic.oup.com/jeea/article-abstract/19/6/3025/6408467)</li><li>&nbsp;WID reports</li></ul><li>Kanbur, Ortiz-Juarez, Sumner 2024. Is the era of declining global income inequality over? (https://www.sciencedirect.com/science/article/pii/S0954349X2400002X)</li><li>Gradín 2024. Revisiting the trends in global inequality. World Development 179<br>(https://www.sciencedirect.com/science/article/pii/S0305750X24000779)</li></ul><p></p>"
         }
       ],
       "notes": ""
