@@ -1,6 +1,6 @@
 {
   "meta": {
-    "title": "Deck framework — demo",
+    "title": "Deck framework \u2014 demo",
     "accent": "rgb(16, 89, 229)"
   },
   "slides": [
@@ -24,7 +24,7 @@
           "html": "<p class=\"muted\">Triangulating between the two main data sources: the World Bank's <i>Poverty and Inequality Platform</i>, and the&nbsp;<i>World Inequality Database</i>.</p>"
         }
       ],
-      "notes": "SHORT TALK — 15 min, academic audience (inequality researchers). Aim to talk for 12-13 min so Q&A can happen.\n\nAbstract / opening framing:\n\nWhere does global inequality lie: between or within countries? Despite a new wealth of data, we're still in the dark: PIP survey data says 'mostly between', WID/DINA says 'mostly within'.\n\nThe divergence mixes known measurement problems with differing methodological choices. That has left unexplored what is arguably the most attractive vantage point of all, lying between these two worlds of measurement: one anchored to a traditional ‘survey income’ concept, while allowing for underestimation at the top. Recent expansion of both datasets makes such bridging far more feasible than it used to be. Seen from such a triangulated vantage point, the between/within split looks close to even.\n\nRunning order: framing → why now (coverage + DINA) → Q2 walkthrough (between/within) → one ask for the room about OWID."
+      "notes": "SHORT TALK \u2014 15 min, academic audience (inequality researchers). Aim to talk for 12-13 min so Q&A can happen.\n\nAbstract / opening framing:\n\nWhere does global inequality lie: between or within countries? Despite a new wealth of data, we're still in the dark: PIP survey data says 'mostly between', WID/DINA says 'mostly within'.\n\nThe divergence mixes known measurement problems with differing methodological choices. That has left unexplored what is arguably the most attractive vantage point of all, lying between these two worlds of measurement: one anchored to a traditional \u2018survey income\u2019 concept, while allowing for underestimation at the top. Recent expansion of both datasets makes such bridging far more feasible than it used to be. Seen from such a triangulated vantage point, the between/within split looks close to even.\n\nRunning order: framing \u2192 why now (coverage + DINA) \u2192 Q2 walkthrough (between/within) \u2192 one ask for the room about OWID."
     },
     {
       "id": "slide-short-summary",
@@ -46,7 +46,7 @@
           "html": "<ul><li>Despite a new wealth of data, we&rsquo;re still in the dark: PIP survey data says <i>mostly between</i>, WID/DINA says <i>mostly within</i>.</li><li>The divergence mixes known measurement problems with differing methodological choices.</li><li>That has left unexplored what is arguably the most attractive vantage point of all, lying between these two worlds of measurement: one anchored to a traditional &lsquo;survey income&rsquo; concept, while allowing for underestimation at the top.</li><li>Recent expansion of both datasets makes such bridging far more feasible than it used to be.</li><li>Seen from such a triangulated vantage point, the between/within split looks close to even.</li></ul>"
         }
       ],
-      "notes": "Roadmap slide for the short talk. ~90 seconds: read the shape of the argument, do not elaborate here — each bullet gets its own slide later.\n\nThe last bullet is the sentence you want them to leave with. Say it slowly, then move on."
+      "notes": "Roadmap slide for the short talk. ~90 seconds: read the shape of the argument, do not elaborate here \u2014 each bullet gets its own slide later.\n\nThe last bullet is the sentence you want them to leave with. Say it slowly, then move on."
     },
     {
       "id": "slide-title-full",
@@ -68,7 +68,7 @@
           "html": "<p class=\"muted\">Triangulating between the two main data sources: the World Bank's <i>Poverty and Inequality Platform</i>, and the&nbsp;<i>World Inequality Database</i>.</p>"
         }
       ],
-      "notes": "FULL TALK — 60 min. Covers all three questions: Q1 (is inequality rising everywhere?), Q2 (between vs within), Q3 (who are the global top 1%?)."
+      "notes": "FULL TALK \u2014 60 min. Covers all three questions: Q1 (is inequality rising everywhere?), Q2 (between vs within), Q3 (who are the global top 1%?)."
     },
     {
       "id": "slide-title",
@@ -126,7 +126,7 @@
         {
           "id": "b-cr5b1v",
           "type": "html",
-          "html": "<table class=\"deck-table small\"><colgroup><col style=\"width:34%\"><col style=\"width:22%\"><col style=\"width:22%\"><col style=\"width:22%\"></colgroup><thead><tr><th></th><th>PIP</th><th>WID \"headlines\"</th><th>Triangulated</th></tr></thead><tbody><tr><th>Q1: Is income inequality rising basically everywhere?</th><td>No</td><td>Yes</td><td>No — unless we look at the <i>extreme</i> top. (Based on post-90s trends. Post-80s trends look worse, though limited coverage.)</td></tr><tr><th>Q2: Which is bigger: inequality <i>between</i> countries, or <i>within</i> countries?</th><td>Between</td><td>Within</td><td>50/50</td></tr><tr><th>Q3: Who are the richest 1% in the world?</th><td>??</td><td>??</td><td>??</td></tr><tr><th><i>Income concept</i></th><td>Income after tax / consumption<br>per capita</td><td>Pre-tax 'National income'<br>per adult</td><td>Income after tax / consumption<br>per capita — with rough &amp; ready robustness checks</td></tr><tr><th><i>Data sources</i></th><td>Survey</td><td>Tax, survey, national accounts</td><td>Survey — with rough &amp; ready adjustments</td></tr><tr><th><i>Typical summary measure</i></th><td>Gini</td><td>Top shares</td><td>Both</td></tr><tr><th><i>Big strengths</i></th><td>What's-in-your-pocket definition</td><td>Top-sensitive data sources; Conceptual consistency; Time x country coverage</td><td>Anchored to what's-in-your-pocket income, but with robustness checks</td></tr><tr><th><i>Big weaknesses</i></th><td>Missing top; Mixing of income/consumption; Breaks in series over time</td><td>Missing data -&gt; Lots and lots of imputation; Not what people think of as \"their income\"</td><td></td></tr></tbody></table>"
+          "html": "<table class=\"deck-table small\"><colgroup><col style=\"width:34%\"><col style=\"width:22%\"><col style=\"width:22%\"><col style=\"width:22%\"></colgroup><thead><tr><th></th><th>PIP</th><th>WID \"headlines\"</th><th>Triangulated</th></tr></thead><tbody><tr><th>Q1: Is income inequality rising basically everywhere?</th><td>No</td><td>Yes</td><td>No \u2014 unless we look at the <i>extreme</i> top. (Based on post-90s trends. Post-80s trends look worse, though limited coverage.)</td></tr><tr><th>Q2: Which is bigger: inequality <i>between</i> countries, or <i>within</i> countries?</th><td>Between</td><td>Within</td><td>50/50</td></tr><tr><th>Q3: Who are the richest 1% in the world?</th><td>??</td><td>??</td><td>??</td></tr><tr><th><i>Income concept</i></th><td>Income after tax / consumption<br>per capita</td><td>Pre-tax 'National income'<br>per adult</td><td>Income after tax / consumption<br>per capita \u2014 with rough &amp; ready robustness checks</td></tr><tr><th><i>Data sources</i></th><td>Survey</td><td>Tax, survey, national accounts</td><td>Survey \u2014 with rough &amp; ready adjustments</td></tr><tr><th><i>Typical summary measure</i></th><td>Gini</td><td>Top shares</td><td>Both</td></tr><tr><th><i>Big strengths</i></th><td>What's-in-your-pocket definition</td><td>Top-sensitive data sources; Conceptual consistency; Time x country coverage</td><td>Anchored to what's-in-your-pocket income, but with robustness checks</td></tr><tr><th><i>Big weaknesses</i></th><td>Missing top; Mixing of income/consumption; Breaks in series over time</td><td>Missing data -&gt; Lots and lots of imputation; Not what people think of as \"their income\"</td><td></td></tr></tbody></table>"
         }
       ],
       "notes": ""
@@ -152,7 +152,7 @@
           "props": {}
         }
       ],
-      "notes": "One dot per country, reference year ≈ 2019. X = World Bank PIP Gini (disposable income, per capita); Y = WID Gini (pre-tax national income, per adult). Almost every country sits above the 45° line — WID's pre-tax measure is higher than PIP's post-tax measure. Coloured by world region; hover a dot for country, both Gini values, and the gap."
+      "notes": "One dot per country, reference year \u2248 2019. X = World Bank PIP Gini (disposable income, per capita); Y = WID Gini (pre-tax national income, per adult). Almost every country sits above the 45\u00b0 line \u2014 WID's pre-tax measure is higher than PIP's post-tax measure. Coloured by world region; hover a dot for country, both Gini values, and the gap."
     },
     {
       "id": "slide-scatter-gw-post",
@@ -177,7 +177,7 @@
           }
         }
       ],
-      "notes": "Same axes and same PIP values as the previous slide — only WID changes from pre-tax to post-tax national income. On a post-tax footing the WID points fall closer to the PIP diagonal (mean gap ≈ 0.18 → 0.12), and 5 countries drop to or below the line. Flick back and forth with the previous slide to see the shift."
+      "notes": "Same axes and same PIP values as the previous slide \u2014 only WID changes from pre-tax to post-tax national income. On a post-tax footing the WID points fall closer to the PIP diagonal (mean gap \u2248 0.18 \u2192 0.12), and 5 countries drop to or below the line. Flick back and forth with the previous slide to see the shift."
     },
     {
       "id": "slide-scatter-gw-reg",
@@ -203,7 +203,7 @@
           }
         }
       ],
-      "notes": "Same post-tax chart as the previous slide, but the register-based-income countries are kept in full colour and the rest are faded. These are the EU-SILC countries whose survey income is taken from tax/administrative registers rather than self-reported — in this dataset: Czechia, Denmark, Finland, Ireland, Latvia, Lithuania, Netherlands, Slovenia, Sweden, Switzerland (Iceland, Malta, Norway also register-based but not in the 58-country sample). Register income reduces top under-reporting but does not fully solve the 'missing top'.",
+      "notes": "Same post-tax chart as the previous slide, but the register-based-income countries are kept in full colour and the rest are faded. These are the EU-SILC countries whose survey income is taken from tax/administrative registers rather than self-reported \u2014 in this dataset: Czechia, Denmark, Finland, Ireland, Latvia, Lithuania, Netherlands, Slovenia, Sweden, Switzerland (Iceland, Malta, Norway also register-based but not in the 58-country sample). Register income reduces top under-reporting but does not fully solve the 'missing top'.",
       "annotations": [
         {
           "id": "a-rztb2i",
@@ -11064,6 +11064,34 @@
           "text": "1993",
           "color": "rgb(87, 114, 145)",
           "size": 20
+        }
+      ]
+    },
+    {
+      "id": "slide-q1refyear-counts",
+      "layout": "default",
+      "notes": "The live version of the previous sketch. For every reference year on the x axis, how many countries \u2014 and what share of people \u2014 have seen inequality rise, fall or stay stable since then. PIP on the left, WID pre-tax on the right. Hover for the exact numbers.",
+      "blocks": [
+        {
+          "id": "b-q1ry-k1",
+          "type": "html",
+          "html": "<p class=\"kicker\"><span style=\"letter-spacing: 1.8px;\">Q1: is income inequality rising everywhere?</span></p>"
+        },
+        {
+          "id": "b-q1ry-h1",
+          "type": "html",
+          "html": "<p>Varying the reference year: rising, falling or stable since when?</p>"
+        },
+        {
+          "id": "b-q1ry-c1",
+          "type": "component",
+          "component": "fig-reference-year-composition",
+          "props": {
+            "title": "",
+            "metrics": [
+              "gini"
+            ]
+          }
         }
       ]
     },
@@ -23600,9 +23628,34 @@
           "type": "text",
           "x": 492.3,
           "y": 600.8,
-          "text": "Top vs bottom sensitivity (GE-family α parameter)",
+          "text": "Top vs bottom sensitivity (GE-family \u03b1 parameter)",
           "color": "rgb(87, 114, 145)",
           "size": 20
+        }
+      ]
+    },
+    {
+      "id": "slide-q1refyear-alpha",
+      "layout": "default",
+      "notes": "The same figure with the measure selector live \u2014 the top-vs-bottom sensitivity from the sketch. GE(0) is bottom-sensitive, GE(2) top-sensitive. Switching to GE(2) is what makes WID's 'rising almost everywhere' picture strongest; the Gini and GE(0) bring the two sources closer together.",
+      "blocks": [
+        {
+          "id": "b-q1ry-k2",
+          "type": "html",
+          "html": "<p class=\"kicker\"><span style=\"letter-spacing: 1.8px;\">Q1: is income inequality rising everywhere?</span></p>"
+        },
+        {
+          "id": "b-q1ry-h2",
+          "type": "html",
+          "html": "<p>Top vs bottom sensitivity: the same question, four inequality measures</p>"
+        },
+        {
+          "id": "b-q1ry-c2",
+          "type": "component",
+          "component": "fig-reference-year-composition",
+          "props": {
+            "title": ""
+          }
         }
       ]
     },
@@ -25693,7 +25746,7 @@
           "type": "text",
           "x": 513.6,
           "y": 594.2,
-          "text": "Top vs bottom sensitivity (GE-family α parameter)",
+          "text": "Top vs bottom sensitivity (GE-family \u03b1 parameter)",
           "color": "rgb(87, 114, 145)",
           "size": 20
         },
@@ -28661,6 +28714,31 @@
       ]
     },
     {
+      "id": "slide-q1refyear-change",
+      "layout": "default",
+      "notes": "The average change since each reference year \u2014 unweighted across countries, and weighted by population. The gap between the two lines is the story: big countries have moved differently from the average country. Measure selector covers the GE family.",
+      "blocks": [
+        {
+          "id": "b-q1ry-k3",
+          "type": "html",
+          "html": "<p class=\"kicker\"><span style=\"letter-spacing: 1.8px;\">Q1: is income inequality rising everywhere?</span></p>"
+        },
+        {
+          "id": "b-q1ry-h3",
+          "type": "html",
+          "html": "<p>Average change from now, unweighted and population weighted</p>"
+        },
+        {
+          "id": "b-q1ry-c3",
+          "type": "component",
+          "component": "fig-reference-year-change",
+          "props": {
+            "title": ""
+          }
+        }
+      ]
+    },
+    {
       "id": "slide-yp4gbg",
       "layout": "default",
       "blocks": [
@@ -28782,7 +28860,7 @@
         {
           "id": "b-q2ci-t",
           "type": "html",
-          "html": "<p><strong>Putting PIP&rsquo;s consumption countries on an income basis:</strong> for the 88 country-years where PIP publishes <em>both</em> income and consumption distributions, we fit one regression per percentile, ln&nbsp;y<sub>p</sub>&nbsp;=&nbsp;α<sub>p</sub>&nbsp;+&nbsp;β<sub>p</sub>&nbsp;ln&nbsp;c<sub>p</sub>, and apply the fitted mapping to every consumption-based country. Income countries are unchanged.</p>"
+          "html": "<p><strong>Putting PIP&rsquo;s consumption countries on an income basis:</strong> for the 88 country-years where PIP publishes <em>both</em> income and consumption distributions, we fit one regression per percentile, ln&nbsp;y<sub>p</sub>&nbsp;=&nbsp;\u03b1<sub>p</sub>&nbsp;+&nbsp;\u03b2<sub>p</sub>&nbsp;ln&nbsp;c<sub>p</sub>, and apply the fitted mapping to every consumption-based country. Income countries are unchanged.</p>"
         },
         {
           "id": "b-q2ci-c",
@@ -28818,7 +28896,7 @@
     {
       "id": "slide-q2bridgeall",
       "layout": "default",
-      "notes": "The same bridging chart, now computed over the WHOLE common sample: all 211 countries covered by both PIP and WID (not just the three example countries). Same component (fig-raw-comparison, bars-only mode: no lollipops in the data), same methods and parameters as the three-country version — the only change is the country set. The rescaled WID series takes its means from PIP_topadj (the far end of the PIP-side chain), so its between component equals PIP top-adjusted's exactly — the bridge meets in the middle. Between-share ladder: WID pre-tax/adult 21.5% -> per-capita 27.7% -> post-tax 38.2% -> at adjusted PIP means 41.7% -> PIP top-adjusted 55.5% -> PIP cons->income 60.4% -> PIP 69.2%. Data: data/scripts/14_fig_bridging_all.py.",
+      "notes": "The same bridging chart, now computed over the WHOLE common sample: all 211 countries covered by both PIP and WID (not just the three example countries). Same component (fig-raw-comparison, bars-only mode: no lollipops in the data), same methods and parameters as the three-country version \u2014 the only change is the country set. The rescaled WID series takes its means from PIP_topadj (the far end of the PIP-side chain), so its between component equals PIP top-adjusted's exactly \u2014 the bridge meets in the middle. Between-share ladder: WID pre-tax/adult 21.5% -> per-capita 27.7% -> post-tax 38.2% -> at adjusted PIP means 41.7% -> PIP top-adjusted 55.5% -> PIP cons->income 60.4% -> PIP 69.2%. Data: data/scripts/14_fig_bridging_all.py.",
       "blocks": [
         {
           "id": "b-q2bridgeall-k",
@@ -28865,7 +28943,7 @@
     {
       "id": "slide-q3thresh",
       "layout": "default",
-      "notes": "Q3 opener: the ENTRY income for the global top 10% / 1% / 0.1% across the seven Q2 scenarios, over the same 211-country common sample. Basis-matched populations: the per-adult scenario ranks the world's ADULTS. All incomes PER MONTH. Headline: the top-1% entry income falls from ~$22,960/month (WID pre-tax per adult) to ~$4,920/month (raw PIP) — and the top-0.1% entry from ~$110,600 to ~$10,980/month. Data: data/scripts/15_fig_top_thresholds.py.",
+      "notes": "Q3 opener: the ENTRY income for the global top 10% / 1% / 0.1% across the seven Q2 scenarios, over the same 211-country common sample. Basis-matched populations: the per-adult scenario ranks the world's ADULTS. All incomes PER MONTH. Headline: the top-1% entry income falls from ~$22,960/month (WID pre-tax per adult) to ~$4,920/month (raw PIP) \u2014 and the top-0.1% entry from ~$110,600 to ~$10,980/month. Data: data/scripts/15_fig_top_thresholds.py.",
       "blocks": [
         {
           "type": "html",
@@ -28905,7 +28983,7 @@
     {
       "id": "slide-q3treewid",
       "layout": "default",
-      "notes": "Treemap of WHO makes up the global top 1% — WID post-tax per capita preselected (the dropdown offers all seven scenarios). Box area = bin population inside the top 1%; colour = region (chip legend above the plot); heavier borders demarcate countries; NO container boxes — every area is data. Country labels overlay the bins; quantile labels where they fit; tooltips carry the rest. Data: data/scripts/16_fig_top1_treemap.py.",
+      "notes": "Treemap of WHO makes up the global top 1% \u2014 WID post-tax per capita preselected (the dropdown offers all seven scenarios). Box area = bin population inside the top 1%; colour = region (chip legend above the plot); heavier borders demarcate countries; NO container boxes \u2014 every area is data. Country labels overlay the bins; quantile labels where they fit; tooltips carry the rest. Data: data/scripts/16_fig_top1_treemap.py.",
       "blocks": [
         {
           "type": "html",
@@ -28976,7 +29054,7 @@
         {
           "id": "b-ng6h9z",
           "type": "html",
-          "html": "<p>New text — click to edit.</p>"
+          "html": "<p>New text \u2014 click to edit.</p>"
         }
       ],
       "notes": ""
@@ -28998,7 +29076,7 @@
         {
           "id": "b-ua0jlu",
           "type": "html",
-          "html": "<p></p><ul><li>Segal &amp; Anand (Handbook chapter) (old!)</li><li>Bouguignon &amp; Morrisson</li><li>Van Zanden et al</li><li>Milanovic &amp; Lakner \"Since the fall of the Berlin Wall...\"</li><li>WID:</li><ul><li>Chancel &amp; Piketty 2021. Global Income Inequality, 1820–2020: the Persistence and Mutation of Extreme Inequality (https://academic.oup.com/jeea/article-abstract/19/6/3025/6408467)</li><li>&nbsp;WID reports</li></ul><li>Kanbur, Ortiz-Juarez, Sumner 2024. Is the era of declining global income inequality over? (https://www.sciencedirect.com/science/article/pii/S0954349X2400002X)</li><li>Gradín 2024. Revisiting the trends in global inequality. World Development 179<br>(https://www.sciencedirect.com/science/article/pii/S0305750X24000779)</li></ul><p></p>"
+          "html": "<p></p><ul><li>Segal &amp; Anand (Handbook chapter) (old!)</li><li>Bouguignon &amp; Morrisson</li><li>Van Zanden et al</li><li>Milanovic &amp; Lakner \"Since the fall of the Berlin Wall...\"</li><li>WID:</li><ul><li>Chancel &amp; Piketty 2021. Global Income Inequality, 1820\u20132020: the Persistence and Mutation of Extreme Inequality (https://academic.oup.com/jeea/article-abstract/19/6/3025/6408467)</li><li>&nbsp;WID reports</li></ul><li>Kanbur, Ortiz-Juarez, Sumner 2024. Is the era of declining global income inequality over? (https://www.sciencedirect.com/science/article/pii/S0954349X2400002X)</li><li>Grad\u00edn 2024. Revisiting the trends in global inequality. World Development 179<br>(https://www.sciencedirect.com/science/article/pii/S0305750X24000779)</li></ul><p></p>"
         }
       ],
       "notes": ""
@@ -29058,7 +29136,7 @@
         {
           "id": "b-m3",
           "type": "html",
-          "html": "<ul><li>Every slide lives in <code>content/slides.json</code> — the single source of truth.</li><li>Text blocks hold HTML; component blocks reference interactive modules by name.</li><li>Claude edits the JSON and drops component files into <code>components/</code>; you edit the same JSON through the point-and-click editor.</li><li>Both authoring paths converge on one file, so nothing gets clobbered.</li></ul>"
+          "html": "<ul><li>Every slide lives in <code>content/slides.json</code> \u2014 the single source of truth.</li><li>Text blocks hold HTML; component blocks reference interactive modules by name.</li><li>Claude edits the JSON and drops component files into <code>components/</code>; you edit the same JSON through the point-and-click editor.</li><li>Both authoring paths converge on one file, so nothing gets clobbered.</li></ul>"
         }
       ],
       "notes": "The key architectural idea: because slides are data, programmatic edits (Claude) and manual edits (the inline editor) are just two writers of the same JSON."
@@ -29082,7 +29160,7 @@
           "type": "component",
           "component": "demo-line-chart",
           "props": {
-            "title": "Two made-up scenarios, 2014–2026",
+            "title": "Two made-up scenarios, 2014\u20132026",
             "unit": "%"
           }
         }
@@ -29134,7 +29212,7 @@
           }
         }
       ],
-      "notes": "Component props are plain JSON — in edit mode, hover the table and hit Props to change the data live."
+      "notes": "Component props are plain JSON \u2014 in edit mode, hover the table and hit Props to change the data live."
     },
     {
       "id": "slide-row",
@@ -29158,7 +29236,7 @@
               "id": "b-r3a",
               "type": "html",
               "width": "42%",
-              "html": "<p>A <code>row</code> block places blocks side by side — the classic argument-next-to-evidence layout.</p><p class=\"muted\">Text in a row is still click-to-edit. Row <em>structure</em> is managed in the JSON, which is Claude's job anyway.</p>"
+              "html": "<p>A <code>row</code> block places blocks side by side \u2014 the classic argument-next-to-evidence layout.</p><p class=\"muted\">Text in a row is still click-to-edit. Row <em>structure</em> is managed in the JSON, which is Claude's job anyway.</p>"
             },
             {
               "id": "b-r3b",
@@ -29196,7 +29274,7 @@
         {
           "id": "b-e3",
           "type": "html",
-          "html": "<ul><li><strong>Click any text</strong> to edit it in place. <strong>Hover a block</strong> for move, delete, and component-props controls.</li><li>The toolbar adds, duplicates, reorders, and deletes slides and blocks.</li><li><strong>Save</strong> writes straight to <code>content/slides.json</code> when the dev server is running — otherwise it downloads the file for you to drop in.</li><li>A draft is kept in your browser, so nothing is lost between sessions.</li></ul>"
+          "html": "<ul><li><strong>Click any text</strong> to edit it in place. <strong>Hover a block</strong> for move, delete, and component-props controls.</li><li>The toolbar adds, duplicates, reorders, and deletes slides and blocks.</li><li><strong>Save</strong> writes straight to <code>content/slides.json</code> when the dev server is running \u2014 otherwise it downloads the file for you to drop in.</li><li>A draft is kept in your browser, so nothing is lost between sessions.</li></ul>"
         }
       ],
       "notes": "Try it now: add ?edit to the URL and change this very sentence."
@@ -29218,10 +29296,10 @@
         {
           "id": "b-p3",
           "type": "html",
-          "html": "<p>The whole deck is static files — no build step. Connect the repo to Netlify once, and every push publishes. Viewers see a clean presentation; <code>?edit</code> stays your secret door.</p><p class=\"muted\">See the README for the two-minute setup, and for the conventions Claude follows when adding slides and components in your content projects.</p>"
+          "html": "<p>The whole deck is static files \u2014 no build step. Connect the repo to Netlify once, and every push publishes. Viewers see a clean presentation; <code>?edit</code> stays your secret door.</p><p class=\"muted\">See the README for the two-minute setup, and for the conventions Claude follows when adding slides and components in your content projects.</p>"
         }
       ],
-      "notes": "End of the demo deck. This deck itself is the dummy content — replace it wholesale in real projects."
+      "notes": "End of the demo deck. This deck itself is the dummy content \u2014 replace it wholesale in real projects."
     }
   ]
 }

@@ -1,4 +1,55 @@
-# Data pipeline: harmonized PIP & WID income distributions
+# Data pipeline
+
+> **NEW (2026-08): the figures are now sourced from OWID's ETL.**
+>
+> The methodology below — harmonising PIP and WID onto one 109-bin structure, the
+> three bridging series, the between/within MLD decomposition — has been ported
+> into OWID's ETL as two versioned garden datasets. The deck no longer computes
+> any of it locally. What this buys:
+>
+> - **It updates itself.** Every PIP and WID release re-runs the whole thing.
+>   (The local pipeline's PIP extract is pinned to catalog version `2025-10-13`;
+>   the World Bank has since revised it, moving 15 countries' 2023 means by more
+>   than 5% — Bosnia −30%, Turkey +20%, Germany −9%. The global bars shift by
+>   ≤0.1pp, but individual countries do move.)
+> - **No Stata, no 1–2 hour WID fetch.** The ETL already holds WID's percentile
+>   distributions for every year, PPP-converted.
+> - **Every year, not just 2023.** The ETL runs 1990–2024, so the figure JSONs now
+>   carry the whole panel (`meta.years`, `mld_by_year`, `lollipop_by_year`).
+> - **One implementation.** The method exists once, with sanity checks that gate
+>   the build, instead of twice in two places that can drift.
+>
+> **The new path** (see `scripts/etl_source.py` for the full contract):
+>
+> ```bash
+> python data/scripts/20_cache_from_etl.py        # refresh the committed ETL cache
+> python data/scripts/21_fig_bridging_from_etl.py # Q2 figures (slides on Q2)
+> python data/scripts/22_fig_reference_year_trends.py  # Q1 reference-year figure
+> ```
+>
+> `20_cache_from_etl.py` pulls from the public OWID catalog once the ETL pull
+> request adding these datasets is merged; until then pass
+> `--staging <etl-branch>` (internal network). The small cache it writes to
+> `data/raw/etl/` is committed, so the figure scripts run offline.
+>
+> **The original scripts (00–04, `mld.py`, `topadj.py`, `rescale.py`,
+> `consinc.py`, `scenarios.py`, `10_`/`14_fig_*`) are left untouched** and still
+> work off the committed raw caches. They are the reference implementation the
+> ETL port was verified against, and are safe to delete once you are happy with
+> the ETL-sourced figures. Everything they documented about method choices still
+> applies — the ETL preserves each one, including the MLD weighting convention
+> and the zero-income floor.
+>
+> One thing worth knowing about that floor: it is doing real work on the WID
+> **pre-tax** series, where the bottom ~5 percentiles are exactly zero in 185 of
+> 211 countries (4.3% of the sample population). Moving it from $0.001 to
+> $1.00/day moves the pre-tax between-country share by about 5 percentage points
+> (20.1% → 25.6%), and dropping zero bins instead gives 28.0%. It does not touch
+> the PIP-side series (no zero bins) and barely touches WID post-tax (0.05% of
+> population). The PIP-vs-WID contrast the deck draws survives every one of those
+> choices — the gap stays above 41 points — but the WID pre-tax *level* should be
+> read as a band, not a point.
+
 
 This folder contains the full, reproducible pipeline behind the data-driven
 figures in this deck. It produces **one dataset that everything downstream
