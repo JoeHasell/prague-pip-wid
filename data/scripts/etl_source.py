@@ -165,11 +165,29 @@ OWID_REGIONS_URL = (
 )
 # The treemap groups countries into eight regions. Seven of them are PIP's own
 # current scheme, which the ETL carries on the thousand-bins table. The eighth is a
-# Western Europe split out of PIP's "Europe and Central Asia", which PIP does not
-# make — so it comes from a region definition the ETL publishes. IHME GBD's
-# "Western Europe" is the closest match to the concept (high-income Western
-# Europe, as against post-socialist Eastern Europe and Central Asia).
+# Western Europe split out of PIP's "Europe and Central Asia" — a grouping PIP does
+# not make, and which this project has always drawn by hand.
+#
+# It is built here from the closest published definition plus the three places the
+# project's own grouping departs from it, rather than from a pasted list, so the
+# departures are visible and the names are checked against the data every run.
+#
+# Base: IHME GBD's "Western Europe" — the right concept (high-income Western
+# Europe, as against post-socialist Eastern Europe and Central Asia), and the
+# closest of the ETL's definitions to this project's list.
 WESTERN_EUROPE_DEFINITION = "Western Europe (IHME GBD)"
+# Dependent territories follow their sovereign: PIP reports a few separately
+# (Greenland, Gibraltar, the Isle of Man, the Faroe Islands), and they belong with
+# the country they depend on.
+WESTERN_EUROPE_INCLUDE_TERRITORIES = True
+# Where this project's grouping differs from the base definition:
+#   Channel Islands  PIP reports Guernsey and Jersey as one aggregate, which the
+#                    territory lists name individually.
+#   Liechtenstein    a Western European micro-state the base definition omits.
+WESTERN_EUROPE_ADD = {"Channel Islands", "Liechtenstein"}
+#   Cyprus           the base definition counts it as Western Europe; this project
+#                    groups it with Eastern Europe and Central Asia.
+WESTERN_EUROPE_REMOVE = {"Cyprus"}
 EUROPE_PARENT = "Europe and Central Asia"
 EUROPE_REMAINDER = "Eastern Europe and Central Asia"
 
@@ -354,30 +372,38 @@ def load_treemap_regions():
     """The eight-region grouping the top-1% treemap colours by, from ETL sources.
 
     Seven groups are PIP's current scheme as published on the thousand-bins table.
-    The eighth splits Western Europe out of PIP's "Europe and Central Asia", using
-    the membership list of `WESTERN_EUROPE_DEFINITION` from OWID's regions dataset;
-    what remains of that group is relabelled "Eastern Europe and Central Asia".
+    The eighth splits Western Europe out of PIP's "Europe and Central Asia": the
+    membership of `WESTERN_EUROPE_DEFINITION` from OWID's regions dataset, plus the
+    dependent territories of those members, plus the explicit adjustments above.
+    What remains of PIP's Europe group is relabelled "Eastern Europe and Central
+    Asia".
 
-    This replaces the hand-maintained data/raw/regions/country_region_mapping.csv.
-    Six of that file's eight groups matched PIP's exactly; the split differs from it
-    on five entities in the covered sample — Gibraltar, Greenland, Isle of Man and
-    Liechtenstein move to the remainder group, and Cyprus joins Western Europe —
-    all of which are negligible in a population-weighted treemap.
+    This replaces the hand-maintained data/raw/regions/country_region_mapping.csv,
+    and reproduces its grouping exactly for every country PIP covers — asserted
+    below against that file while it is still present.
     """
     bins = pd.read_parquet(THOUSAND_BINS_URL, columns=["country", "year", "region"])
     bins["country"] = bins["country"].astype(str)
     bins["region"] = bins["region"].astype(str)
-    latest = bins.sort_values("year").groupby("country", as_index=False).last()
-    latest = latest[["country", "region"]]
+    latest = bins.sort_values("year").groupby("country", as_index=False).last()[["country", "region"]]
 
-    regions = pd.read_parquet(OWID_REGIONS_URL, columns=["code", "name", "members"])
+    regions = pd.read_parquet(OWID_REGIONS_URL, columns=["code", "name", "members", "related"])
     regions["name"] = regions["name"].astype(str)
-    row = regions[regions["name"] == WESTERN_EUROPE_DEFINITION]
-    assert len(row) == 1, f"{WESTERN_EUROPE_DEFINITION} not found in the regions dataset"
-    # `members` is a JSON string of ISO alpha-3 codes, not a list.
-    codes = set(json.loads(row.iloc[0]["members"]))
     code_to_name = dict(zip(regions["code"].astype(str), regions["name"]))
-    west = {code_to_name.get(c, c) for c in codes}
+
+    def names_from(col, region_name):
+        row = regions[regions["name"] == region_name]
+        assert len(row) == 1, f"{region_name} not found in the regions dataset"
+        raw = row.iloc[0][col]
+        if not isinstance(raw, str) or not raw:
+            return set()
+        return {code_to_name.get(c, c) for c in json.loads(raw)}
+
+    west = names_from("members", WESTERN_EUROPE_DEFINITION)
+    if WESTERN_EUROPE_INCLUDE_TERRITORIES:
+        for member in list(west):
+            west |= names_from("related", member)
+    west = (west | WESTERN_EUROPE_ADD) - WESTERN_EUROPE_REMOVE
 
     in_europe = latest["region"] == EUROPE_PARENT
     latest["region"] = latest["region"].where(~in_europe, EUROPE_REMAINDER)
@@ -385,4 +411,18 @@ def load_treemap_regions():
 
     n_groups = latest["region"].nunique()
     assert n_groups == 8, f"expected 8 region groups, got {n_groups}"
+
+    # While the original mapping is still in the repo, prove this reproduces it for
+    # every country PIP covers. (Its remaining entries are countries PIP has no
+    # data for, so they never reach a figure.)
+    legacy = CACHE_DIR.parents[1] / "raw" / "regions" / "country_region_mapping.csv"
+    if legacy.exists():
+        old = pd.read_csv(legacy)
+        merged = latest.merge(old, on="country", how="inner", suffixes=("_new", "_old"))
+        differ = merged[merged["region_new"] != merged["region_old"]]
+        assert differ.empty, (
+            "region grouping differs from the original mapping for: "
+            + ", ".join(f"{r.country} ({r.region_old} -> {r.region_new})" for r in differ.itertuples())
+        )
+
     return latest.sort_values("country").reset_index(drop=True)
