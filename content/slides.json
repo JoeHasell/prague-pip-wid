@@ -298,6 +298,35 @@
       ]
     },
     {
+      "id": "slide-q1refyear-counts-obs",
+      "layout": "default",
+      "notes": "The same question on observed data only: each country's nearest actual survey within five years of the reference year, and of 2019. Coverage drops to 83-155 countries and varies by reference year \u2014 a shorter stack means fewer countries had observations that far back. Compare with the previous slide, which uses the complete panel and so shows 211 countries everywhere, most of them extrapolated. The direction survives; the share counted as stable does not, because extrapolated series move less.",
+      "blocks": [
+        {
+          "id": "b-q1obs-k1",
+          "type": "html",
+          "html": "<p class=\"kicker\"><span style=\"letter-spacing: 1.8px;\">Q1: is income inequality rising everywhere?</span></p>"
+        },
+        {
+          "id": "b-q1obs-h1",
+          "type": "html",
+          "html": "<p>The same question, counting only what the sources actually measured</p>"
+        },
+        {
+          "id": "b-q1obs-c1",
+          "type": "component",
+          "component": "fig-reference-year-composition",
+          "props": {
+            "title": "",
+            "metrics": [
+              "gini"
+            ],
+            "dataUrl": "data/figures/fig_reference_year_observed.json"
+          }
+        }
+      ]
+    },
+    {
       "id": "slide-q1refyear-alpha",
       "layout": "default",
       "notes": "The same figure with the measure selector live \u2014 the top-vs-bottom sensitivity from the sketch. GE(0) is bottom-sensitive, GE(2) top-sensitive. Switching to GE(2) is what makes WID's 'rising almost everywhere' picture strongest; the Gini and GE(0) bring the two sources closer together.",
@@ -323,6 +352,32 @@
       ]
     },
     {
+      "id": "slide-q1refyear-alpha-obs",
+      "layout": "default",
+      "notes": "Observed data only, with the measure selector. Because these are each source's own published measures rather than ones computed from the harmonised bins, the selector offers the Gini, top-10% share, top-1% share and Palma ratio instead of the Generalized Entropy family. PIP publishes a top-1% share, so unlike the trend scatters both panels are populated for it.",
+      "blocks": [
+        {
+          "id": "b-q1obs-k2",
+          "type": "html",
+          "html": "<p class=\"kicker\"><span style=\"letter-spacing: 1.8px;\">Q1: is income inequality rising everywhere?</span></p>"
+        },
+        {
+          "id": "b-q1obs-h2",
+          "type": "html",
+          "html": "<p>Observed data only, across four published measures</p>"
+        },
+        {
+          "id": "b-q1obs-c2",
+          "type": "component",
+          "component": "fig-reference-year-composition",
+          "props": {
+            "title": "",
+            "dataUrl": "data/figures/fig_reference_year_observed.json"
+          }
+        }
+      ]
+    },
+    {
       "id": "slide-q1refyear-change",
       "layout": "default",
       "notes": "The average change since each reference year \u2014 unweighted across countries, and weighted by population. The gap between the two lines is the story: big countries have moved differently from the average country. Measure selector covers the GE family.",
@@ -343,6 +398,32 @@
           "component": "fig-reference-year-change",
           "props": {
             "title": ""
+          }
+        }
+      ]
+    },
+    {
+      "id": "slide-q1refyear-change-obs",
+      "layout": "default",
+      "notes": "Average change on observed data only, unweighted and population weighted. Fewer countries than the panel version, but every point is a real survey on both ends of the comparison.",
+      "blocks": [
+        {
+          "id": "b-q1obs-k3",
+          "type": "html",
+          "html": "<p class=\"kicker\"><span style=\"letter-spacing: 1.8px;\">Q1: is income inequality rising everywhere?</span></p>"
+        },
+        {
+          "id": "b-q1obs-h3",
+          "type": "html",
+          "html": "<p>Average change, counting only what the sources actually measured</p>"
+        },
+        {
+          "id": "b-q1obs-c3",
+          "type": "component",
+          "component": "fig-reference-year-change",
+          "props": {
+            "title": "",
+            "dataUrl": "data/figures/fig_reference_year_observed.json"
           }
         }
       ]

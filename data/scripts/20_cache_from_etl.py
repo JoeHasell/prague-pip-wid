@@ -30,6 +30,10 @@ and the figures do not need all of it. What they need is:
                                                   2019 observations
   wid_posttax_gini                    ~34k rows   WID post-tax Gini, the second
                                                   y-axis on the Gini scatter
+  pip_observed_inequality             ~2.4k rows  PIP's published measures at the
+                                                  years it actually surveyed
+  wid_observed_inequality             ~14k rows   WID's published measures, minus
+                                                  its extrapolated country-years
   country_regions                      ~220 rows  World Bank region per country
   treemap_regions                      ~220 rows  the treemap's eight-region grouping,
                                                   built from PIP's regions plus a
@@ -144,6 +148,14 @@ def main():
 
     regions = es.load_country_regions()
     print(f"  {'country_regions':<38} {len(regions):>7,} rows -> {es.write_cache('country_regions', regions).name}")
+
+    pip_obs = es.load_pip_observed_inequality()
+    print(f"  {'pip_observed_inequality':<38} {len(pip_obs):>7,} rows -> "
+          f"{es.write_cache('pip_observed_inequality', pip_obs).name}")
+
+    wid_obs = es.load_wid_observed_inequality()
+    print(f"  {'wid_observed_inequality':<38} {len(wid_obs):>7,} rows -> "
+          f"{es.write_cache('wid_observed_inequality', wid_obs).name}")
 
     treemap_regions = es.load_treemap_regions()
     print(f"  {'treemap_regions':<38} {len(treemap_regions):>7,} rows -> "

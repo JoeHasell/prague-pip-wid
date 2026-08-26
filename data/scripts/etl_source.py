@@ -85,6 +85,8 @@ CACHE_DIR = Path(__file__).resolve().parents[1] / "raw" / "etl"
 #                         income_distributions (whose 6.4M rows are too large
 #                         to commit and unnecessary for the figures).
 CACHE_ONLY_TABLES = {
+    "pip_observed_inequality",
+    "wid_observed_inequality",
     "example_country_bins",
     "display_year_bins",
     "pip_dual_percentiles",
@@ -196,6 +198,17 @@ THOUSAND_BINS_URL = (
     "thousand_bins_distribution/thousand_bins_distribution.parquet"
 )
 PIP_PPP_VERSION = 2021
+
+# Each source's own published inequality measures. Used by the observation-matched
+# reference-year figures, which only ever read a country-year the source actually
+# surveyed or observed — never an interpolated or extrapolated one.
+PIP_INEQUALITY_URL = (
+    "https://catalog.ourworldindata.org/garden/wb/2026-06-26/world_bank_pip/inequality.parquet"
+)
+# PIP's headline series: surveys consolidated across welfare types, no comparability
+# spells. The "intra/extrapolated" table is deliberately NOT used.
+PIP_TABLE = "Income or consumption consolidated"
+PIP_SPELLS = "No spells"
 
 # The cross-source comparison dataset behind the Gini and trend scatters. It does
 # the reference-year matching (nearest observation to 1993 / 2019, preferring the
@@ -426,3 +439,54 @@ def load_treemap_regions():
         )
 
     return latest.sort_values("country").reset_index(drop=True)
+
+
+def load_pip_observed_inequality():
+    """PIP's published inequality measures at the years it actually surveyed.
+
+    Top 10% is the sum of PIP's two top components (the 90-99 band plus the top 1%),
+    because PIP publishes those rather than a single decile-10 share.
+    """
+    df = pd.read_parquet(
+        PIP_INEQUALITY_URL,
+        columns=["country", "year", "table", "survey_comparability", "gini", "palma_ratio",
+                 "top90_99_share", "top1_share"],
+    )
+    for c in ("country", "table", "survey_comparability"):
+        df[c] = df[c].astype(str)
+    d = df[(df["table"] == PIP_TABLE) & (df["survey_comparability"] == PIP_SPELLS)].copy()
+    d = d[d["gini"].notna()]
+    d["year"] = d["year"].astype(int)
+    d["gini"] = d["gini"].astype("float64")
+    d["palma"] = d["palma_ratio"].astype("float64")
+    d["top10_share"] = d["top90_99_share"].astype("float64") + d["top1_share"].astype("float64")
+    d["top1_share"] = d["top1_share"].astype("float64")
+    out = d[["country", "year", "gini", "top10_share", "top1_share", "palma"]]
+    return out.sort_values(["country", "year"]).reset_index(drop=True)
+
+
+def load_wid_observed_inequality():
+    """WID's published inequality measures, excluding its extrapolated country-years.
+
+    Both tax concepts are kept, tagged by `welfare`, so the figures can show pre-tax
+    and post-tax side by side.
+    """
+    df = pd.read_parquet(
+        WID_INEQUALITY_URL,
+        columns=["country", "year", "welfare_type", "extrapolated", "gini", "palma_ratio",
+                 "share_top_10", "share_top_1"],
+    )
+    for c in ("country", "welfare_type", "extrapolated"):
+        df[c] = df[c].astype(str)
+    d = df[
+        (df["extrapolated"] == "no")
+        & df["welfare_type"].isin(["before tax", "after tax"])
+        & df["gini"].notna()
+    ].copy()
+    d["year"] = d["year"].astype(int)
+    d = d.rename(columns={"welfare_type": "welfare", "palma_ratio": "palma",
+                          "share_top_10": "top10_share", "share_top_1": "top1_share"})
+    for c in ("gini", "palma", "top10_share", "top1_share"):
+        d[c] = d[c].astype("float64")
+    out = d[["country", "year", "welfare", "gini", "top10_share", "top1_share", "palma"]]
+    return out.sort_values(["country", "welfare", "year"]).reset_index(drop=True)
