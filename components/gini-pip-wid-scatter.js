@@ -25,66 +25,27 @@
  *   min, max  axis domain (default 0.2 - 0.8, shared by both axes)
  */
 Deck.registerComponent('gini-pip-wid-scatter', (el, props, ctx) => {
-  const DATA = props.data || [
-  {c:"Albania",p:0.3012,wPre:0.4826,wPost:0.4466,r:"Europe and Central Asia",y:2019},
-  {c:"Bangladesh",p:0.3239,wPre:0.5298,wPost:0.5167,r:"South Asia",y:2016},
-  {c:"Belgium",p:0.2722,wPre:0.4501,wPost:0.285,r:"Other high income countries",y:2019},
-  {c:"Botswana",p:0.5491,wPre:0.7114,wPost:0.6382,r:"Sub-Saharan Africa",y:2015},
-  {c:"Bulgaria",p:0.4027,wPre:0.5308,wPost:0.4824,r:"Europe and Central Asia",y:2019},
-  {c:"Burkina Faso",p:0.4302,wPre:0.6296,wPost:0.6197,r:"Sub-Saharan Africa",y:2018},
-  {c:"Cameroon",p:0.4664,wPre:0.6377,wPost:0.6304,r:"Sub-Saharan Africa",y:2014},
-  {c:"Canada",p:0.3175,wPre:0.483,wPost:0.3535,r:"Other high income countries",y:2019},
-  {c:"Cote d'Ivoire",p:0.3717,wPre:0.5685,wPost:0.5555,r:"Sub-Saharan Africa",y:2018},
-  {c:"Czechia",p:0.2526,wPre:0.3809,wPost:0.283,r:"Europe and Central Asia",y:2019},
-  {c:"Denmark",p:0.2772,wPre:0.4394,wPost:0.2266,r:"Other high income countries",y:2019},
-  {c:"Estonia",p:0.3077,wPre:0.5255,wPost:0.459,r:"Europe and Central Asia",y:2019},
-  {c:"Eswatini",p:0.5458,wPre:0.7047,wPost:0.6735,r:"Sub-Saharan Africa",y:2016},
-  {c:"Ethiopia",p:0.3499,wPre:0.5543,wPost:0.5451,r:"Sub-Saharan Africa",y:2015},
-  {c:"Finland",p:0.2774,wPre:0.4386,wPost:0.2769,r:"Other high income countries",y:2019},
-  {c:"France",p:0.312,wPre:0.4557,wPost:0.2706,r:"Other high income countries",y:2019},
-  {c:"Gambia",p:0.3592,wPre:0.5642,wPost:0.5519,r:"Sub-Saharan Africa",y:2015},
-  {c:"Germany",p:0.3221,wPre:0.4886,wPost:0.368,r:"Other high income countries",y:2019},
-  {c:"Ghana",p:0.4351,wPre:0.6078,wPost:0.5977,r:"Sub-Saharan Africa",y:2016},
-  {c:"Greece",p:0.331,wPre:0.4452,wPost:0.3633,r:"Other high income countries",y:2019},
-  {c:"Guinea",p:0.2959,wPre:0.4947,wPost:0.4688,r:"Sub-Saharan Africa",y:2018},
-  {c:"Guinea-Bissau",p:0.3477,wPre:0.5534,wPost:0.543,r:"Sub-Saharan Africa",y:2018},
-  {c:"Iran",p:0.3648,wPre:0.5663,wPost:0.5393,r:"Middle East and North Africa",y:2019},
-  {c:"Ireland",p:0.3026,wPre:0.477,wPost:0.3237,r:"Other high income countries",y:2019},
-  {c:"Kenya",p:0.4077,wPre:0.5991,wPost:0.5875,r:"Sub-Saharan Africa",y:2015},
-  {c:"Laos",p:0.388,wPre:0.6013,wPost:0.6012,r:"East Asia and Pacific",y:2018},
-  {c:"Latvia",p:0.3449,wPre:0.4914,wPost:0.4298,r:"Europe and Central Asia",y:2019},
-  {c:"Lesotho",p:0.4488,wPre:0.6189,wPost:0.5303,r:"Sub-Saharan Africa",y:2017},
-  {c:"Lithuania",p:0.3525,wPre:0.5038,wPost:0.4691,r:"Europe and Central Asia",y:2019},
-  {c:"Luxembourg",p:0.3424,wPre:0.4607,wPost:0.3501,r:"Other high income countries",y:2019},
-  {c:"Malawi",p:0.3854,wPre:0.5885,wPost:0.5498,r:"Sub-Saharan Africa",y:2019},
-  {c:"Mali",p:0.3596,wPre:0.5604,wPost:0.5467,r:"Sub-Saharan Africa",y:2018},
-  {c:"Mauritania",p:0.32,wPre:0.5164,wPost:0.482,r:"Sub-Saharan Africa",y:2019},
-  {c:"Moldova",p:0.2602,wPre:0.4869,wPost:0.4535,r:"Europe and Central Asia",y:2019},
-  {c:"Mongolia",p:0.3274,wPre:0.5597,wPost:0.4961,r:"East Asia and Pacific",y:2018},
-  {c:"Mozambique",p:0.5074,wPre:0.6921,wPost:0.6134,r:"Sub-Saharan Africa",y:2019},
-  {c:"Netherlands",p:0.2925,wPre:0.4122,wPost:0.2937,r:"Other high income countries",y:2019},
-  {c:"Niger",p:0.3726,wPre:0.5875,wPost:0.5749,r:"Sub-Saharan Africa",y:2018},
-  {c:"Nigeria",p:0.3513,wPre:0.5452,wPost:0.5357,r:"Sub-Saharan Africa",y:2018},
-  {c:"Pakistan",p:0.2959,wPre:0.5298,wPost:0.5095,r:"South Asia",y:2018},
-  {c:"Philippines",p:0.3781,wPre:0.5717,wPost:0.5419,r:"East Asia and Pacific",y:2018},
-  {c:"Poland",p:0.2876,wPre:0.4841,wPost:0.3971,r:"Europe and Central Asia",y:2019},
-  {c:"Romania",p:0.348,wPre:0.5397,wPost:0.477,r:"Europe and Central Asia",y:2019},
-  {c:"Senegal",p:0.3831,wPre:0.587,wPost:0.5777,r:"Sub-Saharan Africa",y:2018},
-  {c:"Slovakia",p:0.2323,wPre:0.3785,wPost:0.3001,r:"Europe and Central Asia",y:2019},
-  {c:"Slovenia",p:0.2438,wPre:0.4075,wPost:0.3253,r:"Europe and Central Asia",y:2019},
-  {c:"South Africa",p:0.5964,wPre:0.7465,wPost:0.6562,r:"Sub-Saharan Africa",y:2014},
-  {c:"Spain",p:0.343,wPre:0.4479,wPost:0.3511,r:"Other high income countries",y:2019},
-  {c:"Sweden",p:0.293,wPre:0.4038,wPost:0.2556,r:"Other high income countries",y:2019},
-  {c:"Switzerland",p:0.34,wPre:0.4127,wPost:0.2723,r:"Other high income countries",y:2019},
-  {c:"Thailand",p:0.3486,wPre:0.6101,wPost:0.5729,r:"East Asia and Pacific",y:2019},
-  {c:"Turkey",p:0.4191,wPre:0.6363,wPost:0.6121,r:"Europe and Central Asia",y:2019},
-  {c:"Uganda",p:0.427,wPre:0.6291,wPost:0.618,r:"Sub-Saharan Africa",y:2019},
-  {c:"United Kingdom",p:0.3283,wPre:0.4663,wPost:0.3293,r:"Other high income countries",y:2019},
-  {c:"United States",p:0.419,wPre:0.5805,wPost:0.4904,r:"Other high income countries",y:2019},
-  {c:"Vietnam",p:0.3572,wPre:0.5616,wPost:0.5358,r:"East Asia and Pacific",y:2018},
-  {c:"Yemen",p:0.3671,wPre:0.6875,wPost:0.6701,r:"Middle East and North Africa",y:2014},
-  {c:"Zambia",p:0.5584,wPre:0.7133,wPost:0.6905,r:"Sub-Saharan Africa",y:2015}
-];
+  // Data is fetched, not embedded: data/figures/fig_gini_scatter.json, written by
+  // data/scripts/25_fig_scatters_from_etl.py from OWID's ETL. Pass `data` to
+  // override it (an array of {c, p, wPre, wPost, r, y} rows).
+  const DATA_URL = props.dataUrl || 'data/figures/fig_gini_scatter.json';
+  if (Array.isArray(props.data)) return render(props.data);
+
+  el.innerHTML = `<div style="padding:32px;font:15px var(--font-body);color:rgb(120,135,155)">Loading figure data…</div>`;
+  let dead = false;
+  let inner = null;
+  fetch(DATA_URL)
+    .then(r => { if (!r.ok) throw new Error(`${r.status} fetching ${DATA_URL}`); return r.json(); })
+    .then(json => { if (!dead) inner = render(json.countries); })
+    .catch(err => {
+      if (!dead) el.innerHTML =
+        `<div style="padding:32px;font:15px var(--font-body);color:rgb(120,135,155)">` +
+        `Could not load ${DATA_URL} — run ` +
+        `<code>python data/scripts/25_fig_scatters_from_etl.py</code> (${err.message})</div>`;
+    });
+  return () => { dead = true; if (inner) inner(); };
+
+  function render(DATA) {
 
   const measure = props.measure === 'posttax' ? 'posttax' : 'pretax';
   const yKey = measure === 'posttax' ? 'wPost' : 'wPre';
@@ -250,4 +211,5 @@ Deck.registerComponent('gini-pip-wid-scatter', (el, props, ctx) => {
     svg.removeEventListener('mouseout', onOut);
     wrap.removeEventListener('mouseleave', onWrapLeave);
   };
+}
 });

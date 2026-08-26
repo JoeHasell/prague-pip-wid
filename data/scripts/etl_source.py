@@ -83,7 +83,14 @@ CACHE_DIR = Path(__file__).resolve().parents[1] / "raw" / "etl"
 #   example_country_bins  the 109 bins of the three example countries, from
 #                         income_distributions (whose 6.4M rows are too large
 #                         to commit and unnecessary for the figures).
-CACHE_ONLY_TABLES = {"example_country_bins"}
+CACHE_ONLY_TABLES = {
+    "example_country_bins",
+    "display_year_bins",
+    "pip_dual_percentiles",
+    "country_regions",
+    "inequality_comparison",
+    "wid_posttax_gini",
+}
 
 # ---------------------------------------------------------------------------
 # Series names
@@ -143,6 +150,39 @@ EXAMPLE_COUNTRIES = ["United States", "Indonesia", "Nigeria"]
 # Displayed incomes are PER MONTH; the ETL's unit is international-$ per day.
 DAILY_TO_MONTHLY = 365 / 12
 
+# The single year the top-of-distribution and explainer figures show.
+DISPLAY_YEAR = 2023
+
+# Two other OWID datasets the figures draw on directly. Both are long published,
+# so these read from the public catalog rather than needing the staging fallback.
+PIP_PERCENTILES_URL = (
+    "https://catalog.ourworldindata.org/garden/wb/2026-06-26/world_bank_pip/percentiles.parquet"
+)
+THOUSAND_BINS_URL = (
+    "https://catalog.ourworldindata.org/garden/wb/2026-03-25/"
+    "thousand_bins_distribution/thousand_bins_distribution.parquet"
+)
+PIP_PPP_VERSION = 2021
+
+# The cross-source comparison dataset behind the Gini and trend scatters. It does
+# the reference-year matching (nearest observation to 1993 / 2019, preferring the
+# same welfare concept and reporting level), which is why those slides read from
+# it rather than from the bin-level distributions.
+COMPARISON_VERSION = "2025-01-22"
+INEQUALITY_COMPARISON_URL = (
+    "https://catalog.ourworldindata.org/garden/poverty_inequality/2025-01-22/"
+    "inequality_comparison/inequality_comparison.parquet"
+)
+# Post-tax WID Gini is not in the comparison dataset (which carries pre-tax only),
+# so it comes from the WID dataset itself.
+WID_INEQUALITY_URL = (
+    "https://catalog.ourworldindata.org/garden/wid/2026-06-18/"
+    "world_inequality_database/inequality.parquet"
+)
+
+# The deck's scatter legend spells this region with "the"; PIP does not.
+REGION_RELABEL = {"Latin America and Caribbean": "Latin America and the Caribbean"}
+
 
 def catalog_url(table):
     """Public OWID catalog URL of one ETL table."""
@@ -168,9 +208,14 @@ def _to_deck_series(df):
     if "series" in df.columns:
         raw = df["series"].astype(str)
         df["series"] = raw.map(ETL_TO_DECK_SERIES).fillna(raw)
-    for col in ("country", "percentile", "metric"):
+    # Categoricals become plain strings for predictable filtering. `percentile` is
+    # a bin LABEL ("p0p1") in the distribution tables but an integer in the
+    # regression model, so only non-numeric ones are cast.
+    for col in ("country", "metric", "welfare_type", "series"):
         if col in df.columns:
             df[col] = df[col].astype(str)
+    if "percentile" in df.columns and not pd.api.types.is_numeric_dtype(df["percentile"]):
+        df["percentile"] = df["percentile"].astype(str)
     return df
 
 
@@ -209,3 +254,82 @@ def write_cache(table, df):
     with gzip.open(path, "wt", newline="") as f:
         df.to_csv(f, index=False)
     return path
+
+
+def load_pip_dual_percentiles():
+    """PIP's own income/consumption percentiles, at each country's most recent year.
+
+    Feeds the consumption->income explainer, which is drawn at PIP's native
+    100-percentile resolution rather than the deck's 109-bin structure. Where a
+    country has a year with BOTH welfare types that year is preferred, so the
+    chart can show the fit against an actual income series; otherwise its most
+    recent consumption year is used.
+    """
+    df = pd.read_parquet(
+        PIP_PERCENTILES_URL,
+        columns=["country", "year", "ppp_version", "welfare_type", "reporting_level", "percentile", "avg"],
+    )
+    d = df[
+        (df["ppp_version"] == PIP_PPP_VERSION)
+        & (df["reporting_level"] == "national")
+        & df["welfare_type"].isin(["income", "consumption"])
+    ][["country", "year", "welfare_type", "percentile", "avg"]].copy()
+    for c in ("country", "welfare_type"):
+        d[c] = d[c].astype(str)
+    d["year"] = d["year"].astype(int)
+    d["avg"] = d["avg"].astype("float64")
+
+    cons = d[d["welfare_type"] == "consumption"]
+    latest = cons.groupby("country")["year"].max()
+    both = d.groupby(["country", "year"])["welfare_type"].nunique()
+    dual_latest = both[both == 2].reset_index().groupby("country")["year"].max()
+    chosen = latest.copy()
+    chosen.update(dual_latest)
+
+    keep = d.merge(chosen.rename("chosen").reset_index(), on="country")
+    keep = keep[keep["year"] == keep["chosen"]].drop(columns="chosen")
+    return keep.sort_values(["country", "welfare_type", "percentile"]).reset_index(drop=True)
+
+
+def load_country_regions():
+    """World Bank region per country, from the thousand-bins distribution.
+
+    Uses PIP's OLD region scheme (`region_old`), which is the seven-group one the
+    scatter's palette and legend are built on — it keeps "Other high income
+    countries" as a group, where the current scheme splits out North America. The
+    treemap keeps the project's own modified scheme in data/raw/regions/ instead.
+    """
+    df = pd.read_parquet(THOUSAND_BINS_URL, columns=["country", "year", "region_old"])
+    df["country"] = df["country"].astype(str)
+    df["region"] = df["region_old"].astype(str).replace(REGION_RELABEL)
+    latest = df.sort_values("year").groupby("country", as_index=False).last()
+    return latest[["country", "region"]].sort_values("country").reset_index(drop=True)
+
+
+def load_inequality_comparison():
+    """The cross-source comparison table: PIP and WID pre-tax Gini, top-10% share,
+    Palma and (WID only) top-1% share, at the matched 1993 and 2019 observations."""
+    df = pd.read_parquet(INEQUALITY_COMPARISON_URL)
+    for c in ("country", "ref_year", "reference_years", "only_all_series"):
+        df[c] = df[c].astype(str)
+    df["year"] = df["year"].astype(int)
+    return df.reset_index(drop=True)
+
+
+def load_wid_posttax_gini(first_year=1985):
+    """WID's post-tax national income Gini, with extrapolations — the second
+    y-axis on the Gini scatter."""
+    df = pd.read_parquet(
+        WID_INEQUALITY_URL, columns=["country", "year", "welfare_type", "extrapolated", "gini"]
+    )
+    for c in ("country", "welfare_type", "extrapolated"):
+        df[c] = df[c].astype(str)
+    df["year"] = df["year"].astype(int)
+    d = df[
+        (df["welfare_type"] == "after tax")
+        & (df["extrapolated"] == "yes")
+        & (df["year"] >= first_year)
+        & df["gini"].notna()
+    ][["country", "year", "gini"]].copy()
+    d["gini"] = d["gini"].astype("float64")
+    return d.sort_values(["country", "year"]).reset_index(drop=True)
