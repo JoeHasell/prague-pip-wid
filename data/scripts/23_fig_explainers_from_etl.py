@@ -77,6 +77,9 @@ def mld_decomposition_figure(example, by_country, year):
     for source, label in MLD_SOURCES.items():
         g = bc[bc["series"] == source]
         assert len(g) == len(es.EXAMPLE_COUNTRIES), f"missing country rows for {source}"
+        # Keep the configured order; the ETL table is sorted alphabetically.
+        g = g.set_index("country").reindex(es.EXAMPLE_COUNTRIES).reset_index()
+        assert g["country"].tolist() == es.EXAMPLE_COUNTRIES
         w = g["population_weight"].to_numpy(float)
         mu_c = g["mean"].to_numpy(float)
         within_c = g["mld_within"].to_numpy(float)
