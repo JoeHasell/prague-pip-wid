@@ -55,6 +55,7 @@ table). Refresh it with:
 """
 
 import gzip
+import json
 from pathlib import Path
 
 import pandas as pd
@@ -90,6 +91,7 @@ CACHE_ONLY_TABLES = {
     "country_regions",
     "inequality_comparison",
     "wid_posttax_gini",
+    "treemap_regions",
 }
 
 # ---------------------------------------------------------------------------
@@ -158,6 +160,19 @@ DISPLAY_YEAR = 2023
 PIP_PERCENTILES_URL = (
     "https://catalog.ourworldindata.org/garden/wb/2026-06-26/world_bank_pip/percentiles.parquet"
 )
+OWID_REGIONS_URL = (
+    "https://catalog.ourworldindata.org/garden/regions/2023-01-01/regions/regions.parquet"
+)
+# The treemap groups countries into eight regions. Seven of them are PIP's own
+# current scheme, which the ETL carries on the thousand-bins table. The eighth is a
+# Western Europe split out of PIP's "Europe and Central Asia", which PIP does not
+# make — so it comes from a region definition the ETL publishes. IHME GBD's
+# "Western Europe" is the closest match to the concept (high-income Western
+# Europe, as against post-socialist Eastern Europe and Central Asia).
+WESTERN_EUROPE_DEFINITION = "Western Europe (IHME GBD)"
+EUROPE_PARENT = "Europe and Central Asia"
+EUROPE_REMAINDER = "Eastern Europe and Central Asia"
+
 THOUSAND_BINS_URL = (
     "https://catalog.ourworldindata.org/garden/wb/2026-03-25/"
     "thousand_bins_distribution/thousand_bins_distribution.parquet"
@@ -333,3 +348,41 @@ def load_wid_posttax_gini(first_year=1985):
     ][["country", "year", "gini"]].copy()
     d["gini"] = d["gini"].astype("float64")
     return d.sort_values(["country", "year"]).reset_index(drop=True)
+
+
+def load_treemap_regions():
+    """The eight-region grouping the top-1% treemap colours by, from ETL sources.
+
+    Seven groups are PIP's current scheme as published on the thousand-bins table.
+    The eighth splits Western Europe out of PIP's "Europe and Central Asia", using
+    the membership list of `WESTERN_EUROPE_DEFINITION` from OWID's regions dataset;
+    what remains of that group is relabelled "Eastern Europe and Central Asia".
+
+    This replaces the hand-maintained data/raw/regions/country_region_mapping.csv.
+    Six of that file's eight groups matched PIP's exactly; the split differs from it
+    on five entities in the covered sample — Gibraltar, Greenland, Isle of Man and
+    Liechtenstein move to the remainder group, and Cyprus joins Western Europe —
+    all of which are negligible in a population-weighted treemap.
+    """
+    bins = pd.read_parquet(THOUSAND_BINS_URL, columns=["country", "year", "region"])
+    bins["country"] = bins["country"].astype(str)
+    bins["region"] = bins["region"].astype(str)
+    latest = bins.sort_values("year").groupby("country", as_index=False).last()
+    latest = latest[["country", "region"]]
+
+    regions = pd.read_parquet(OWID_REGIONS_URL, columns=["code", "name", "members"])
+    regions["name"] = regions["name"].astype(str)
+    row = regions[regions["name"] == WESTERN_EUROPE_DEFINITION]
+    assert len(row) == 1, f"{WESTERN_EUROPE_DEFINITION} not found in the regions dataset"
+    # `members` is a JSON string of ISO alpha-3 codes, not a list.
+    codes = set(json.loads(row.iloc[0]["members"]))
+    code_to_name = dict(zip(regions["code"].astype(str), regions["name"]))
+    west = {code_to_name.get(c, c) for c in codes}
+
+    in_europe = latest["region"] == EUROPE_PARENT
+    latest["region"] = latest["region"].where(~in_europe, EUROPE_REMAINDER)
+    latest.loc[in_europe & latest["country"].isin(west), "region"] = "Western Europe"
+
+    n_groups = latest["region"].nunique()
+    assert n_groups == 8, f"expected 8 region groups, got {n_groups}"
+    return latest.sort_values("country").reset_index(drop=True)

@@ -31,6 +31,9 @@ and the figures do not need all of it. What they need is:
   wid_posttax_gini                    ~34k rows   WID post-tax Gini, the second
                                                   y-axis on the Gini scatter
   country_regions                      ~220 rows  World Bank region per country
+  treemap_regions                      ~220 rows  the treemap's eight-region grouping,
+                                                  built from PIP's regions plus a
+                                                  Western Europe split
 
 The scatter slides read `inequality_comparison` rather than recomputing their
 measures from the bins. That dataset already does the reference-year matching
@@ -141,6 +144,10 @@ def main():
 
     regions = es.load_country_regions()
     print(f"  {'country_regions':<38} {len(regions):>7,} rows -> {es.write_cache('country_regions', regions).name}")
+
+    treemap_regions = es.load_treemap_regions()
+    print(f"  {'treemap_regions':<38} {len(treemap_regions):>7,} rows -> "
+          f"{es.write_cache('treemap_regions', treemap_regions).name}")
 
     print("\nDone. Now re-run the figure scripts (21_ through 25_).")
     return 0

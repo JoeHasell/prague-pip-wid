@@ -38,7 +38,6 @@ import etl_source as es
 
 DATA_DIR = Path(__file__).resolve().parents[1]
 FIGURES_DIR = DATA_DIR / "figures"
-REGION_FILE = DATA_DIR / "raw" / "regions" / "country_region_mapping.csv"
 
 TOP_SHARES = [0.10, 0.01, 0.001]
 TREEMAP_SHARE = 0.01
@@ -171,7 +170,7 @@ def thresholds_figure(thresholds, countries, year):
 
 
 def treemap_figure(scenarios, countries, year):
-    regions = pd.read_csv(REGION_FILE)
+    regions = es.load("treemap_regions")
     rmap = dict(zip(regions["country"], regions["region"]))
     missing = sorted(c for c in countries if c not in rmap)
     assert not missing, f"countries missing from the region mapping: {missing}"
@@ -216,8 +215,9 @@ def treemap_figure(scenarios, countries, year):
                 "partial, so the listed populations sum to exactly 1% of the global total.",
                 "Population concept is basis-matched: adults for the per-adult series, "
                 "total population otherwise, both from WID's demography.",
-                "Regions follow data/raw/regions/country_region_mapping.csv, the "
-                "project's modified World Bank scheme.",
+                "Regions are PIP's own current scheme, with Western Europe split out "
+                f"of Europe and Central Asia using {es.WESTERN_EUROPE_DEFINITION} — both "
+                "from the ETL, so no hand-maintained mapping is involved.",
                 "Computed by OWID's ETL: garden/poverty_inequality/"
                 f"{es.ETL_VERSION}/harmonized_income_distributions.",
             ],
