@@ -22,6 +22,11 @@
           "id": "b-ts3",
           "type": "html",
           "html": "<p class=\"muted\">Triangulating between the two main data sources: the World Bank's <i>Poverty and Inequality Platform</i>, and the&nbsp;<i>World Inequality Database</i>.</p>"
+        },
+        {
+          "id": "b-ts4",
+          "type": "html",
+          "html": "<p style=\"font-size: 20px; line-height: 1.6; margin-top: 14px; color: var(--muted);\"><strong style=\"color: var(--ink); font-weight: 700;\">Joe Hasell</strong> &middot; Oxford Martin School, Our World in Data<br><strong style=\"color: var(--ink); font-weight: 700;\">Pablo Arriagada</strong> &middot; Our World in Data<br><strong style=\"color: var(--ink); font-weight: 700;\">Bertha Rohenkohl</strong> &middot; Our World in Data</p>"
         }
       ],
       "notes": "SHORT TALK — 15 min, academic audience (inequality researchers). Aim to talk for 12-13 min so Q&A can happen.\n\nAbstract / opening framing:\n\nWhere does global inequality lie: between or within countries? Despite a new wealth of data, we're still in the dark: PIP survey data says 'mostly between', WID/DINA says 'mostly within'.\n\nThe divergence mixes known measurement problems with differing methodological choices. That has left unexplored what is arguably the most attractive vantage point of all, lying between these two worlds of measurement: one anchored to a traditional ‘survey income’ concept, while allowing for underestimation at the top. Recent expansion of both datasets makes such bridging far more feasible than it used to be. Seen from such a triangulated vantage point, the between/within split looks close to even.\n\nRunning order: framing → why now (coverage + DINA) → Q2 walkthrough (between/within) → one ask for the room about OWID."
@@ -66,6 +71,11 @@
           "id": "b-tf3",
           "type": "html",
           "html": "<p class=\"muted\">Triangulating between the two main data sources: the World Bank's <i>Poverty and Inequality Platform</i>, and the&nbsp;<i>World Inequality Database</i>.</p>"
+        },
+        {
+          "id": "b-tf4",
+          "type": "html",
+          "html": "<p style=\"font-size: 20px; line-height: 1.6; margin-top: 14px; color: var(--muted);\"><strong style=\"color: var(--ink); font-weight: 700;\">Joe Hasell</strong> &middot; Oxford Martin School, Our World in Data<br><strong style=\"color: var(--ink); font-weight: 700;\">Pablo Arriagada</strong> &middot; Our World in Data<br><strong style=\"color: var(--ink); font-weight: 700;\">Bertha Rohenkohl</strong> &middot; Our World in Data</p>"
         }
       ],
       "notes": "FULL TALK — 60 min. Covers all three questions: Q1 (is inequality rising everywhere?), Q2 (between vs within), Q3 (who are the global top 1%?)."
@@ -88,6 +98,11 @@
           "id": "b-t3",
           "type": "html",
           "html": "<p class=\"muted\">Triangulating between the two main data sources: the World Bank's <i style=\"\">Poverty and Inequality Platform</i>, and the&nbsp;<i>World Inequality Database</i>.</p>"
+        },
+        {
+          "id": "b-t4",
+          "type": "html",
+          "html": "<p style=\"font-size: 20px; line-height: 1.6; margin-top: 14px; color: var(--muted);\"><strong style=\"color: var(--ink); font-weight: 700;\">Joe Hasell</strong> &middot; Oxford Martin School, Our World in Data<br><strong style=\"color: var(--ink); font-weight: 700;\">Pablo Arriagada</strong> &middot; Our World in Data<br><strong style=\"color: var(--ink); font-weight: 700;\">Bertha Rohenkohl</strong> &middot; Our World in Data</p>"
         }
       ],
       "notes": "Press N to toggle these speaker notes. Arrow keys or the buttons bottom-right to navigate. Add ?edit to the URL to enter edit mode."
