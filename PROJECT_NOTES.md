@@ -1,7 +1,7 @@
 # PROJECT NOTES — "prague-pip-wid" deck
 
 > Handoff notes for a future chat. Read this first, then `README.md` for the
-> framework mechanics. Last updated: 2026-08-10.
+> framework mechanics. Last updated: 2026-08-27.
 
 ## 1. What this is
 
@@ -82,6 +82,27 @@ that localhost** — do all rendering/verification with the headless harness (§
 **Note on `src/` changes:** editing `src/deck.js`, `src/editor.js`, CSS requires
 Joe to **restart the dev server + hard-refresh**. `slides.json`-only changes need
 just a reload.
+
+**Git: Joe pushes from GitHub Desktop. The assistant must not run `git` at all.**
+For the whole of this project, Joe commits and pushes using **GitHub Desktop**
+(command-line push does not work — GitHub disabled HTTPS password auth, and the
+credentials live in the app). More importantly: the sandbox shell **cannot delete
+files**, so *any* git command run through the bridge — including read-only ones
+like `git status` — leaves a stale `.git/index.lock` behind, and Joe's next commit
+then fails with *"Another git process seems to be running in this repository"*.
+This happened on 2026-08-27. The fix is Joe running, in his own Terminal:
+
+```bash
+rm -f .git/index.lock .git/objects/maintenance.lock
+```
+
+So: to answer questions about repo state, **read the working files directly**
+rather than asking git. If branch/PR/diff information is genuinely needed, ask
+Joe to paste it from GitHub Desktop or the GitHub web UI.
+
+**When the assistant adds a NEW file** (e.g. anything under `content/images/`),
+say so explicitly in the reply — new files appear in GitHub Desktop's changes
+list and are easy to miss, and a missing image breaks the slide for everyone else.
 
 ## 4. Current state of the deck (as of this handoff)
 
