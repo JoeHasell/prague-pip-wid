@@ -3,6 +3,25 @@
 > Handoff notes for a future chat. Read this first, then `README.md` for the
 > framework mechanics. Last updated: 2026-08-10.
 
+## ⚠️ Refreshing the data after an ETL change
+
+The figures are committed JSON built from a cached ETL extract; nothing in this repo
+watches the ETL. After any ETL change, and before presenting, run:
+
+```bash
+# while owid/etl#6764 is open — the datasets live only on staging:
+python data/scripts/refresh_from_etl.py --staging worktree-etl-prague-pip-wid
+
+# once #6764 merges, drop the flag to read the public catalog:
+python data/scripts/refresh_from_etl.py
+```
+
+Commit `data/raw/etl/` and `data/figures/` together. `python data/scripts/refresh_from_etl.py --check`
+reports staleness without changing anything (non-zero exit when the figures are behind).
+
+Full detail, including the `ETL_VERSION` pin the refresh cannot check for you, in
+[`data/README.md`](data/README.md).
+
 ## 1. What this is
 
 An interactive, static HTML **slide deck** for a talk (in Prague) by **Joe Hasell

@@ -19,18 +19,50 @@
 > - **One implementation.** The method exists once, with sanity checks that gate
 >   the build, instead of twice in two places that can drift.
 >
-> **The new path** (see `scripts/etl_source.py` for the full contract):
+> ### ⚠️ The figures do NOT update themselves — you must run the refresh
+>
+> The ETL re-runs on every PIP and WID release, but **this repo does not notice.**
+> The figures the deck renders are JSON files committed here, built from a cached
+> extract in `data/raw/etl/`. Until someone runs the refresh, the slides keep
+> showing whatever was cached last. **Run this after any ETL change, and before
+> presenting:**
 >
 > ```bash
-> python data/scripts/20_cache_from_etl.py        # refresh the committed ETL cache
-> python data/scripts/21_fig_bridging_from_etl.py # Q2 figures (slides on Q2)
-> python data/scripts/22_fig_reference_year_trends.py  # Q1 reference-year figure
+> # ⚠️ WHILE owid/etl#6764 IS OPEN, the datasets are only on staging:
+> python data/scripts/refresh_from_etl.py --staging worktree-etl-prague-pip-wid
+>
+> # ONCE #6764 IS MERGED, drop the flag — it then reads the public catalog:
+> python data/scripts/refresh_from_etl.py
+>
+> # Change nothing, just report whether the committed figures are stale:
+> python data/scripts/refresh_from_etl.py --check
 > ```
 >
-> `20_cache_from_etl.py` pulls from the public OWID catalog once the ETL pull
-> request adding these datasets is merged; until then pass
-> `--staging <etl-branch>` (internal network). The small cache it writes to
-> `data/raw/etl/` is committed, so the figure scripts run offline.
+> Then **commit `data/raw/etl/` and `data/figures/` together**. `--check` rebuilds
+> into a temporary directory, restores the committed figures whatever happens, and
+> exits non-zero when they no longer match the ETL — so it is safe to run any time
+> and works as a pre-talk sanity check.
+>
+> It runs the cache refresh and all six figure scripts in dependency order. Running
+> them by hand still works if you need one in isolation:
+>
+> ```bash
+> python data/scripts/20_cache_from_etl.py            # the ETL cache
+> python data/scripts/21_fig_bridging_from_etl.py     # Q2 figures
+> python data/scripts/22_fig_reference_year_trends.py # Q1 reference-year panel
+> python data/scripts/23_fig_explainers_from_etl.py   # the Q2 explainers
+> python data/scripts/24_fig_top_of_distribution_from_etl.py  # Q3
+> python data/scripts/25_fig_scatters_from_etl.py     # Q1 scatters
+> python data/scripts/26_fig_reference_year_observed.py  # Q1, observed only
+> ```
+>
+> **One trap the refresh cannot catch for you.** `etl_source.ETL_VERSION` pins the
+> dataset version (currently `2026-08-25`). New data flowing through the *same*
+> version folder is picked up automatically, but when the ETL mints a *new* version
+> folder — which it does whenever a derived step is repointed at newer dependencies
+> — that constant must be bumped first, or the refresh will faithfully rebuild the
+> old version and report no drift. This is the same trap `config.PIP_URL` set for
+> the old pipeline.
 >
 > **The original scripts (00–04, `mld.py`, `topadj.py`, `rescale.py`,
 > `consinc.py`, `scenarios.py`, `10_`/`14_fig_*`) are left untouched** and still

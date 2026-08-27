@@ -48,10 +48,22 @@ WHERE THE DATA COMES FROM (three tiers, in order)
 The figure scripts use the cache by default, so they run offline and the deck
 builds reproducibly on any machine — exactly like the PIP extract committed in
 data/raw/pip/. The cache is small (the figure inputs, not the 6.4M-row bin
-table). Refresh it with:
+table).
 
-    python data/scripts/20_cache_from_etl.py              # from the catalog
-    python data/scripts/20_cache_from_etl.py --staging <branch>   # while unmerged
+Refresh the cache AND every figure in one command (see refresh_from_etl.py):
+
+    # TODO(owid/etl#6764): while that PR is open the datasets exist only on
+    # staging, so the --staging flag is REQUIRED. The staging server is torn
+    # down when the branch merges or is deleted, at which point this stops
+    # working and the plain form below becomes the right one. Switch then, and
+    # drop the flag from data/README.md and PROJECT_NOTES.md too.
+    python data/scripts/refresh_from_etl.py --staging worktree-etl-prague-pip-wid
+
+    # once #6764 has merged — reads the public catalog, no VPN needed:
+    python data/scripts/refresh_from_etl.py
+
+Nothing here watches the ETL: until the refresh runs, the deck renders whatever
+was cached last.
 """
 
 import gzip
