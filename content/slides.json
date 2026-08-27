@@ -32,6 +32,28 @@
       "notes": "SHORT TALK — 15 min, academic audience (inequality researchers). Aim to talk for 12-13 min so Q&A can happen.\n\nAbstract / opening framing:\n\nWhere does global inequality lie: between or within countries? Despite a new wealth of data, we're still in the dark: PIP survey data says 'mostly between', WID/DINA says 'mostly within'.\n\nThe divergence mixes known measurement problems with differing methodological choices. That has left unexplored what is arguably the most attractive vantage point of all, lying between these two worlds of measurement: one anchored to a traditional ‘survey income’ concept, while allowing for underestimation at the top. Recent expansion of both datasets makes such bridging far more feasible than it used to be. Seen from such a triangulated vantage point, the between/within split looks close to even.\n\nRunning order: framing → why now (coverage + DINA) → Q2 walkthrough (between/within) → one ask for the room about OWID."
     },
     {
+      "id": "slide-two-sides",
+      "layout": "default",
+      "notes": "Setup slide. ~60-75 seconds.\n\nThe two main sources answer the same question in opposite ways, and both are respectable. Left: WID/DINA, between-country has fallen to about a third of the total. Right: the World Bank's own flagship report, on PovcalNet (the ancestor of PIP), where between-country is about two-thirds.\n\nNote for questions: this is not a clean apples-to-apples gap. It mixes (i) the data source, (ii) the inequality index (Theil/GE(1) on the left, mean log deviation/GE(0) on the right), (iii) the year, and (iv) the income concept. That is the point of the talk: the headline disagreement bundles measurement problems together with methodological choices. In both figures the warm colour is between-country, which helps when pointing at them.",
+      "blocks": [
+        {
+          "id": "b-2s-k",
+          "type": "html",
+          "html": "<p class=\"kicker\">The problem</p>"
+        },
+        {
+          "id": "b-2s-h",
+          "type": "html",
+          "html": "<h2>The two main sources give opposite answers</h2>"
+        },
+        {
+          "id": "b-2s-fig",
+          "type": "html",
+          "html": "<div style=\"display:flex; gap:36px; width:100%; margin-top:4px; align-items:flex-start;\"><div style=\"flex:165 1 0; min-width:0; display:flex; flex-direction:column;\"><p style=\"font-size:16px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin:0 0 10px 0;\">World Inequality Database</p><div style=\"background:var(--wash); border:1px solid var(--line); padding:8px;\"><img src=\"content/images/chancel-piketty-2021-fig5.png\" alt=\"Chancel and Piketty 2021 Figure 5: global income inequality 1820-2020, between versus within country, Theil index\" style=\"width:100%; height:auto; display:block;\"></div><p style=\"font-size:19px; font-weight:700; color:var(--ink); margin:12px 0 4px 0;\">32% between-country (2020)</p><p style=\"font-size:13px; line-height:1.45; color:var(--muted); margin:0;\">Chancel &amp; Piketty (2021), <i>JEEA</i> 19(6), Fig.&nbsp;5. Theil index, 1820&ndash;2020.</p></div><div style=\"flex:127 1 0; min-width:0; display:flex; flex-direction:column;\"><p style=\"font-size:16px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin:0 0 10px 0;\">World Bank &middot; PovcalNet / PIP</p><div style=\"background:var(--wash); border:1px solid var(--line); padding:8px;\"><img src=\"content/images/wb-psp-2016-fig-o10.png\" alt=\"World Bank Poverty and Shared Prosperity 2016 Figure O.10: global inequality 1988 to 2013, mean log deviation split into within and between country\" style=\"width:100%; height:auto; display:block;\"></div><p style=\"font-size:19px; font-weight:700; color:var(--ink); margin:12px 0 4px 0;\">65% between-country (2013)</p><p style=\"font-size:13px; line-height:1.45; color:var(--muted); margin:0;\">World Bank, <i>Poverty and Shared Prosperity 2016</i>, Fig.&nbsp;O.10. Mean log deviation, 1988&ndash;2013. CC&nbsp;BY&nbsp;3.0&nbsp;IGO.</p></div></div>"
+        }
+      ]
+    },
+    {
       "id": "slide-short-summary",
       "layout": "default",
       "blocks": [
