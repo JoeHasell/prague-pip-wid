@@ -1,9 +1,10 @@
 # Deck framework
 
-> **Working on the Prague income-inequality deck?** Read **[`PROJECT_NOTES.md`](PROJECT_NOTES.md)**
-> first — it covers what's been built, how the assistant and Joe work together
-> (the edit/commit protocol and the two-writer caveat), the data provenance, and
-> the next steps. This README below documents the generic framework mechanics.
+> **Working on the Prague income-inequality deck?** Read **[`CLAUDE.md`](CLAUDE.md)**
+> (how to work in this repo: git protocol, environment, verification recipes) and
+> **[`PROJECT_NOTES.md`](PROJECT_NOTES.md)** (what's been built, data provenance,
+> next steps) first. This README below documents the generic framework mechanics —
+> note that unlike a plain content project, this deck *does* modify `src/`.
 
 A static, no-build-step slide deck with interactive components and two authoring paths that converge on the same file:
 
