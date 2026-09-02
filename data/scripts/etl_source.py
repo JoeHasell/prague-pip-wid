@@ -38,11 +38,11 @@ THE TWO ETL DATASETS
 
 WHERE THE DATA COMES FROM (three tiers, in order)
 -------------------------------------------------
-  1. the public OWID catalog — the permanent home, once the ETL pull request
-     adding these datasets is merged;
-  2. an OWID staging server — where the datasets already live while that pull
-     request is open (internal network only, and ephemeral: the server is torn
-     down when the branch is merged or deleted);
+  1. the public OWID catalog — the permanent home. The datasets landed there with
+     owid/etl#6764 (merged 2026-09-02), so this is the normal path and needs no VPN;
+  2. an OWID staging server — only while a FUTURE ETL pull request changes these
+     datasets and they exist there before merging (internal network only, and
+     ephemeral: the server is torn down when the branch is merged or deleted);
   3. the committed cache in data/raw/etl/ — written by 20_cache_from_etl.py.
 
 The figure scripts use the cache by default, so they run offline and the deck
@@ -52,15 +52,10 @@ table).
 
 Refresh the cache AND every figure in one command (see refresh_from_etl.py):
 
-    # TODO(owid/etl#6764): while that PR is open the datasets exist only on
-    # staging, so the --staging flag is REQUIRED. The staging server is torn
-    # down when the branch merges or is deleted, at which point this stops
-    # working and the plain form below becomes the right one. Switch then, and
-    # drop the flag from data/README.md and PROJECT_NOTES.md too.
-    python data/scripts/refresh_from_etl.py --staging worktree-etl-prague-pip-wid
-
-    # once #6764 has merged — reads the public catalog, no VPN needed:
     python data/scripts/refresh_from_etl.py
+
+    # only while an ETL pull request that changes these datasets is still open:
+    python data/scripts/refresh_from_etl.py --staging <owid/etl branch name>
 
 Nothing here watches the ETL: until the refresh runs, the deck renders whatever
 was cached last.

@@ -11,11 +11,11 @@ The figures are committed JSON built from a cached ETL extract; nothing in this 
 watches the ETL. After any ETL change, and before presenting, run:
 
 ```bash
-# while owid/etl#6764 is open — the datasets live only on staging:
-python data/scripts/refresh_from_etl.py --staging worktree-etl-prague-pip-wid
-
-# once #6764 merges, drop the flag to read the public catalog:
+# reads the public OWID catalog (owid/etl#6764 merged 2026-09-02); no VPN needed:
 python data/scripts/refresh_from_etl.py
+
+# only while a future ETL pull request that changes these datasets is still open:
+python data/scripts/refresh_from_etl.py --staging <owid/etl branch name>
 ```
 
 Commit `data/raw/etl/` and `data/figures/` together. `python data/scripts/refresh_from_etl.py --check`

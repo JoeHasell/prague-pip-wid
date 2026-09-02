@@ -28,11 +28,11 @@
 > presenting:**
 >
 > ```bash
-> # ⚠️ WHILE owid/etl#6764 IS OPEN, the datasets are only on staging:
-> python data/scripts/refresh_from_etl.py --staging worktree-etl-prague-pip-wid
->
-> # ONCE #6764 IS MERGED, drop the flag — it then reads the public catalog:
+> # Reads the public OWID catalog (owid/etl#6764 merged on 2026-09-02); no VPN needed:
 > python data/scripts/refresh_from_etl.py
+>
+> # Only while a future ETL pull request that changes these datasets is still open:
+> python data/scripts/refresh_from_etl.py --staging <owid/etl branch name>
 >
 > # Change nothing, just report whether the committed figures are stale:
 > python data/scripts/refresh_from_etl.py --check
