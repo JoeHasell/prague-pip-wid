@@ -25,22 +25,30 @@ in a Claude Code checkout.)
 
 - Work on the branch this session was assigned; commit and push there.
 - Never push to `main`. Don't open a PR unless Joe asks.
-- Joe still commits his own browser edits through **GitHub Desktop** on his Mac.
+
+**A web session cannot see Joe's Mac.** It is a separate clone in a cloud
+container, with no bridge to his filesystem (that bridge was a Cowork feature and
+is gone). So if Joe says *"I made changes in the browser — push them"*, the honest
+answer from a web session is that those edits are on his laptop and unreachable
+here: he commits and pushes them himself in **GitHub Desktop**, then you `git pull`.
+Don't go looking for them, and don't reconstruct them from memory.
 
 **The two-writer caveat, restated for git.** `content/slides.json` is edited from
-two places: Joe's in-browser `?edit` editor, and Claude. It's one big JSON file, so
-concurrent edits become merge conflicts that are painful to resolve by hand.
-Habits that avoid it:
+two places: Joe's in-browser `?edit` editor on his Mac, and Claude in a clone.
+It's one ~540 KB JSON file, so the two ways it goes wrong are merge conflicts and
+— worse — a silent revert, when Joe saves from a browser holding a stale copy.
+The ordering that avoids both:
 
-- Before starting structural work on the deck, `git pull` (in a web session: check
-  the branch is up to date) so you're editing Joe's latest text.
-- Ask Joe to **Save in the browser and commit before** handing over a slides task,
-  and to **pull and reload** after you push.
-- Edit `slides.json` **surgically** — never regenerate it wholesale, or you'll wipe
-  hand-edits and blow up the diff (the file is ~540 KB, mostly annotation point
-  arrays).
-- `src/*`, `components/*` and `data/*` are Claude-only in practice (the browser
-  editor writes `slides.json` alone), so those rarely collide.
+1. Joe **Saves in the browser and pushes from GitHub Desktop** *before* handing
+   over a slides task.
+2. Claude **pulls** before starting structural work, edits `slides.json`
+   **surgically** (never regenerate it wholesale), commits, pushes.
+3. Joe **pulls in GitHub Desktop and reloads the browser** *before* his next edit.
+   Skipping this is the silent-revert trap: the editor saves the whole file, so a
+   Save from a tab loaded before Claude's push wipes that push.
+
+`src/*`, `components/*` and `data/*` are Claude-only in practice (the browser
+editor writes `slides.json` alone), so those rarely collide.
 
 Call out **new files** explicitly in your reply (e.g. anything under
 `content/images/`) — they're easy to miss in GitHub Desktop's changes list, and a

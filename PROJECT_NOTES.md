@@ -59,18 +59,21 @@ hard rule "the assistant must never run git") is **obsolete** — see
   GitHub Desktop commit. That failure mode doesn't exist in a checkout.)
 - Claude commits to its assigned branch and pushes; it does not push to `main`
   and does not open PRs unless asked. Joe still commits his own browser edits
-  through **GitHub Desktop**.
+  through **GitHub Desktop** — a web session is a separate clone with **no access
+  to his Mac**, so "push the changes I made in the browser" is something only he
+  can do. (Decided 2026-09-02, after weighing running Claude Code locally on the
+  Mac instead; revisit if the browser-edit round trip starts to chafe.)
 - **localhost is reachable** inside the Claude Code container, so Claude can now
   serve the deck (`node dev-server.js`) *and* screenshot it headlessly itself —
   the §9 recipes work in one place. Joe's own `http://localhost:4173/?edit` on
   his Mac is still his to run.
 - The **two-writer caveat still applies**, in a new shape. Joe edits
-  `content/slides.json` in the browser; Claude edits it in the checkout. It is one
-  ~540 KB JSON file, so simultaneous edits now surface as **merge conflicts**
-  rather than silent rollbacks. Habits: Joe **saves and commits before** handing
-  over a slides task, and **pulls and reloads after** Claude pushes; Claude
-  **pulls before** structural work and always edits `slides.json`
-  **surgically** — never regenerating it wholesale.
+  `content/slides.json` in the browser; Claude edits it in a clone. It is one
+  ~540 KB JSON file, and it can now fail two ways: a **merge conflict**, or a
+  **silent revert** if Joe saves from a browser tab loaded before Claude's push
+  (the editor writes the whole file). The ordering in `CLAUDE.md` prevents both:
+  Joe saves + pushes *before* handing over a slides task; Claude pulls, edits
+  surgically, pushes; Joe pulls + reloads *before* his next edit.
 - `src/*`, `components/*` and `data/*` are Claude-only in practice (the browser
   editor writes `slides.json` alone), so those rarely collide.
 - **Note on `src/` changes:** editing `src/deck.js`, `src/editor.js` or the CSS
