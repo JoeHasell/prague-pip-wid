@@ -34,7 +34,7 @@ Run:  python data/scripts/15_fig_top_thresholds.py
 import json
 import pandas as pd
 
-from config import HARMONIZED_FILE, DATA_DIR, DAILY_TO_MONTHLY
+from config import HARMONIZED_FILE, DATA_DIR, DAILY_TO_MONTHLY, PPP_YEAR
 from mld import reference_populations
 from scenarios import DISPLAY_SCENARIOS, common_sample, append_derived
 
@@ -90,7 +90,7 @@ def main():
             "top_shares": TOP_SHARES,
             "n_countries": len(countries),
             "year": 2023,
-            "units": "international-$ PER MONTH (PIP: 2021 PPPs; WID: 2023 "
+            "units": f"international-$ PER MONTH (PIP: 2021 PPPs; WID: {PPP_YEAR} "
                      "PPPs); converted from daily values at 365/12",
             "notes": [
                 "Thresholds are ENTRY incomes: the average income of the "

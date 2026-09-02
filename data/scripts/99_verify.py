@@ -20,7 +20,7 @@ import pandas as pd
 
 from config import (
     WID_PERCENTILES_RAW, WID_PPP_FILE, PIP_RAW_FILE,
-    WID_PROCESSED_FILE, HARMONIZED_FILE, TARGET_YEAR, wid_bin_labels,
+    WID_PROCESSED_FILE, HARMONIZED_FILE, TARGET_YEAR, PPP_YEAR, wid_bin_labels,
 )
 
 FAILURES = []
@@ -35,6 +35,9 @@ def check(name, ok, detail=""):
 def main():
     raw = pd.read_csv(WID_PERCENTILES_RAW)
     ppp = pd.read_csv(WID_PPP_FILE)
+    # The raw PPP file holds several years; the pipeline converts with the
+    # PRICE-BASE year (config.PPP_YEAR), so the check must use the same one.
+    ppp = ppp[ppp["year"] == PPP_YEAR]
     pip = pd.read_csv(PIP_RAW_FILE)
     wid = pd.read_csv(WID_PROCESSED_FILE)
     h = pd.read_csv(HARMONIZED_FILE)

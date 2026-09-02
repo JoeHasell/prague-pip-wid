@@ -18,7 +18,8 @@ WID_percentiles.csv        one row per country x percentile bin (109 bins),
                            in 99_verify.py). It is NOT disposable/cash income
                            (that is WID code cainc, not fetched).
 WID_ppp.csv                PPP conversion factors (WID code xlcusp): local
-                           currency units per international dollar, 2023.
+                           currency units per international dollar. Contains BOTH 2023 and
+                           2025; the pipeline uses PPP_YEAR (2025) — WID's price base.
 WID_aggregate_population.csv   adult_pop (age 20+, WID age code 992) and
                            total_pop (all ages, code 999) per country, 2023.
 
@@ -67,6 +68,7 @@ import pandas as pd
 from config import (
     WID_PERCENTILES_RAW, WID_PPP_FILE, WID_POPULATION_FILE,
     COUNTRY_MAPPING_FILE, WID_PROCESSED_FILE, PROCESSED_DIR, TARGET_YEAR,
+    PPP_YEAR,
 )
 
 DAYS_PER_YEAR = 365
@@ -85,7 +87,11 @@ def main():
 
     # Filter to target year (defensive — the fetch is single-year already)
     pct = pct[pct["year"] == TARGET_YEAR].copy()
-    ppp = ppp[ppp["year"] == TARGET_YEAR]
+    # PPP factors come from the PRICE-BASE year, not the data year — WID
+    # reports incomes in constant LCU of the latest database year (see
+    # config.PPP_YEAR).
+    ppp = ppp[ppp["year"] == PPP_YEAR]
+    assert len(ppp), f"no xlcusp rows for PPP_YEAR={PPP_YEAR} in the raw PPP file"
     pop = pop[pop["year"] == TARGET_YEAR]
 
     # ------------------------------------------------------------------

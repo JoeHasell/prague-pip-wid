@@ -10,6 +10,7 @@
     "fig-top1-treemap.js",
     "fig-reference-year-trends.js",
     "fig-between-share-trend.js",
+    "fig-means-scatter.js",
     "demo-line-chart.js",
     "demo-sortable-table.js",
     "demo-scrubber.js"

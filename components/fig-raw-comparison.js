@@ -30,6 +30,13 @@
  *   dataUrl  override the JSON path
  *   title    chart title; pass "" (empty) to omit it — the lollipop row
  *            stretches up into the freed space
+ *   reveal   subset of `sources` actually DRAWN, for building a chart up
+ *            across consecutive slides. Every column in `sources` keeps its
+ *            slot and both scales are still computed from all of them, so
+ *            columns never shift and the axes never rescale as the build
+ *            proceeds — only the marks appear. Unrevealed columns keep a
+ *            faded header so the audience can see where the build is going.
+ *            Omit to draw everything (the finished chart).
  *   sources  ordered array of series to show as columns, from:
  *            WID_pretax_per_adult | WID_pretax_per_capita |
  *            WID_posttax_per_adult | WID_posttax_per_capita | PIP
@@ -94,6 +101,10 @@ Deck.registerComponent('fig-raw-comparison', (el, props, ctx) => {
     // Sources not present in the JSON render as GHOST columns (dashed
     // placeholder) — used to reserve space for planned bridging steps.
     const ghosts = new Set(SOURCES.filter(s => !data.mld.some(m => m.source === s)));
+    // Build-up: `reveal` limits what is DRAWN, never what is measured or
+    // laid out — SOURCES still drives nG, groupX and both scales.
+    const REVEAL = Array.isArray(props.reveal) ? new Set(props.reveal) : null;
+    const isOn = s => !REVEAL || REVEAL.has(s);
     const countries = data.meta.countries;
     const nG = SOURCES.length;
 
@@ -164,7 +175,7 @@ Deck.registerComponent('fig-raw-comparison', (el, props, ctx) => {
       `<text x="${ML - 10}" y="${y1(t) + 4}" text-anchor="end" class="frc-tick">${money(t)}</text>`
     ).join('');
 
-    const lolli = data.lollipop.filter(d => SOURCES.includes(d.source)).map(d => {
+    const lolli = data.lollipop.filter(d => SOURCES.includes(d.source) && isOn(d.source)).map(d => {
       const i = countries.indexOf(d.country);
       const x = slotX(d.source, i);
       const c = COUNTRY_COLOR[d.country] || '#555';
@@ -194,7 +205,7 @@ Deck.registerComponent('fig-raw-comparison', (el, props, ctx) => {
       );
     }).join('');
 
-    const ghostBoxes = [...ghosts].map(s => {
+    const ghostBoxes = [...ghosts].filter(isOn).map(s => {
       const gx = groupX[s] + 10, gw = halfW - 20;
       const gbw = Math.min(130, Math.round(halfW * 0.62));   // matches barW
       return (
@@ -212,8 +223,9 @@ Deck.registerComponent('fig-raw-comparison', (el, props, ctx) => {
     const groupHeads = SOURCES.map(s => {
       const [l1, l2] = (nG >= 5 ? GROUP_LABEL_SM[s] : GROUP_LABEL[s]) || [s, ''];
       const cx = groupX[s] + halfW / 2;
-      return `<text x="${cx}" y="${headBase - 24}" text-anchor="middle" class="frc-group${nG > 2 ? ' frc-group-sm' : ''}">${l1}</text>` +
-             `<text x="${cx}" y="${headBase - 9}" text-anchor="middle" class="frc-group-sub">${l2}</text>`;
+      const dim = isOn(s) ? '' : ' opacity="0.3"';
+      return `<text x="${cx}" y="${headBase - 24}" text-anchor="middle"${dim} class="frc-group${nG > 2 ? ' frc-group-sm' : ''}">${l1}</text>` +
+             `<text x="${cx}" y="${headBase - 9}" text-anchor="middle"${dim} class="frc-group-sub">${l2}</text>`;
     }).join('');
 
     // Marker-shape legend (the non-obvious encoding) — one horizontal row in
@@ -242,7 +254,7 @@ Deck.registerComponent('fig-raw-comparison', (el, props, ctx) => {
     ).join('');
 
     const barW = Math.min(130, Math.round(halfW * 0.62));
-    const bars = data.mld.filter(m => SOURCES.includes(m.source)).map(m => {
+    const bars = data.mld.filter(m => SOURCES.includes(m.source) && isOn(m.source)).map(m => {
       const cx = groupX[m.source] + halfW / 2;
       const x = cx - barW / 2;
       const yB = y2(m.between), yT = y2(m.total);
