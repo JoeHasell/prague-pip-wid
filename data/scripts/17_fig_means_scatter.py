@@ -105,7 +105,16 @@ def build_year(year, ppp, cmap, regions):
     return df.sort_index()
 
 
+# Superseded by the ETL pipeline — see legacy_guard.py.
+from legacy_guard import require_ack
+
+
 def main():
+    require_ack(
+        script='17_fig_means_scatter.py',
+        figures=['fig_means_scatter.json'],
+        replaced_by='28_fig_means_from_etl.py',
+    )
     ppp = pd.read_csv(WID_PPP_FILE)
     ppp = ppp[ppp.year == PPP_YEAR][["country", "ppp"]]
     cmap = (pd.read_csv(COUNTRY_MAPPING_FILE)[["country", "PIP country name"]]

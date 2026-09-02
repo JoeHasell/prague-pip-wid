@@ -49,7 +49,16 @@ def sig4(x):
     return float(f"{x * DAILY_TO_MONTHLY:.4g}")
 
 
+# Superseded by the ETL pipeline — see legacy_guard.py.
+from legacy_guard import require_ack
+
+
 def main():
+    require_ack(
+        script='11_fig_topadj_explainer.py',
+        figures=['fig_topadj_explainer.json'],
+        replaced_by='23_fig_explainers_from_etl.py',
+    )
     h = pd.read_csv(HARMONIZED_FILE)
     model = pd.read_csv(PROCESSED_DIR / "consinc_model.csv")
     welfare = pd.read_csv(RAW_PIP_DIR / "pip_welfare_types.csv")

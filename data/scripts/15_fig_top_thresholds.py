@@ -57,7 +57,16 @@ def entry_income(d, share):
     return float(d.loc[cum >= target - 1e-9, "income"].iloc[0])
 
 
+# Superseded by the ETL pipeline — see legacy_guard.py.
+from legacy_guard import require_ack
+
+
 def main():
+    require_ack(
+        script='15_fig_top_thresholds.py',
+        figures=['fig_top_thresholds.json'],
+        replaced_by='24_fig_top_of_distribution_from_etl.py',
+    )
     h = pd.read_csv(HARMONIZED_FILE)
     countries = common_sample(h)
     h, rep = append_derived(h, countries)

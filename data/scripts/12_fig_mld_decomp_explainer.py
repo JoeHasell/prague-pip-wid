@@ -46,7 +46,16 @@ SOURCES = {
 DECILE_BINS = [f"p{d}p{d + 1}" for d in range(10, 100, 10)]
 
 
+# Superseded by the ETL pipeline — see legacy_guard.py.
+from legacy_guard import require_ack
+
+
 def main():
+    require_ack(
+        script='12_fig_mld_decomp_explainer.py',
+        figures=['fig_mld_decomp_explainer.json'],
+        replaced_by='23_fig_explainers_from_etl.py',
+    )
     h = pd.read_csv(HARMONIZED_FILE)
 
     out_sources = []

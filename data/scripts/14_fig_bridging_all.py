@@ -57,7 +57,16 @@ ZERO_REPLACEMENT = 0.01           # $/day, applied ONLY inside the MLD
 SPLICE_PERCENTILE = 95            # anchor bin p94p95 — keep in sync with 10_fig
 
 
+# Superseded by the ETL pipeline — see legacy_guard.py.
+from legacy_guard import require_ack
+
+
 def main():
+    require_ack(
+        script='14_fig_bridging_all.py',
+        figures=['fig_bridging_all.json'],
+        replaced_by='21_fig_bridging_from_etl.py',
+    )
     h = pd.read_csv(HARMONIZED_FILE)
 
     # ------------------------------------------------------------------

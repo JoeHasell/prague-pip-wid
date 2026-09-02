@@ -52,6 +52,7 @@ FIGURE_SCRIPTS = [
     "25_fig_scatters_from_etl.py",
     "26_fig_reference_year_observed.py",
     "27_fig_between_share_trend.py",
+    "28_fig_means_from_etl.py",
 ]
 
 

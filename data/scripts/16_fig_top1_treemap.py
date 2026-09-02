@@ -82,7 +82,16 @@ def top_bins(d, share):
     return full
 
 
+# Superseded by the ETL pipeline — see legacy_guard.py.
+from legacy_guard import require_ack
+
+
 def main():
+    require_ack(
+        script='16_fig_top1_treemap.py',
+        figures=['fig_top1_treemap.json'],
+        replaced_by='24_fig_top_of_distribution_from_etl.py',
+    )
     h = pd.read_csv(HARMONIZED_FILE)
     countries = common_sample(h)
     h, rep = append_derived(h, countries)

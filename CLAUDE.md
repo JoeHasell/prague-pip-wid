@@ -103,8 +103,11 @@ longer exists. Don't install them; the pane needs nothing.
    `node dev-server.js` first only if `:4173` isn't already answering — usually
    it is, and then it's Joe's.
 2. `resize_window` to **1280×720** so the stage renders 1:1, then `screenshot`.
-   The image returns scaled to 800×450 — faithful enough for layout; `zoom` on a
-   region for detail.
+   The image returns scaled to 800×450 — faithful enough for layout, but too
+   coarse to read footnotes. `zoom` does NOT crop in this pane (it returns the
+   full screenshot), so to check small text or whether something overflows, use
+   `javascript_tool` and measure: `getBoundingClientRect().right` against the
+   stage's own right edge (verified 2026-09-02).
 3. `javascript_tool` pokes `Deck.data` or fires events to exercise dropdowns,
    radios and draw tools. Add `?edit` to the URL to test the editor.
 4. `resize_window` with preset `desktop` when finished — an emulated size

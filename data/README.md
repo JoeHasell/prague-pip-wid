@@ -43,7 +43,7 @@
 > exits non-zero when they no longer match the ETL — so it is safe to run any time
 > and works as a pre-talk sanity check.
 >
-> It runs the cache refresh and all six figure scripts in dependency order. Running
+> It runs the cache refresh and all eight figure scripts in dependency order. Running
 > them by hand still works if you need one in isolation:
 >
 > ```bash
@@ -54,6 +54,8 @@
 > python data/scripts/24_fig_top_of_distribution_from_etl.py  # Q3
 > python data/scripts/25_fig_scatters_from_etl.py     # Q1 scatters
 > python data/scripts/26_fig_reference_year_observed.py  # Q1, observed only
+> python data/scripts/27_fig_between_share_trend.py    # Q2 between-share over time
+> python data/scripts/28_fig_means_from_etl.py         # surveys vs national accounts
 > ```
 >
 > **One trap the refresh cannot catch for you.** `etl_source.ETL_VERSION` pins the
@@ -68,7 +70,10 @@
 > `consinc.py`, `scenarios.py`, `10_`/`14_fig_*`) are left untouched** and still
 > work off the committed raw caches. They are the reference implementation the
 > ETL port was verified against, and are safe to delete once you are happy with
-> the ETL-sourced figures. Everything they documented about method choices still
+> the ETL-sourced figures. **Since 2026-09-02 the eight that write figure JSONs
+> (`10`–`17`) refuse to run without `--write-legacy-figures`** — they share
+> filenames with the ETL scripts, so running one silently replaced whole-panel
+> ETL output with 2023-only local output. See `legacy_guard.py`. Everything they documented about method choices still
 > applies — the ETL preserves each one, including the MLD weighting convention
 > and the zero-income floor.
 >
@@ -136,6 +141,23 @@ before changing anything.
 
 ## Figure scripts (10+): one script per deck figure
 
+> ### ⚠️ This section describes the SUPERSEDED local pipeline
+>
+> Scripts `10`–`17` no longer feed the deck. Every figure they list is now built
+> from the ETL by `21`–`24` and `28`, and they write **the same filenames** — so
+> running one replaces whole-panel ETL output (1990–2024, current vintage) with
+> 2023-only local output. Measured 2026-09-02: the WID between-country share
+> moves 3–4pp (WID pre-tax per adult 29.4% → 26.2%) and the per-year data is
+> lost. The slides keep rendering normally, so nothing tells you.
+>
+> They therefore **refuse to run** unless you pass `--write-legacy-figures`
+> (`legacy_guard.py`). To rebuild the figures, use
+> `python data/scripts/refresh_from_etl.py`.
+>
+> The section below is kept because it documents the METHOD — the bridging
+> series, the MLD convention, the zero handling, the display unit — all of which
+> the ETL preserves. Read it for the why; don't run it for the figures.
+
 Scripts numbered `10_fig_*.py` and up each produce the data behind ONE deck
 figure, written as a small JSON to `data/figures/`. The matching chart
 component in `components/` fetches that JSON at runtime — **no numbers are
@@ -177,8 +199,14 @@ basis via the dual-country regression fitted by `04_fit_consinc.py`) so
 each definition exists once.
 Method choices that affect a figure's numbers (e.g. zero-income handling for
 MLD) are made and documented in the figure script, and echoed in the JSON's
-`meta.notes`. After a raw-data refresh, re-run steps 02–03 and then the
-figure scripts to regenerate every figure.
+`meta.notes`.
+
+**To regenerate the deck's figures, run `python data/scripts/refresh_from_etl.py`.**
+(This used to read "re-run steps 02–03 and then the figure scripts" — that
+instruction predates the ETL port and would now overwrite ETL-sourced figures
+with 2023-only local output. Steps 02–03 still rebuild `processed/` for the
+reference implementation and for `99_verify.py`; they no longer feed any
+figure.)
 
 | script | figure | slide component |
 |---|---|---|

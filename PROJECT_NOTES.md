@@ -182,7 +182,8 @@ components (55 line chart, 57 sortable table, 58 row + scrubber).
 
 Registered in `components/manifest.json`: `gini-pip-wid-scatter.js`,
 `ineq-trend.js`, the **nine** `fig-*.js` figure files, plus the three
-`demo-*.js`. Newest: **`fig-means-scatter.js`** (added 2026-08-27, slides 19/20/22)
+`demo-*.js`. Newest: **`fig-means-scatter.js`** (added 2026-08-27, slides 19/20/22;
+ETL-sourced since 2026-09-02 via `28_fig_means_from_etl.py`)
 — survey mean vs WID national-income mean, one dot per country, with
 `mode` (`levels`/`ratio`/`share`), `year` (`2023`/`1990`), `hide`, `yDomain`,
 `bubbles` and `fits` props; **`fig-reference-year-trends.js`** (2026-08-26,
@@ -373,18 +374,37 @@ Full detail in `CLAUDE.md`. Everything runs on Joe's Mac.
   `config.PPP_YEAR = 2025` now drives the conversion; both processed CSVs and all
   figure JSONs were regenerated and `99_verify.py` passes 19/19. See §12.
 - **DONE 2026-08-27 — the survey-vs-national-accounts figure**
-  (`17_fig_means_scatter.py` → `fig-means-scatter.js`, slides 19/20/22), the
-  project's first two-year figure: `config.COMPARISON_YEAR = 1990` alongside
-  `TARGET_YEAR`. The rest of the pipeline stays single-year.
-- **OPEN — two reproducibility gaps in that new figure** (found 2026-09-02, Joe's
-  call whether to close them):
-  - `18_fetch_wid_means.py` is cited three times (`config.py`,
-    `17_fig_means_scatter.py`) as the producer of
-    `data/raw/wid/WID_national_income_means.csv`, but **the script doesn't
-    exist**. The raw file is committed and correct; nothing regenerates it.
-  - `01_fetch_pip.py` only ever writes `TARGET_YEAR`, so it **cannot produce**
-    the committed `pip_thousand_bins_1990.csv.gz` that `PIP_RAW_FILE_EARLY`
-    points at. ~5 lines to loop over both years.
+  (`fig-means-scatter.js`, slides 19/20/22), the project's first two-year figure.
+  Originally `17_fig_means_scatter.py` off the local pipeline.
+- **DONE 2026-09-02 — that figure is now ETL-sourced** (`28_fig_means_from_etl.py`),
+  the last chart to move over. It was left behind by Pablo's port, which meant it
+  sat on the OLD data vintage while its own slide neighbours sat on the new one,
+  and `refresh_from_etl.py` did not touch it. Numbers moved: WID means −3.0%
+  (1990) / −4.5% (2023) at the median, concentrated in high-inflation and
+  conflict economies (Syria +102%, Yemen +88%, Venezuela −71%, Sudan −44%); PIP
+  means unchanged at the median. **The median WID/PIP ratio fell 2.55x → 2.33x
+  in 2023.** Regions come from the ETL's `treemap_regions`, verified to
+  reproduce the local 8-region scheme exactly (218 countries, 0 disagreements).
+- **CLOSED 2026-09-02 by that port — the two reproducibility gaps are moot.**
+  The missing `18_fetch_wid_means.py` and the single-year `01_fetch_pip.py` only
+  mattered because figure 17 read `WID_national_income_means.csv` and
+  `pip_thousand_bins_1990.csv.gz`. Nothing the deck renders reads either file
+  now. Both inputs (and `17_`) are kept as the reference implementation; don't
+  write the missing fetch script.
+- **DONE 2026-09-02 — the superseded figure scripts are guarded.** `10`–`17`
+  share output filenames with the ETL scripts, so running one silently replaced
+  whole-panel ETL figures with 2023-only local ones (WID between share moves
+  3–4pp). They now exit 2 unless given `--write-legacy-figures`
+  (`data/scripts/legacy_guard.py`), and `data/README.md`'s old figure-scripts
+  section carries a warning instead of the stale "re-run the figure scripts"
+  instruction.
+- **OPEN — ask Pablo why the WID numbers moved.** Porting the Q2 figures changed
+  the WID between-country share by 3–4pp (e.g. pre-tax per adult 26.2% → 29.4%,
+  same year, same zero handling, same splice) and the WID country means by the
+  amounts above. Not the population yardstick (documented as ≤0.02pp). Presumably
+  a newer WID vintage or a different PPP vintage — the movers are the countries
+  where PPP conversion is fragile — but it is not written down anywhere, and
+  these are numbers Joe says out loud in the talk.
 - Editorial TODOs (Joe's call, don't do unprompted): rename `meta.title` (still
   the template's "Deck framework — demo"); give slides 30 & 31 distinct headings
   (both currently under the same Q1 kicker); the slide-26 table's Q3 row still

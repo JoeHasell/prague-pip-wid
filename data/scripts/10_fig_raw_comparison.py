@@ -89,7 +89,16 @@ from config import PROCESSED_DIR, RAW_PIP_DIR
 SPLICE_PERCENTILE = 95            # anchor bin p94p95; first adjusted bin p95p96
 
 
+# Superseded by the ETL pipeline — see legacy_guard.py.
+from legacy_guard import require_ack
+
+
 def main():
+    require_ack(
+        script='10_fig_raw_comparison.py',
+        figures=['fig_raw_comparison.json'],
+        replaced_by='21_fig_bridging_from_etl.py',
+    )
     h = pd.read_csv(HARMONIZED_FILE)
     # Append the derived series so they flow through the same lollipop/MLD
     # computations as every other source.
