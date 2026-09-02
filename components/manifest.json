@@ -8,6 +8,7 @@
     "fig-consinc-explainer.js",
     "fig-top-thresholds.js",
     "fig-top1-treemap.js",
+    "fig-means-scatter.js",
     "demo-line-chart.js",
     "demo-sortable-table.js",
     "demo-scrubber.js"

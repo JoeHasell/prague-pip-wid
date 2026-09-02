@@ -39,12 +39,29 @@
         {
           "id": "b-owid-k",
           "type": "html",
-          "html": "<p class=\"kicker\">Goals / role of Our World in Data</p>"
+          "html": "<p class=\"kicker\">AbouT Our World in Data&nbsp;</p>"
         },
         {
           "id": "b-owid-body",
           "type": "html",
-          "html": "<div style=\"max-width:1040px;\"><ul style=\"font-size:32px; line-height:1.45; margin:0; padding-left:30px;\"><li style=\"margin-bottom:14px;\">Nothing &lsquo;new&rsquo;</li><li style=\"margin-bottom:14px;\">Nothing methodologically interesting</li><li>Very rough-and-ready modelling</li></ul><div style=\"height:1px; background:var(--line); margin:32px 0 30px 0;\"></div><ul style=\"font-size:32px; line-height:1.45; margin:0; padding-left:0; list-style:none;\"><li style=\"display:flex; gap:16px; margin-bottom:20px;\"><span style=\"color:var(--accent); font-weight:700; flex:none;\">&rarr;</span><span style=\"\">(Re-)Presenting existing work in a clearer way to aid understanding about an important question</span></li><li style=\"display:flex; gap:16px; margin-bottom:20px;\"><span style=\"color:var(--accent); font-weight:700; flex:none;\">&rarr;</span><span style=\"\">Under-investment within academia</span></li><li style=\"display:flex; gap:16px; margin-bottom:0;\"><span style=\"color:transparent; font-weight:700; flex:none;\">&rarr;</span><span style=\" font-weight:700;\">Role for Our World in Data</span></li></ul></div>"
+          "html": "<div style=\"max-width:1040px;\"><ul style=\"font-size:32px; line-height:1.45; margin:0; padding-left:30px;\"><li style=\"margin-bottom:14px;\">Quick poll&nbsp;</li></ul><div><span style=\"font-size: 32px;\"><br></span></div><ul style=\"line-height: 1.45; margin: 0px; padding-left: 30px;\"><li style=\"font-size: 32px; margin-bottom: 14px;\">OWID</li><ul style=\"\"><li style=\"font-size: 32px; margin-bottom: 14px;\">Goal: Making data and research more accessible and understandable</li><li style=\"font-size: 32px; margin-bottom: 14px;\">Present <i>existing</i> research in new ways</li><li style=\"font-size: 32px; margin-bottom: 14px;\">Not doing methodologically innovative research ourselves</li><li style=\"font-size: 32px; margin-bottom: 14px;\">Occasionally, some rough-and-ready modelling&nbsp;</li><ul style=\"font-size: 32px;\"><li style=\"margin-bottom:14px;\">extend well-established methods to new cases</li><li style=\"margin-bottom:14px;\">e.g., simple demographic models, historical income distributions</li></ul></ul></ul></div>"
+        }
+      ]
+    },
+    {
+      "id": "slide-g61p1r",
+      "layout": "default",
+      "notes": "Expectation-setting slide, placed before the problem setup.\n\nSays up front what the talk is not, so the contribution claim is honest: the value is in re-presenting existing work clearly, not in new data or new method.\n\n(Notes to fill in — Joe's framing.)",
+      "blocks": [
+        {
+          "id": "b-e9z0yp",
+          "type": "html",
+          "html": "<p class=\"kicker\">AbouT Our World in Data&nbsp;</p>"
+        },
+        {
+          "id": "b-nmjwtn",
+          "type": "html",
+          "html": "<div style=\"max-width:1040px;\"><span style=\"font-size: 32px;\">Better&nbsp;<i>presentation</i>&nbsp;of g</span><span style=\"font-size: 32px;\">lobal data on inequality could unlock much more public value</span></div><div style=\"max-width:1040px;\"><span style=\"font-size: 32px;\"><br></span><div><ul style=\"line-height: 1.45; padding-left: 30px;\"><li style=\"margin-bottom: 14px; font-size: 32px;\">Huge improvements in the available data</li><ul><li style=\"margin-bottom: 14px; font-size: 32px;\">Coverage, accessibility, comparability</li></ul></ul></div><div><span style=\"font-size: 32px;\"><br></span></div><ul style=\"line-height: 1.45; margin: 0px; padding-left: 30px;\"><li style=\"font-size: 32px; margin-bottom: 14px;\">Bewildering terrain for anyone other than real specialists&nbsp;</li><ul><li style=\"font-size: 32px; margin-bottom: 14px;\">Different sources, metrics, definitions.&nbsp;</li><li style=\"font-size: 32px; margin-bottom: 14px;\">Hefty assumptions/caveats buried in technical notes</li><li style=\"font-size: 32px; margin-bottom: 14px;\">Qs about <i>accuracy</i> mixed up with normative Qs about <i>concepts</i></li><li style=\"font-size: 32px; margin-bottom: 14px;\">Incommensurable \"worlds\" of measurement (Survey \"vs\" DINA/top incomes)</li></ul></ul></div>"
         }
       ]
     },
@@ -71,26 +88,548 @@
       ]
     },
     {
-      "id": "slide-short-summary",
+      "id": "slide-4ovt9k",
       "layout": "default",
       "blocks": [
         {
-          "id": "b-ss1",
+          "id": "b-tblhky",
           "type": "html",
-          "html": "<p class=\"kicker\">Where does global inequality lie: between or within countries?</p>"
+          "html": "<p class=\"kicker\">Section</p>"
         },
         {
-          "id": "b-ss2",
+          "id": "b-nvcwsp",
           "type": "html",
-          "html": "<h2>Summary</h2>"
+          "html": "<h2>Mean Log Deviation</h2>"
         },
         {
-          "id": "b-ss3",
+          "id": "b-siutud",
           "type": "html",
-          "html": "<ul><li>Despite a new wealth of data, the question is wide open:&nbsp;</li><ul><li>PIP (survey data) says <b>mostly between</b><i> — (Milanovic ; Milanovic &amp; Lakner)</i></li><li>WID (DINA) says <b>mostly within</b><i> (Chancel &amp; Piketty, 2021)</i></li></ul><li>Divergence due to a mix of:&nbsp;</li><ul><li>Known measurement problems (top incomes; data gaps — mix of income/consumption survey data)&nbsp;</li><li>Differing methodological choices (source data, adjustments/assumptions, welfare/income concept)</li><ul><li>-&gt; Two 'worlds' of measurement&nbsp;</li></ul></ul></ul><div><span style=\"font-size: 22px;\">-------</span></div><ul><li>Exploring the 'center ground': anchored to traditional survey income <i>concepts</i>, while addressing concerns about their&nbsp;<i>accuracy</i>&nbsp;(Nolan... Morelli...)</li><li>Recent expansion of PIP and WID datasets makes 'bridging' between them more feasible</li><li>Seen from a center-ground perspective, the between/within split <b>looks closer to 50/50</b>.</li></ul>"
+          "html": "<p><ul><li>Standard in the literature because of its decomposability</li><li>[Formula]</li><li>Convenience of MLD hides a normative choice concerning the 'right' inequality measure</li><ul><li>Measures more sensitive to the top would tell a different picture about global inequality</li></ul></ul></p>"
         }
       ],
-      "notes": "Roadmap slide for the short talk. ~90 seconds: read the shape of the argument, do not elaborate here — each bullet gets its own slide later.\n\nThe last bullet is the sentence you want them to leave with. Say it slowly, then move on."
+      "notes": ""
+    },
+    {
+      "id": "slide-f85v2c",
+      "layout": "default",
+      "blocks": [
+        {
+          "id": "b-uoh421",
+          "type": "html",
+          "html": "<p class=\"kicker\">Section</p>"
+        },
+        {
+          "id": "b-fghf2h",
+          "type": "html",
+          "html": "<h2>Why do survey data and DINA disagree?</h2>"
+        },
+        {
+          "id": "b-5vd8oo",
+          "type": "html",
+          "html": "<div><ul><li><b>Empirical / measurement issues:</b></li><ul><li>'Missing top' in survey data</li><ul><li><i> Quote Chancel — I'll show that this isn't right, there's more going on and top incomes might not even be the biggest p</i></li></ul><li>Strengths/weakness of different data sources (survey, tax, National Accounts)</li><li>Data gaps:</li><ul><li>PIP: mix of income/consumption survey data;&nbsp;</li><li>WID: Expansive coverage contrasts with thin data for much of the world</li></ul><li>Uncertainty of adjustments/assumptions</li></ul></ul><div><span style=\"font-size: 22px;\"><br></span></div><ul><li><b>Normative / conceptual differences:</b></li><ul><li>&nbsp;welfare/income concept (pre-tax NNI vs household post-tax income/consumption)</li><li>(Often: Which inequality metrics to highlight — Gini, top shares etc.)</li></ul></ul></div>"
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "slide-vk8p9y",
+      "layout": "default",
+      "blocks": [
+        {
+          "id": "b-sg4fxi",
+          "type": "html",
+          "html": "<p class=\"kicker\">Section</p>"
+        },
+        {
+          "id": "b-x25zsc",
+          "type": "html",
+          "html": "<h2>Why do survey data and DINA disagree?</h2>"
+        },
+        {
+          "id": "b-x972z4",
+          "type": "html",
+          "html": "<div><ul><li><b>Empirical / measurement issues:</b></li><ul><li>'Missing top' in survey data</li><ul><li><i> Quote Chancel — I'll show that this isn't right, there's more going on and top incomes might not even be the biggest p</i></li></ul><li>Strengths/weakness of different data sources (survey, tax, National Accounts)</li><li>Data gaps:</li><ul><li>PIP: mix of income/consumption survey data;&nbsp;</li><li>WID: Expansive coverage contrasts with thin data for much of the world</li></ul><li>Uncertainty of adjustments/assumptions</li></ul></ul><div><span style=\"font-size: 22px;\"><br></span></div><ul><li><b>Normative / conceptual differences:</b></li><ul><li>&nbsp;welfare/income concept (pre-tax NNI vs household post-tax income/consumption)</li><li>(Often: Which inequality metrics to highlight — Gini, top shares etc.)</li></ul></ul></div>"
+        }
+      ],
+      "notes": "",
+      "annotations": [
+        {
+          "id": "a-g5mzjl",
+          "type": "text",
+          "x": 430.7,
+          "y": 187.1,
+          "text": "\"Correctness\"",
+          "color": "rgb(206, 38, 30)",
+          "size": 20
+        },
+        {
+          "id": "a-j2rgdh",
+          "type": "text",
+          "x": 470.4,
+          "y": 555.7,
+          "text": "More complicated",
+          "color": "rgb(206, 38, 30)",
+          "size": 20
+        }
+      ]
+    },
+    {
+      "id": "slide-16foo7",
+      "layout": "default",
+      "blocks": [
+        {
+          "id": "b-bldrjo",
+          "type": "html",
+          "html": "<p class=\"kicker\">Section</p>"
+        },
+        {
+          "id": "b-i22ixd",
+          "type": "html",
+          "html": "<h2>'Survey income' is the more relevant concept here</h2>"
+        },
+        {
+          "id": "b-y3ckwz",
+          "type": "html",
+          "html": "<div><ul><li>Arguably, 'survey income' more closely anchored to <b>welfare</b> -&gt; The better choice (Anand and Segal. Contra: sala-i-martin )</li><li>Apparent trade-off: accuracy at the top vs. more relevant income concept</li><li>Usual story:</li><ul><li>Note a departure from WID: per capita.&nbsp;</li><li>Adjusting&nbsp;</li><li>Engaging with a literature anchored more in welfare.</li></ul></ul></div><div><ul><ul></ul></ul></div>"
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "slide-s64zud",
+      "layout": "default",
+      "blocks": [
+        {
+          "id": "b-bazd3f",
+          "type": "html",
+          "html": "<p class=\"kicker\">Section</p>"
+        },
+        {
+          "id": "b-adw65i",
+          "type": "html",
+          "html": "<h2>Bridging</h2>"
+        },
+        {
+          "id": "b-yctdqx",
+          "type": "html",
+          "html": "<div><ul><li><span style=\"font-size: 22px;\">Can we have our cake and eat it?</span></li><ul><li>i.e. anchor to traditional survey income <i>concepts</i>, while addressing concerns about their <i>accuracy</i> <br>(Nolan... Morelli...)</li><li>Anand and Segal (); Milanovic and Lakner (2016) try with global data — now a lot easier</li></ul><li>Bridging from both ends:</li><ul><li>WID —&nbsp;</li><li>From PIP — how far would a 'top-corrected' take us?</li></ul><li>Result: When we 'bridge', the between/within split&nbsp;<b>looks closer to 50/50</b>.</li><ul></ul></ul></div>"
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "slide-xdr0fh",
+      "layout": "default",
+      "notes": "The raw comparison, before any bridging adjustments. Top: P10/P90/mean for three countries on a shared log scale - WID (pre-tax national income, per adult) left, PIP (disposable income/consumption, per capita) right. Bottom: MLD level decomposition (between vs within) computed on just these three countries. Data pipeline: data/scripts/10_fig_raw_comparison.py",
+      "blocks": [
+        {
+          "id": "b-jx8bby",
+          "type": "html",
+          "html": "<p class=\"kicker\"><span style=\"letter-spacing: 0.12em;\">Q2: Which is bigger: inequality between countries, or within countries?</span></p>"
+        },
+        {
+          "id": "b-njaake",
+          "type": "component",
+          "component": "fig-raw-comparison",
+          "props": {
+            "title": ""
+          }
+        }
+      ]
+    },
+    {
+      "id": "slide-bridge-step1",
+      "layout": "default",
+      "notes": "Bridging build, step 1 of 6.\n\nStart at the two ends: WID's headline series and PIP's, as each source publishes them.\n\nShowing: WID pre-tax per adult, PIP.\n\nColumns and both axes are fixed across the whole build, so only the new column appears — nothing shifts or rescales.",
+      "blocks": [
+        {
+          "id": "b-np7otf-b1",
+          "type": "html",
+          "html": "<p class=\"kicker\"><span style=\"letter-spacing: 0.12em;\">Q2: Which is bigger: inequality between countries, or within countries?</span></p>"
+        },
+        {
+          "id": "b-zb6io4-b1",
+          "type": "component",
+          "component": "fig-raw-comparison",
+          "props": {
+            "title": "",
+            "sources": [
+              "WID_pretax_per_adult",
+              "WID_pretax_per_capita",
+              "WID_posttax_per_capita",
+              "WID_posttax_rescaled",
+              "PIP_topadj",
+              "PIP_consinc",
+              "PIP"
+            ],
+            "reveal": [
+              "WID_pretax_per_adult",
+              "PIP"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "slide-bridge-step2",
+      "layout": "default",
+      "notes": "Bridging build, step 2 of 6.\n\nStep 1 — put WID on a per-capita basis, so both sides count children.\n\nShowing: WID pre-tax per adult, WID pre-tax per capita, PIP.\n\nColumns and both axes are fixed across the whole build, so only the new column appears — nothing shifts or rescales.",
+      "blocks": [
+        {
+          "id": "b-np7otf-b2",
+          "type": "html",
+          "html": "<p class=\"kicker\"><span style=\"letter-spacing: 0.12em;\">Q2: Which is bigger: inequality between countries, or within countries?</span></p>"
+        },
+        {
+          "id": "b-zb6io4-b2",
+          "type": "component",
+          "component": "fig-raw-comparison",
+          "props": {
+            "title": "",
+            "sources": [
+              "WID_pretax_per_adult",
+              "WID_pretax_per_capita",
+              "WID_posttax_per_capita",
+              "WID_posttax_rescaled",
+              "PIP_topadj",
+              "PIP_consinc",
+              "PIP"
+            ],
+            "reveal": [
+              "WID_pretax_per_adult",
+              "WID_pretax_per_capita",
+              "PIP"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "slide-bridge-step3",
+      "layout": "default",
+      "notes": "Bridging build, step 3 of 6.\n\nStep 2 — move WID from pre-tax to post-tax national income.\n\nShowing: WID pre-tax per adult, WID pre-tax per capita, WID post-tax per capita, PIP.\n\nColumns and both axes are fixed across the whole build, so only the new column appears — nothing shifts or rescales.",
+      "blocks": [
+        {
+          "id": "b-np7otf-b3",
+          "type": "html",
+          "html": "<p class=\"kicker\"><span style=\"letter-spacing: 0.12em;\">Q2: Which is bigger: inequality between countries, or within countries?</span></p>"
+        },
+        {
+          "id": "b-zb6io4-b3",
+          "type": "component",
+          "component": "fig-raw-comparison",
+          "props": {
+            "title": "",
+            "sources": [
+              "WID_pretax_per_adult",
+              "WID_pretax_per_capita",
+              "WID_posttax_per_capita",
+              "WID_posttax_rescaled",
+              "PIP_topadj",
+              "PIP_consinc",
+              "PIP"
+            ],
+            "reveal": [
+              "WID_pretax_per_adult",
+              "WID_pretax_per_capita",
+              "WID_posttax_per_capita",
+              "PIP"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "slide-bridge-step4",
+      "layout": "default",
+      "notes": "Bridging build, step 4 of 6.\n\nStep 3 — put PIP's consumption countries on an income basis.\n\nShowing: WID pre-tax per adult, WID pre-tax per capita, WID post-tax per capita, PIP cons→income, PIP.\n\nColumns and both axes are fixed across the whole build, so only the new column appears — nothing shifts or rescales.",
+      "blocks": [
+        {
+          "id": "b-np7otf-b4",
+          "type": "html",
+          "html": "<p class=\"kicker\"><span style=\"letter-spacing: 0.12em;\">Q2: Which is bigger: inequality between countries, or within countries?</span></p>"
+        },
+        {
+          "id": "b-zb6io4-b4",
+          "type": "component",
+          "component": "fig-raw-comparison",
+          "props": {
+            "title": "",
+            "sources": [
+              "WID_pretax_per_adult",
+              "WID_pretax_per_capita",
+              "WID_posttax_per_capita",
+              "WID_posttax_rescaled",
+              "PIP_topadj",
+              "PIP_consinc",
+              "PIP"
+            ],
+            "reveal": [
+              "WID_pretax_per_adult",
+              "WID_pretax_per_capita",
+              "WID_posttax_per_capita",
+              "PIP_consinc",
+              "PIP"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "slide-bridge-step5",
+      "layout": "default",
+      "notes": "Bridging build, step 5 of 6.\n\nStep 4 — top-adjust PIP.\n\nShowing: WID pre-tax per adult, WID pre-tax per capita, WID post-tax per capita, PIP top-adjusted, PIP cons→income, PIP.\n\nColumns and both axes are fixed across the whole build, so only the new column appears — nothing shifts or rescales.",
+      "blocks": [
+        {
+          "id": "b-np7otf-b5",
+          "type": "html",
+          "html": "<p class=\"kicker\"><span style=\"letter-spacing: 0.12em;\">Q2: Which is bigger: inequality between countries, or within countries?</span></p>"
+        },
+        {
+          "id": "b-zb6io4-b5",
+          "type": "component",
+          "component": "fig-raw-comparison",
+          "props": {
+            "title": "",
+            "sources": [
+              "WID_pretax_per_adult",
+              "WID_pretax_per_capita",
+              "WID_posttax_per_capita",
+              "WID_posttax_rescaled",
+              "PIP_topadj",
+              "PIP_consinc",
+              "PIP"
+            ],
+            "reveal": [
+              "WID_pretax_per_adult",
+              "WID_pretax_per_capita",
+              "WID_posttax_per_capita",
+              "PIP_topadj",
+              "PIP_consinc",
+              "PIP"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "slide-bridging-all-nomid",
+      "layout": "default",
+      "notes": "All 211 countries, but WITHOUT the bridging column — picking up exactly where the three-country build left off.\n\nBoth ladders are here and they still do not meet: the WID side bottoms out at 1.01 and the PIP side tops out at 0.80. The gap between those two is what the last step has to close.\n\nNext slide adds the bridging column. Columns and the axis are fixed across the pair, so only that column appears.",
+      "blocks": [
+        {
+          "id": "b-c2embf-nomid",
+          "type": "html",
+          "html": "<p class=\"kicker\"><span style=\"letter-spacing: 0.12em;\">Q2: Which is bigger: inequality between countries, or within countries?</span></p>"
+        },
+        {
+          "id": "b-18dp33-nomid",
+          "type": "component",
+          "component": "fig-raw-comparison",
+          "props": {
+            "title": "",
+            "dataUrl": "data/figures/fig_bridging_all.json",
+            "sources": [
+              "WID_pretax_per_adult",
+              "WID_pretax_per_capita",
+              "WID_posttax_per_capita",
+              "WID_posttax_rescaled",
+              "PIP_topadj",
+              "PIP_consinc",
+              "PIP"
+            ],
+            "reveal": [
+              "WID_pretax_per_adult",
+              "WID_pretax_per_capita",
+              "WID_posttax_per_capita",
+              "PIP_topadj",
+              "PIP_consinc",
+              "PIP"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "slide-2ewkz8",
+      "layout": "default",
+      "notes": "All 211 countries, with the bridging column now in place.\n\nWID post-tax rescaled to the adjusted PIP means lands at 1.06 with a 58/42 within/between split — between the two ladders, which is the point: once the concepts are aligned, the sources are much closer than their headline numbers suggest.\n\nThe same bridging chart, now computed over the WHOLE common sample: all 211 countries covered by both PIP and WID (not just the three example countries). Same component (fig-raw-comparison, bars-only mode: no lollipops in the data), same methods and parameters as the three-country version — the only change is the country set. The rescaled WID series takes its means from PIP_topadj (the far end of the PIP-side chain), so its between component equals PIP top-adjusted's exactly — the bridge meets in the middle. Between-share ladder: WID pre-tax/adult 21.5% -> per-capita 27.7% -> post-tax 38.2% -> at adjusted PIP means 41.7% -> PIP top-adjusted 55.5% -> PIP cons->income 60.4% -> PIP 69.2%. Data: data/scripts/14_fig_bridging_all.py.",
+      "blocks": [
+        {
+          "id": "b-c2embf",
+          "type": "html",
+          "html": "<p class=\"kicker\"><span style=\"letter-spacing: 0.12em;\">Q2: Which is bigger: inequality between countries, or within countries?</span></p>"
+        },
+        {
+          "id": "b-18dp33",
+          "type": "component",
+          "component": "fig-raw-comparison",
+          "props": {
+            "title": "",
+            "dataUrl": "data/figures/fig_bridging_all.json",
+            "sources": [
+              "WID_pretax_per_adult",
+              "WID_pretax_per_capita",
+              "WID_posttax_per_capita",
+              "WID_posttax_rescaled",
+              "PIP_topadj",
+              "PIP_consinc",
+              "PIP"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "slide-epyx2y",
+      "layout": "default",
+      "blocks": [
+        {
+          "id": "b-6m9gaa",
+          "type": "html",
+          "html": "<p class=\"kicker\">Section</p>"
+        },
+        {
+          "id": "b-q67gln",
+          "type": "html",
+          "html": "<h2>How does survey/NA ratio vary with income?</h2>"
+        },
+        {
+          "id": "b-h4lnlu",
+          "type": "html",
+          "html": "<p><ul><li>Deaton Milanovic (early) showed a negative relationship</li><ul><li>Using NA means rather than survey means increases the between component (\"Concept 2 inequality\")</li></ul><li>Milanovic (3 eras) just states it as a known fact</li><li>We see the opposite — <i>when weighting by population</i>&nbsp;</li></ul></p>"
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "slide-means-share-plain",
+      "layout": "default",
+      "notes": "First pass at the share chart: one dot per country, equally weighted, and only the unweighted fit.\n\nThe typical survey captures 39% of national income per capita. The k-multiples become 100%, 50%, 33%, 20%, 10%, so the horizontal lines are round shares.\n\nThe NEXT slide adds population as bubble size and the population-weighted fit — that is the point of the pair: weighting by people pulls the line down to 31%, because the big poor countries sit below the unweighted line.\n\nAxes, hidden outlier and everything else are identical across the two slides, so only the encoding changes.",
+      "blocks": [
+        {
+          "id": "slide-means-share-plain-k",
+          "type": "html",
+          "html": "<p class=\"kicker\">Surveys vs national accounts</p>"
+        },
+        {
+          "id": "slide-means-share-plain-h",
+          "type": "html",
+          "html": "<p>Flipped: what share of national income the survey actually captures</p>"
+        },
+        {
+          "id": "slide-means-share-plain-c",
+          "type": "component",
+          "component": "fig-means-scatter",
+          "props": {
+            "mode": "share",
+            "year": "2023",
+            "hide": [
+              "Venezuela"
+            ],
+            "yDomain": [
+              5,
+              200
+            ],
+            "bubbles": false,
+            "fits": [
+              "unweighted"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "slide-means-share",
+      "layout": "default",
+      "notes": "The exact inverse of the previous slide, which is often the easier one to say out loud: the typical survey captures 39% of national income per capita, and only 31% weighted by population.\n\nThe k-multiples become 100%, 50%, 33%, 20%, 10%, so the horizontal lines are round shares. Population-weighted fit slopes UP here: richer countries' surveys capture more.\n\nRange 5% (Liechtenstein) to 285% (Venezuela). Venezuela is omitted from THIS plot only — it stretched the axis to 500% and squashed everything else. It remains in the regression, and a note on the chart says so. It is not omitted from the 1990 share slide, where its 64% is unremarkable.",
+      "blocks": [
+        {
+          "id": "slide-means-share-k",
+          "type": "html",
+          "html": "<p class=\"kicker\">Surveys vs national accounts</p>"
+        },
+        {
+          "id": "slide-means-share-h",
+          "type": "html",
+          "html": "<p>Flipped: what share of national income the survey actually captures</p>"
+        },
+        {
+          "id": "slide-means-share-c",
+          "type": "component",
+          "component": "fig-means-scatter",
+          "props": {
+            "mode": "share",
+            "year": "2023",
+            "hide": [
+              "Venezuela"
+            ],
+            "yDomain": [
+              5,
+              200
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "slide-m203r4",
+      "layout": "default",
+      "notes": "Bridging build, step 6 of 6 — the finished chart.\n\nStep 5 — the last gap: rescale WID post-tax to the adjusted PIP means. The two ladders now meet.\n\nBuild-up: two bridging steps between the raw WID series and PIP. Step 1: per-adult -> per-capita basis. Step 2: pre-tax -> post-tax national income. Between-country share of MLD climbs 28% -> 36% -> 49%, vs PIP's 76%. Same component and data as the previous slide - the sources prop selects the columns (data/scripts/10_fig_raw_comparison.py). Added: PIP top-adjusted (WID post-tax shape grafted above the p99-99.1 bin, anchored at PIP's level there; splice point parameterized in data/scripts/10_fig_raw_comparison.py). PIP_consinc is a PLACEHOLDER column (ghost) for the future consumption->income adjustment; data source identified: garden/wb/2026-06-26/world_bank_pip/percentiles (income+consumption percentiles for 88 country-years).",
+      "blocks": [
+        {
+          "id": "b-np7otf",
+          "type": "html",
+          "html": "<p class=\"kicker\"><span style=\"letter-spacing: 0.12em;\">Q2: Which is bigger: inequality between countries, or within countries?</span></p>"
+        },
+        {
+          "id": "b-zb6io4",
+          "type": "component",
+          "component": "fig-raw-comparison",
+          "props": {
+            "title": "",
+            "sources": [
+              "WID_pretax_per_adult",
+              "WID_pretax_per_capita",
+              "WID_posttax_per_capita",
+              "WID_posttax_rescaled",
+              "PIP_topadj",
+              "PIP_consinc",
+              "PIP"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "slide-means-share-1990",
+      "layout": "default",
+      "notes": "1990: median 42%, population-weighted 38%.\n\nAgainst 2023's 39% and 31%. So the share captured has fallen — most clearly on the population-weighted measure, from 38% to 31%. That is the sentence this pair of slides exists to support.\n\nCAVEAT for 1990: it is the first year in PIP's thousand-bins data, and survey coverage that far back is thin — many country-years are interpolated or extrapolated by the source, on both sides. Indicative, not a measurement.\n\nBoth share slides are pinned to a fixed 5-200% axis so they stay comparable with slide 9, which hides Venezuela. Venezuela's 1990 value (64%) is inside that range and is plotted here as normal.",
+      "blocks": [
+        {
+          "id": "slide-means-share-1990-k",
+          "type": "html",
+          "html": "<p class=\"kicker\">Surveys vs national accounts · 1990</p>"
+        },
+        {
+          "id": "slide-means-share-1990-h",
+          "type": "html",
+          "html": "<p>The same share at the start of the PIP record</p>"
+        },
+        {
+          "id": "slide-means-share-1990-c",
+          "type": "component",
+          "component": "fig-means-scatter",
+          "props": {
+            "mode": "share",
+            "year": "1990",
+            "yDomain": [
+              5,
+              200
+            ]
+          }
+        }
+      ]
     },
     {
       "id": "slide-title-full",

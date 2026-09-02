@@ -33,7 +33,7 @@ Run:  python data/scripts/14_fig_bridging_all.py
 import json
 import pandas as pd
 
-from config import HARMONIZED_FILE, DATA_DIR, PROCESSED_DIR, RAW_PIP_DIR
+from config import HARMONIZED_FILE, DATA_DIR, PROCESSED_DIR, RAW_PIP_DIR, PPP_YEAR
 from mld import mld_decomposition
 from topadj import build_pip_topadj, anchor_bin_label, WID_SHAPE_SOURCE
 from rescale import build_wid_rescaled
@@ -129,7 +129,7 @@ def main():
             "sources": SOURCES,
             "year": 2023,
             "units": "MLD is unit-free; underlying incomes in international-$ "
-                     "(PIP: 2021 PPPs; WID: 2023 PPPs)",
+                     f"(PIP: 2021 PPPs; WID: {PPP_YEAR} PPPs)",
             "zero_replacement_usd_per_day": ZERO_REPLACEMENT,
             "topadj_splice_percentile": SPLICE_PERCENTILE,
             "topadj_anchor_bin": anchor_bin_label(SPLICE_PERCENTILE),

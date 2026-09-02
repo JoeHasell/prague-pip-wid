@@ -49,7 +49,7 @@ import json
 import numpy as np
 import pandas as pd
 
-from config import HARMONIZED_FILE, DATA_DIR, DAILY_TO_MONTHLY
+from config import HARMONIZED_FILE, DATA_DIR, DAILY_TO_MONTHLY, PPP_YEAR
 
 FIGURES_DIR = DATA_DIR / "figures"
 OUTPUT_FILE = FIGURES_DIR / "fig_raw_comparison.json"
@@ -161,7 +161,7 @@ def main():
             "countries": COUNTRIES,
             "sources": SOURCES,
             "year": 2023,
-            "units": "international-$ PER MONTH (PIP: 2021 PPPs; WID: 2023 "
+            "units": f"international-$ PER MONTH (PIP: 2021 PPPs; WID: {PPP_YEAR} "
                      "PPPs); converted from daily values at 365/12",
             "zero_replacement_usd_per_day": ZERO_REPLACEMENT,
             "topadj_splice_percentile": SPLICE_PERCENTILE,

@@ -8,7 +8,7 @@
     ],
     "n_countries": 211,
     "year": 2023,
-    "units": "international-$ PER MONTH (PIP: 2021 PPPs; WID: 2023 PPPs); converted from daily values at 365/12",
+    "units": "international-$ PER MONTH (PIP: 2021 PPPs; WID: 2025 PPPs); converted from daily values at 365/12",
     "notes": [
       "Thresholds are ENTRY incomes: the average income of the marginal country-bin when bins are sorted by income and population is accumulated to the target global share.",
       "Population concept is basis-matched (mld.py convention): per-adult series rank the world's ADULTS (WID adult populations); per-capita series rank all people (WID total populations).",
@@ -21,25 +21,25 @@
       "source": "WID_pretax_per_adult",
       "label": "WID pre-tax national income, per adult",
       "basis": "adult",
-      "top10": 5854.51,
-      "top1": 22956.51,
-      "top0_1": 110625.98
+      "top10": 5633.49,
+      "top1": 20677.91,
+      "top0_1": 102558.8
     },
     {
       "source": "WID_pretax_per_capita",
       "label": "WID pre-tax national income, per capita",
       "basis": "total",
-      "top10": 4040.19,
-      "top1": 15775.67,
-      "top0_1": 73040.62
+      "top10": 3896.52,
+      "top1": 14957.48,
+      "top0_1": 68569.26
     },
     {
       "source": "WID_posttax_per_capita",
       "label": "WID post-tax national income, per capita",
       "basis": "total",
-      "top10": 4252.44,
-      "top1": 14483.47,
-      "top0_1": 66427.64
+      "top10": 4033.16,
+      "top1": 13208.85,
+      "top0_1": 57761.74
     },
     {
       "source": "WID_posttax_rescaled",

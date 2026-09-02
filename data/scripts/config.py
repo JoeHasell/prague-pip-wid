@@ -39,6 +39,24 @@ PROCESSED_DIR = DATA_DIR / "processed"
 # to match. When we extend to a time series this becomes a list.)
 TARGET_YEAR = 2023
 
+# The price base of WID's monetary series. WID publishes incomes in CONSTANT
+# local currency of the LATEST year in the database, NOT of the data year, so
+# the xlcusp PPP factor must be taken for that price-base year — not for
+# TARGET_YEAR. As of the 2026-08 pull the base is 2025.
+#   *** Using xlcusp(2023) against 2025-price incomes was a bug (found in
+#   review, 2026-08-27). It left every country's income overstated by its
+#   inflation relative to the US over 2023-25: negligible for most, but ~4x
+#   for Venezuela, Sudan and Argentina, ~2x for Turkey. ***
+# Check against wid.world's technical note "Prices and currency conversions in
+# WID.world" after any refresh: if the base year moves, this must move with it.
+PPP_YEAR = 2025
+
+# A second, early year used ONLY by 17_fig_means_scatter.py, to show how the
+# survey/national-accounts gap has changed. 1990 is the first year in PIP's
+# thousand-bins dataset. The rest of the pipeline remains single-year
+# (TARGET_YEAR); this is a deliberately narrow addition, not a time series.
+COMPARISON_YEAR = 1990
+
 # DISPLAY UNIT (decided 2026-08-11): the deck shows incomes PER MONTH.
 # The pipeline's INTERNAL unit remains $/day throughout (the sources arrive
 # daily; the consinc regression is fitted on daily values and its alpha would
@@ -74,6 +92,13 @@ WID_FETCH_STATE_FILE = RAW_WID_DIR / "fetch_progress.json"
 
 # PIP raw cache — produced by 01_fetch_pip.py (pure Python, ~30s).
 PIP_RAW_FILE = RAW_PIP_DIR / f"pip_thousand_bins_{TARGET_YEAR}.csv.gz"
+PIP_RAW_FILE_EARLY = RAW_PIP_DIR / f"pip_thousand_bins_{COMPARISON_YEAR}.csv.gz"
+
+# WID national income per capita (variable anninci999) and population
+# (npopuli999), country x year, in raw units: LCU/year at WID's constant
+# prices, and persons. Produced by 18_fetch_wid_means.py from wid.world's
+# bulk download — no Stata needed. Convert with xlcusp for PPP_YEAR.
+WID_MEANS_FILE = RAW_WID_DIR / "WID_national_income_means.csv"
 
 # ---------------------------------------------------------------------------
 # Processed files (outputs of the pipeline)
