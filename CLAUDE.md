@@ -16,52 +16,55 @@ Claude builds the scaffolding: chart components, data pipeline steps, engine and
 editor features, and keeping `content/slides.json` valid. **Don't invent narrative
 or pick data without being asked.**
 
-## Where this session is running — check this first
+## Where this session runs
 
-Two kinds of session work on this repo, and they have very different powers.
-**Local is the default for this project.** In the desktop app's **Code** tab the
-**Environment** selector offers Local / Cloud / SSH; pick **Local** and the
-project folder.
+**Always local, on Joe's Mac** — the desktop app's **Code** tab, Environment =
+**Local**, project folder `~/Documents/Claude/Projects/prague-pip-wid`. You read
+and write his actual working copy: his browser edits are visible the moment he
+hits Save, Stata is present, and his dev server may already be on `:4173`.
 
-| | **Local session** (preferred) | **Cloud session** |
-|---|---|---|
-| Files | Joe's actual working copy, `~/Documents/Claude/Projects/prague-pip-wid` | a fresh clone in an isolated VM — **no access to Joe's Mac** |
-| Browser edits | visible the moment he hits Save | invisible; they must reach GitHub first |
-| Stata | available → `00_fetch_wid.py` can run **only here** | not available |
-| Dev server | Joe's own may already be on `:4173` | yours to start |
-| Lives | until the app closes | keeps running with the laptop shut |
-
-**Tell them apart:** `$CLAUDE_CODE_REMOTE` is `true` in a cloud session and unset
-locally; the working directory is `/home/user/prague-pip-wid` in the cloud and the
-`Documents/...` path on the Mac. Check before you reason about where files are.
-
-Use **Cloud** only for long autonomous jobs Joe wants running with the laptop shut.
-The app's **Continue in → Claude Code on the Web** pushes a local session there.
+**Cloud sessions are not used on this project** (decided 2026-09-02). A cloud
+container is an isolated VM with no access to the Mac — which is where the deck is
+authored and where Stata lives — so it can't see Joe's browser edits and can't run
+the WID fetch. There is deliberately **no SessionStart hook** (one existed briefly
+and was removed): don't add one, and don't reintroduce cloud-vs-local branching
+into these docs.
 
 ## Git protocol
 
-Claude Code runs `git` normally. (The old rule "the assistant must never run git"
-was a Cowork-bridge artifact — the bridge couldn't delete `.git/index.lock`, so any
-git command broke Joe's next commit. That constraint is gone.)
+**Joe commits and pushes; Claude edits files.** The division that actually
+operates on this project (confirmed 2026-09-02):
 
-- Work on the branch this session was assigned; commit and push there.
-- Never push to `main`. Don't open a PR unless Joe asks.
-- Joe does not use the command line. **Claude does the git work**, including for
-  his own edits.
+- **Work directly on `main`.** No feature branches, no PRs — this is a one-author
+  deck, not a shared codebase.
+- **Claude leaves its work uncommitted.** Make the edits, verify them, and stop
+  there. Joe reviews the changes in **GitHub Desktop** and commits and pushes from
+  the app — that's where his GitHub credentials live (HTTPS password auth is
+  disabled, so a command-line push fails anyway).
+- **Don't commit, push, branch, merge, rebase or rewrite history unless Joe asks
+  for that specific thing.** Committing on his behalf takes the review step away
+  from him.
+- **Read-only `git` is free and encouraged** — `status`, `log`, `diff`,
+  `merge-base`, `merge-tree`, `show`. Use it to orient and to explain the repo's
+  state. (The old ban on running `git` at all was a Cowork-bridge artifact: the
+  bridge couldn't delete `.git/index.lock`, so any git command broke Joe's next
+  commit. That constraint is gone.)
+- **Say what you changed, and name every NEW file explicitly** — Desktop's
+  changes list is long and a new file is easy to miss, and a missing image or
+  component file breaks the slide for everyone.
+- **If Desktop refuses to push** ("Newer Commits on Remote"), that's the remote
+  being ahead, not a conflict. Dry-run the merge (`git merge-tree` against the
+  merge base) to see whether the incoming commits touch the same files, tell Joe
+  what he'll receive, then walk him through **Fetch → Pull → Push**. Joe is not
+  comfortable with git: explain what each click does, don't just name it.
 
-**In a local session — the normal case.** "I made a bunch of changes in the browser
-— push them" is a request you can just do: he saved from `?edit`, so
-`content/slides.json` on disk is already his latest. `git diff` it, sanity-check
-that it parses, commit and push. Don't rewrite what he wrote; the diff is his text.
+**Joe's browser edits are already on disk.** He saves from `?edit`, so
+`content/slides.json` is his latest — `git diff` shows his text. Never rewrite it.
 
-**In a cloud session — the fallback.** His browser edits are on his laptop and
-unreachable. Say so plainly rather than hunting for them or reconstructing them
-from memory: he pushes them from **GitHub Desktop**, then you `git pull`.
-
-**The one two-writer trap that survives, in both kinds of session.** The `?edit`
-editor holds the whole deck in the browser tab and writes the *whole file* on Save.
-So if Claude edits `slides.json` while a tab is open on an older copy, Joe's next
-Save silently reverts that work — no conflict, no warning. The rule:
+**The two-writer trap.** The `?edit` editor holds the whole deck in the browser
+tab and writes the *whole file* on Save. So if Claude edits `slides.json` while a
+tab is open on an older copy, Joe's next Save silently reverts that work — no
+conflict, no warning. The rule:
 
 > **After Claude touches `slides.json`, Joe reloads the browser before his next
 > edit.** Say so explicitly in your reply every time you change that file.
@@ -74,48 +77,42 @@ point arrays). `src/*`, `components/*` and `data/*` are Claude-only in practice
 Call out **new files** explicitly in your reply (e.g. anything under
 `content/images/`) — a missing image breaks the slide for everyone.
 
-## Environment
-
-### In a local session (Joe's Mac)
+## Environment — Joe's Mac
 
 - **Don't fight his dev server.** If `:4173` is already answering, it's his — use
   it, don't start a second one and don't kill it. Only `src/` changes need a
   restart (ask him); `slides.json` changes need only a reload.
-- The Python and Node here are his, not a clean container. Check before assuming a
-  package is present, and prefer `pip install -r data/requirements.txt` over
-  installing things ad hoc. The SessionStart hook deliberately **does not** run
-  locally — his machine is his.
+- The Python and Node here are his, not a clean container: **Python 3.9.7** and
+  **Node v16.9.1** (checked 2026-09-02). Write pipeline scripts for 3.9 — no
+  `match`, no `X | Y` annotations evaluated at runtime. pandas and pyarrow are
+  installed; check before assuming anything else is, and prefer
+  `pip install -r data/requirements.txt` over installing things ad hoc. Don't
+  install into his machine without asking.
+- The deck itself has **no dependencies** — `node dev-server.js` serves on `:4173`.
+  Don't `npm i` into the repo root; keeping it dependency-free is deliberate.
 - **Stata lives here**, so this is the only place `00_fetch_wid.py` can run. Still
   don't run it casually: ~1–2 h, and the raw pull is a committed cache.
 
-### In a cloud session (this container)
-
-| | |
-|---|---|
-| Setup | `.claude/hooks/session-start.sh` runs at session start (cloud only) and installs the two things below. `$NODE_PATH` and `$CHROMIUM_PATH` are exported for you. |
-| Node | v22; the deck itself has **no dependencies** — `node dev-server.js` serves on `:4173` |
-| Python | 3.11; pandas + pyarrow come from the hook (`pip install -r data/requirements.txt` if you ever need it by hand) |
-| Stata | **not available** → `00_fetch_wid.py` cannot run. Everything downstream of the committed raw cache can. |
-| Chromium | preinstalled at `$CHROMIUM_PATH` (`/opt/pw-browsers/chromium`) — **never** run `playwright install`. The playwright package lives outside the repo in `~/.deck-tools`, on `$NODE_PATH`, so the repo stays dependency-free — don't `npm i` into the repo root. |
-| Google Fonts | blocked by the sandbox proxy — headless screenshots fall back to system fonts. Not a bug; on Joe's Mac and on Netlify the Playfair/Lato faces load. |
-
 ### Verify a slide actually renders
 
-Works in both kinds of session — localhost is reachable from inside the cloud
-container too.
+Use the **built-in browser pane** against Joe's dev server. There is **no
+Playwright or Chromium on this Mac** — those came from the cloud hook that no
+longer exists. Don't install them; the pane needs nothing.
 
-```bash
-node dev-server.js &          # LOCAL: only if :4173 isn't already Joe's
-# then, in a scratchpad script (cloud: playwright resolves via $NODE_PATH):
-#   const { chromium } = require('playwright');
-#   const b = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH });
-#   await p.goto('http://localhost:4173/#26'); await p.screenshot({ path: ... });
-```
+1. `preview_start` with `url: http://localhost:4173/#<N>`. Start
+   `node dev-server.js` first only if `:4173` isn't already answering — usually
+   it is, and then it's Joe's.
+2. `resize_window` to **1280×720** so the stage renders 1:1, then `screenshot`.
+   The image returns scaled to 800×450 — faithful enough for layout; `zoom` on a
+   region for detail.
+3. `javascript_tool` pokes `Deck.data` or fires events to exercise dropdowns,
+   radios and draw tools. Add `?edit` to the URL to test the editor.
+4. `resize_window` with preset `desktop` when finished — an emulated size
+   otherwise sticks to that tab.
 
-Read the PNG back and look at it. Slides are a fixed **1280×720** canvas that does
-not scroll — layout overflow is invisible unless you look. Use `page.evaluate` to
-poke `Deck.data` or fire events to exercise dropdowns, radios and draw tools, and
-add `?edit` to test the editor.
+Then actually look at the screenshot. Slides are a fixed **1280×720** canvas that
+does not scroll, so layout overflow is invisible unless you look. (This route was
+verified end to end on 2026-09-02.)
 
 ### Always, before committing
 
@@ -139,10 +136,12 @@ python data/scripts/99_verify.py                                          # any 
   listed in `components/manifest.json`. Scope emitted `<style>` under a unique
   class. One file may register several components.
 - **Figure components must fetch their data** from `data/figures/fig_*.json` — no
-  hard-coded numbers in new component JS. The provenance chain is:
-  `slide → components/fig-*.js → data/figures/fig_*.json → data/scripts/1N_fig_*.py → processed/ → raw/`.
-  (`gini-pip-wid-scatter.js` and `ineq-trend.js` predate this rule and still embed
-  their arrays.)
+  hard-coded numbers in component JS (since 2026-08-26 this holds for every chart,
+  the Q1 scatters included). The provenance chain is:
+  `slide → components/fig-*.js → data/figures/fig_*.json → data/scripts/2N_*.py → data/raw/etl/ (ETL cache) → OWID's ETL`,
+  refreshed by `python data/scripts/refresh_from_etl.py`. The `1N_fig_*.py →
+  processed/ → raw/` chain is the local-pipeline original, kept as the reference
+  implementation.
 - Region colours: Okabe-Ito colourblind-safe palette
   (`#0072B2 #E69F00 #009E73 #CC79A7 #56B4E9 #D55E00 #7A3E9D`). Validate any new
   categorical palette with the dataviz skill's `scripts/validate_palette.js` —
@@ -163,9 +162,13 @@ Full detail in `data/README.md`; the load-bearing ones:
 
 - **Never re-run `00_fetch_wid.py` casually** — needs Stata, takes 1–2 h. The raw
   WID pull is a committed cache (`data/raw/wid/`, refreshed 2026-08-11).
-- Everything builds on `data/processed/pip_wid_harmonized_2023.csv`.
-- **Every MLD decomposition goes through `data/scripts/mld.py`**, weighting
-  countries by WID demography matched to the series' basis. Never hand-roll one.
+- The deck's figures build on the ETL's `harmonized_income_distributions` (cached in
+  `data/raw/etl/`, see `data/README.md`); the local pipeline's
+  `data/processed/pip_wid_harmonized_2023.csv` is the reference implementation.
+- **Every MLD decomposition goes through `data/scripts/mld.py`** (or the ETL's
+  equivalent), weighting countries by one demographic yardstick matched to the
+  series' basis — WID's in the local pipeline, OWID population / UN WPP adults in
+  the ETL. Never hand-roll one.
 - Derived-series definitions live once, in their own module: `topadj.py`,
   `rescale.py`, `consinc.py`; the seven displayed scenarios in `scenarios.py`.
 - Zeros are retained in the harmonized file — each analysis script must state its
