@@ -22,7 +22,9 @@ remaining population and flagged `partial`.
 
 Populations are basis-matched, per the project convention: a per-adult series is
 weighted by adult populations, everything else by total populations, and both come
-from WID's demography so the two sources' population disagreements never enter.
+from one demographic yardstick independent of both sources — OWID's population
+series for totals, UN World Population Prospects for adults aged 20+ — so the two
+sources' population disagreements never enter.
 The ETL publishes exactly that number per country and series, as the
 `population_weight` column of inequality_decomposition_by_country.
 
@@ -157,7 +159,8 @@ def thresholds_figure(thresholds, countries, year):
                 "The threshold is the average income of the marginal bin — the first "
                 "bin at which cumulative population reaches the target share.",
                 "Population concept is basis-matched: adults for the per-adult series, "
-                "total population otherwise, both from WID's demography.",
+                "total population otherwise — UN WPP adults 20+ and OWID population "
+                "respectively, the same yardstick for every series.",
                 "Computed by OWID's ETL: garden/poverty_inequality/"
                 f"{es.ETL_VERSION}/harmonized_income_distributions.",
             ],
@@ -214,7 +217,8 @@ def treemap_figure(scenarios, countries, year):
                 "marginal bin is clipped to the population still needed and flagged "
                 "partial, so the listed populations sum to exactly 1% of the global total.",
                 "Population concept is basis-matched: adults for the per-adult series, "
-                "total population otherwise, both from WID's demography.",
+                "total population otherwise — UN WPP adults 20+ and OWID population "
+                "respectively, the same yardstick for every series.",
                 "Regions are PIP's own current scheme, with Western Europe split out "
                 f"of Europe and Central Asia using {es.WESTERN_EUROPE_DEFINITION} — both "
                 "from the ETL, so no hand-maintained mapping is involved.",

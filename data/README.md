@@ -145,6 +145,16 @@ hard-coded in component JS**. So the provenance chain for any figure is:
 slide → component (components/fig-*.js) → data/figures/fig_*.json → data/scripts/10+_fig_*.py → processed/ → raw/
 ```
 
+**Updated 2026-09-02, in the ETL:** the yardstick is now independent of both
+sources — Our World in Data's population series for total population and UN
+World Population Prospects for adults aged 20+, still matched to the series'
+basis and still applied to every series including PIP. WID's per-adult series
+are still converted to per capita with WID's own adult share. Measured effect:
+every between share moved by at most 0.02pp, because WID's counts are UN WPP
+too (Togo, revised by UN in 2026, and France, which WID counts with its overseas
+departments, are the only material differences). The paragraph below records
+the original convention the deck's local pipeline used.
+
 **MLD weighting convention (project-wide, decided 2026-08-11):** every MLD
 decomposition — for every series, including PIP — weights countries by
 **WID's demography, matched to the series' basis**: adult populations for

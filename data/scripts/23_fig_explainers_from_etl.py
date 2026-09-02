@@ -134,9 +134,10 @@ def mld_decomposition_figure(example, by_country, year):
                 "Identity: ln(mu/x) = ln(mu/mu_c) + ln(mu_c/x); MLD is the "
                 "population-weighted average of these gaps.",
                 "Computed by OWID's ETL: garden/poverty_inequality/"
-                f"{es.ETL_VERSION}/harmonized_income_distributions. Weights are WID's "
-                "demography matched to each series' basis; zero incomes are floored at "
-                "$0.01/day inside the MLD only.",
+                f"{es.ETL_VERSION}/harmonized_income_distributions. Weights are one "
+                "demographic yardstick for every series — OWID population for totals, UN WPP "
+                "adults 20+ for per-adult series — matched to each series' basis; zero "
+                "incomes are floored at $0.01/day inside the MLD only.",
                 "The three-country decomposition is derived from the published "
                 "per-country weights, means and within-country MLDs, which the "
                 "decomposition is additive in — so restricting the sample is exact.",

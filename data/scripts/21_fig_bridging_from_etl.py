@@ -51,10 +51,14 @@ ZERO_REPLACEMENT = 0.01
 NOTES_COMMON = [
     "Computed by OWID's ETL: garden/poverty_inequality/"
     f"{es.ETL_VERSION}/harmonized_income_distributions.",
-    "MLD weighting convention: ALL series are weighted by WID's demography, "
-    "matched to each series' basis (adults for per-adult, total population "
-    "otherwise) — so the two sources' population disagreements never enter the "
-    "comparison.",
+    "MLD weighting convention: ALL series are weighted by one demographic yardstick "
+    "independent of both sources — Our World in Data's population series for total "
+    "population, UN World Population Prospects for adults aged 20+ — matched to each "
+    "series' basis (adults for per-adult, total population otherwise), so the two "
+    "sources' population disagreements never enter the comparison. WID's per-adult "
+    "series are still converted to per capita with WID's own adult share. (The deck "
+    "originally weighted by WID's demography; the switch moved every between share "
+    "by at most 0.02pp, since WID's counts are UN WPP too.)",
     f"Zero incomes are replaced with ${ZERO_REPLACEMENT}/day inside the MLD only. "
     "This matters for the WID PRE-TAX series, where the bottom ~5 percentiles of "
     "almost every country are zero (4.3% of the sample population in 2023): "

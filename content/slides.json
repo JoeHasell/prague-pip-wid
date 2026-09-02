@@ -614,6 +614,41 @@
       ]
     },
     {
+      "id": "slide-q2trend",
+      "layout": "default",
+      "notes": "The same decomposition, for every year the two sources share (1990-2024), on the same 211 countries, at constant prices, with the same $0.01/day floor - so levels and the long trend are comparable across years. All eight series agree on the shape: the between-country share falls from 1990 to about 2015 and then flattens or ticks up (PIP 75.9% -> 66.5% -> 69.3%; WID pre-tax per adult 40.6% -> 23.2% -> 21.6%). Three caveats, printed under the chart: WID's country-years are WID's own extrapolations for 63-84% of the panel and 97% in 2023-24 (shaded); PIP's are survey years for only 13-51% of countries in any given year, the rest lined up by the World Bank, with 2023-24 nowcasts; and two to four countries switch welfare concept in a typical year, each a small step in the PIP income-basis series. Read the levels and the trend, not the wiggles. The selector switches to the MLD components themselves. Data: data/scripts/27_fig_between_share_trend.py from the ETL's inequality_decomposition table.",
+      "blocks": [
+        {
+          "id": "b-q2trend-k",
+          "type": "html",
+          "html": "<p class=\"kicker\"><span style=\"letter-spacing: 0.12em;\">Q2: Which is bigger: inequality between countries, or within countries?</span></p>"
+        },
+        {
+          "id": "b-q2trend-h",
+          "type": "html",
+          "html": "<p>Has the answer changed over time? The same split, every year since 1990</p>"
+        },
+        {
+          "id": "b-q2trend-c",
+          "type": "component",
+          "component": "fig-between-share-trend",
+          "props": {
+            "title": "",
+            "dataUrl": "data/figures/fig_between_share_trend.json",
+            "sources": [
+              "WID_pretax_per_adult",
+              "WID_pretax_per_capita",
+              "WID_posttax_per_capita",
+              "WID_posttax_rescaled",
+              "PIP_topadj",
+              "PIP_consinc",
+              "PIP"
+            ]
+          }
+        }
+      ]
+    },
+    {
       "id": "slide-r2fdmx",
       "layout": "default",
       "blocks": [

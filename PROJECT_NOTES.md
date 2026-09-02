@@ -326,11 +326,17 @@ concepts, and six known caveats. Key facts for a fresh session:
   pipeline** (19 checks; encodes two historical bugs: missing PPP conversion,
   wrong bin population weights).
 - **MLD weighting convention:** ALL MLD decompositions weight countries by
-  WID's demography, MATCHED TO THE SERIES' BASIS (adults for per-adult
-  series, total population otherwise — incl. for PIP) — via the single
-  shared module `data/scripts/mld.py`. Never compute an MLD decomposition
-  without it (per-source population weights leak WID-vs-PIP demographic
-  disagreements into the between component; decided 2026-08-11).
+  ONE demographic yardstick, MATCHED TO THE SERIES' BASIS (adults for
+  per-adult series, total population otherwise — incl. for PIP). Never
+  compute an MLD decomposition without it (per-source population weights
+  leak WID-vs-PIP demographic disagreements into the between component;
+  decided 2026-08-11). The yardstick was WID's demography in the deck's local
+  pipeline (`data/scripts/mld.py`); since 2026-09-02 the ETL uses Our World in
+  Data's population series for totals and UN World Population Prospects for
+  adults aged 20+, independent of both sources, while WID's per-adult series
+  are still converted to per capita with WID's own adult share. Measured
+  effect on every between share: at most 0.02pp (WID's counts are UN WPP
+  too; Togo and France are the only material differences).
 - **IMPLEMENTED bridging step "PIP_consinc"** (2026-08-11): PIP adjusted to
   an income basis — consumption countries mapped via per-percentile OLS
   ln(y_p)=alpha_p+beta_p ln(c_p) fitted on PIP's 88 dual country-years
