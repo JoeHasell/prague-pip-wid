@@ -1,5 +1,9 @@
 #!/bin/bash
-# SessionStart hook — prepare a Claude Code *web* container for this repo.
+# SessionStart hook — prepare a Claude Code CLOUD container for this repo.
+#
+# This project is worked on LOCAL-FIRST (desktop app, Code tab, Environment =
+# Local), where the machine is Joe's own and this hook must not touch it. The
+# hook exists for the occasional cloud session, whose container starts empty.
 #
 # Two things this repo needs that a fresh container does not have, both of them
 # load-bearing for verification rather than for the deck itself:
@@ -18,7 +22,8 @@
 
 set -uo pipefail
 
-# Web sessions only. On a local Mac checkout the environment is Joe's own.
+# Cloud sessions only. In a local session the environment is Joe's Mac — his to
+# manage, not ours: exit before installing anything.
 if [ "${CLAUDE_CODE_REMOTE:-}" != "true" ]; then
   exit 0
 fi

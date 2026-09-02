@@ -47,41 +47,38 @@ scaled to the window.
 
 ## 3. How we work together (OPERATIONAL PROTOCOL — important for a fresh session)
 
-**This project moved from Claude Cowork to Claude Code on 2026-09-02.** The
-Cowork-era protocol (the `mcp__remote-devices__*` file bridge, staging files into
-`/mnt/user-data/uploads`, `device_commit_files` with `expectedMtimeMs`, and the
-hard rule "the assistant must never run git") is **obsolete** — see
-[`CLAUDE.md`](CLAUDE.md) for the current working rules. The short version:
+**This project moved from Claude Cowork to Claude Code on 2026-09-02, and works
+LOCAL-FIRST.** The Cowork-era protocol (the `mcp__remote-devices__*` file bridge,
+staging into `/mnt/user-data/uploads`, `device_commit_files` with
+`expectedMtimeMs`, and the hard rule "the assistant must never run git") is
+**obsolete**. [`CLAUDE.md`](CLAUDE.md) holds the current rules; the essentials:
 
-- Claude Code works in a **git checkout** of the repo — reads and writes files
-  directly, and runs `git` normally. (The old no-git rule existed because the
-  Cowork sandbox couldn't delete `.git/index.lock` and so broke Joe's next
-  GitHub Desktop commit. That failure mode doesn't exist in a checkout.)
-- Claude commits to its assigned branch and pushes; it does not push to `main`
-  and does not open PRs unless asked. Joe still commits his own browser edits
-  through **GitHub Desktop** — a web session is a separate clone with **no access
-  to his Mac**, so "push the changes I made in the browser" is something only he
-  can do. (Decided 2026-09-02, after weighing running Claude Code locally on the
-  Mac instead; revisit if the browser-edit round trip starts to chafe.)
-- **localhost is reachable** inside the Claude Code container, so Claude can now
-  serve the deck (`node dev-server.js`) *and* screenshot it headlessly itself —
-  the §9 recipes work in one place. Joe's own `http://localhost:4173/?edit` on
-  his Mac is still his to run.
-- The **two-writer caveat still applies**, in a new shape. Joe edits
-  `content/slides.json` in the browser; Claude edits it in a clone. It is one
-  ~540 KB JSON file, and it can now fail two ways: a **merge conflict**, or a
-  **silent revert** if Joe saves from a browser tab loaded before Claude's push
-  (the editor writes the whole file). The ordering in `CLAUDE.md` prevents both:
-  Joe saves + pushes *before* handing over a slides task; Claude pulls, edits
-  surgically, pushes; Joe pulls + reloads *before* his next edit.
+- **Default to a LOCAL session** — in the desktop app's **Code** tab, Environment
+  = **Local**, project folder `~/Documents/Claude/Projects/prague-pip-wid`. Claude
+  then reads and writes Joe's actual working copy, exactly as Cowork did, and can
+  run `git`. Joe never touches the command line: **Claude does the git work**,
+  including committing Joe's own browser edits ("I made changes in the browser —
+  push them" is a request Claude can simply carry out).
+- **A CLOUD session is an isolated VM with a fresh clone and no access to Joe's
+  Mac.** His browser edits are unreachable from there — he'd have to push them
+  from GitHub Desktop first. Reserve cloud sessions for long autonomous jobs he
+  wants running with the laptop shut. `$CLAUDE_CODE_REMOTE=true` marks one.
+- **Stata is only on the Mac**, so `00_fetch_wid.py` can *only* run in a local
+  session — the one pipeline step a cloud session can never do.
+- **The two-writer trap that survives both:** the `?edit` editor holds the whole
+  deck in the tab and writes the *whole file* on Save, so if Claude edits
+  `slides.json` while an older tab is open, Joe's next Save silently reverts it —
+  no conflict, no warning. **After Claude touches `slides.json`, Joe reloads the
+  browser before his next edit**, and Claude says so in its reply. Claude edits
+  that file surgically, never regenerating it wholesale.
 - `src/*`, `components/*` and `data/*` are Claude-only in practice (the browser
-  editor writes `slides.json` alone), so those rarely collide.
+  editor writes `slides.json` alone), so those never collide.
 - **Note on `src/` changes:** editing `src/deck.js`, `src/editor.js` or the CSS
   requires Joe to **restart the dev server + hard-refresh**. `slides.json`-only
-  changes need just a reload.
+  changes need just a reload. In a local session, if `:4173` is already answering
+  it's Joe's dev server — use it, don't kill it, don't start a second one.
 - **When Claude adds a NEW file** (e.g. anything under `content/images/`), say so
-  explicitly in the reply — new files are easy to miss in GitHub Desktop's changes
-  list, and a missing image breaks the slide for everyone else.
+  explicitly in the reply — a missing image breaks the slide for everyone else.
 
 ## 4. Current state of the deck (as of this handoff)
 
@@ -262,29 +259,32 @@ return to normal block editing. Coordinate mapping uses the SVG's
 Freehand sketches store many points, so heavy drawing inflates `slides.json`
 (the sketch slides pushed the file past 500 KB — normal, just noticeable).
 
-## 9. Environment & verification recipes (Claude Code container)
+## 9. Environment & verification recipes
 
-Verified working on 2026-09-02 in a Claude Code cloud session. See `CLAUDE.md`
-for the full environment table.
+Full environment tables in `CLAUDE.md`. The recipes below work in both a local
+and a cloud session; the differences are called out.
 
-- **A SessionStart hook does the setup** (`.claude/hooks/session-start.sh`,
-  registered in `.claude/settings.json`; web sessions only, guarded on
-  `$CLAUDE_CODE_REMOTE`). It installs pandas + pyarrow from
+- **Local session (Joe's Mac):** the Python and Node are his, not a clean
+  container — check before assuming a package is present, and prefer
+  `pip install -r data/requirements.txt` over ad-hoc installs. The SessionStart
+  hook deliberately does **not** run here. **Stata lives here**, so this is the
+  only place `00_fetch_wid.py` can run (still ~1–2 h; don't run it casually).
+  If `:4173` already answers, that's Joe's dev server — use it, don't kill it.
+- **Cloud session:** a **SessionStart hook does the setup**
+  (`.claude/hooks/session-start.sh`, registered in `.claude/settings.json`,
+  guarded on `$CLAUDE_CODE_REMOTE`). It installs pandas + pyarrow from
   `data/requirements.txt` and playwright into `~/.deck-tools` — outside the repo,
   reachable via the `$NODE_PATH` it exports, so the deck stays a zero-dependency
-  project. ~19 s cold, ~0.4 s warm, and the container image is cached after it
-  runs. It is non-fatal by design: a failed install warns and lets the session
-  start, so a network blip never blocks slides work.
+  project. ~19 s cold, ~0.4 s warm, and the container image is cached afterwards.
+  Non-fatal by design: a failed install warns and lets the session start, so a
+  network blip never blocks slides work. Verified 2026-09-02:
+  `python data/scripts/99_verify.py` → 19/19 pass.
 - The catalog fetches read parquet/feather straight off
   `catalog.ourworldindata.org` — the `owid-catalog` library is **not** needed.
-  **Stata is not available**, so `00_fetch_wid.py` cannot run here; everything
-  downstream of the committed raw cache can, and does
-  (`python data/scripts/99_verify.py` → 19/19 pass).
-- **Headless render harness** (localhost *is* reachable here, unlike the old
-  Cowork sandbox — you can serve and screenshot in one place):
+- **Headless render harness** (localhost is reachable in both):
   ```bash
-  node dev-server.js &          # :4173, or: python3 -m http.server 8300
-  # playwright is already installed by the hook and on $NODE_PATH:
+  node dev-server.js &          # LOCAL: only if :4173 isn't already Joe's
+  # cloud: playwright is installed by the hook and on $NODE_PATH
   # chromium.launch({ executablePath: process.env.CHROMIUM_PATH })
   # page.goto('http://localhost:4173/#<N>'); page.screenshot(...)
   ```
@@ -292,9 +292,9 @@ for the full environment table.
   scroll, so overflow is invisible otherwise. Use `page.evaluate` to poke
   `Deck.data` / dispatch events to test interactivity (radios, dropdowns, draw
   tools); add `?edit` to test editor tools.
-  **Google Fonts is blocked by the sandbox proxy**, so screenshots fall back to
-  system fonts (a console `ERR_CONNECTION_RESET`). Not a bug — Playfair/Lato load
-  fine on Joe's Mac and on Netlify. Don't "fix" it.
+  In a **cloud** session **Google Fonts is blocked by the sandbox proxy**, so
+  screenshots fall back to system fonts (a console `ERR_CONNECTION_RESET`). Not a
+  bug — Playfair/Lato load fine on Joe's Mac and on Netlify. Don't "fix" it.
 - **Palette validator**: dataviz skill →
   `node scripts/validate_palette.js "<hex,hex,...>" --mode light --pairs all`.
 - Always `node --check` edited JS and `JSON.parse` edited JSON before committing.
