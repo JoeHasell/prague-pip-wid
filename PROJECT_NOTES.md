@@ -264,8 +264,15 @@ Freehand sketches store many points, so heavy drawing inflates `slides.json`
 Verified working on 2026-09-02 in a Claude Code cloud session. See `CLAUDE.md`
 for the full environment table.
 
-- **Python deps:** `pip install -r data/requirements.txt` (pandas + pyarrow;
-  neither is preinstalled). The catalog fetches read parquet/feather straight off
+- **A SessionStart hook does the setup** (`.claude/hooks/session-start.sh`,
+  registered in `.claude/settings.json`; web sessions only, guarded on
+  `$CLAUDE_CODE_REMOTE`). It installs pandas + pyarrow from
+  `data/requirements.txt` and playwright into `~/.deck-tools` — outside the repo,
+  reachable via the `$NODE_PATH` it exports, so the deck stays a zero-dependency
+  project. ~19 s cold, ~0.4 s warm, and the container image is cached after it
+  runs. It is non-fatal by design: a failed install warns and lets the session
+  start, so a network blip never blocks slides work.
+- The catalog fetches read parquet/feather straight off
   `catalog.ourworldindata.org` — the `owid-catalog` library is **not** needed.
   **Stata is not available**, so `00_fetch_wid.py` cannot run here; everything
   downstream of the committed raw cache can, and does
@@ -274,8 +281,8 @@ for the full environment table.
   Cowork sandbox — you can serve and screenshot in one place):
   ```bash
   node dev-server.js &          # :4173, or: python3 -m http.server 8300
-  npm i playwright              # into the scratchpad dir, not the repo
-  # chromium.launch({ executablePath: '/opt/pw-browsers/chromium' })
+  # playwright is already installed by the hook and on $NODE_PATH:
+  # chromium.launch({ executablePath: process.env.CHROMIUM_PATH })
   # page.goto('http://localhost:4173/#<N>'); page.screenshot(...)
   ```
   Read the PNG back to eyeball layout/colours — the 1280×720 stage does not
@@ -317,6 +324,9 @@ for the full environment table.
 
 ```
 CLAUDE.md               # how Claude works in this repo (read first)
+.claude/
+  settings.json         # registers the SessionStart hook
+  hooks/session-start.sh  # web-session setup: python deps + playwright
 content/slides.json     # all slide content + per-slide annotations (SINGLE SOURCE OF TRUTH)
 components/
   manifest.json         # list of component files to load

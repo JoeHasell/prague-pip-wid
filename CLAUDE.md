@@ -50,10 +50,11 @@ missing image breaks the slide for everyone.
 
 | | |
 |---|---|
-| Node | v22, no dependencies — `node dev-server.js` serves on `:4173` |
-| Python | 3.11; **`pandas` and `pyarrow` are not preinstalled** — `pip install -r data/requirements.txt` |
+| Setup | `.claude/hooks/session-start.sh` runs automatically at session start (web only) and installs the two things below. `$NODE_PATH` and `$CHROMIUM_PATH` are exported for you. |
+| Node | v22; the deck itself has **no dependencies** — `node dev-server.js` serves on `:4173` |
+| Python | 3.11; pandas + pyarrow come from the hook (`pip install -r data/requirements.txt` if you ever need it by hand) |
 | Stata | **not available** → `00_fetch_wid.py` cannot run here. Everything downstream of the committed raw cache can. |
-| Chromium | `/opt/pw-browsers/chromium`; `npm i playwright` into the scratchpad to drive it |
+| Chromium | preinstalled at `$CHROMIUM_PATH` (`/opt/pw-browsers/chromium`) — **never** run `playwright install`. The playwright package lives outside the repo in `~/.deck-tools`, on `$NODE_PATH`, so the repo stays dependency-free — don't `npm i` into the repo root. |
 | localhost | reachable from within the container (unlike the old Cowork sandbox), so you can serve *and* screenshot the deck yourself |
 | Google Fonts | blocked by the sandbox proxy — headless screenshots fall back to system fonts. Not a bug; on Joe's Mac and on Netlify the Playfair/Lato faces load. |
 
@@ -61,9 +62,10 @@ missing image breaks the slide for everyone.
 
 ```bash
 node dev-server.js &                       # or: python3 -m http.server 8300
-# then, with playwright installed in the scratchpad:
-#   chromium.launch({ executablePath: '/opt/pw-browsers/chromium' })
-#   page.goto('http://localhost:4173/#26'); page.screenshot(...)
+# then, in a script written to the scratchpad (playwright resolves via $NODE_PATH):
+#   const { chromium } = require('playwright');
+#   const b = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH });
+#   await p.goto('http://localhost:4173/#26'); await p.screenshot({ path: ... });
 ```
 
 Read the PNG back and look at it. Slides are a fixed **1280×720** canvas that does
