@@ -1,4 +1,87 @@
-# Data pipeline: harmonized PIP & WID income distributions
+# Data pipeline
+
+> **NEW (2026-08): the figures are now sourced from OWID's ETL.**
+>
+> The methodology below — harmonising PIP and WID onto one 109-bin structure, the
+> three bridging series, the between/within MLD decomposition — has been ported
+> into OWID's ETL as two versioned garden datasets. The deck no longer computes
+> any of it locally. What this buys:
+>
+> - **It updates itself.** Every PIP and WID release re-runs the whole thing.
+>   (The local pipeline's PIP extract is pinned to catalog version `2025-10-13`;
+>   the World Bank has since revised it, moving 15 countries' 2023 means by more
+>   than 5% — Bosnia −30%, Turkey +20%, Germany −9%. The global bars shift by
+>   ≤0.1pp, but individual countries do move.)
+> - **No Stata, no 1–2 hour WID fetch.** The ETL already holds WID's percentile
+>   distributions for every year, PPP-converted.
+> - **Every year, not just 2023.** The ETL runs 1990–2024, so the figure JSONs now
+>   carry the whole panel (`meta.years`, `mld_by_year`, `lollipop_by_year`).
+> - **One implementation.** The method exists once, with sanity checks that gate
+>   the build, instead of twice in two places that can drift.
+>
+> ### ⚠️ The figures do NOT update themselves — you must run the refresh
+>
+> The ETL re-runs on every PIP and WID release, but **this repo does not notice.**
+> The figures the deck renders are JSON files committed here, built from a cached
+> extract in `data/raw/etl/`. Until someone runs the refresh, the slides keep
+> showing whatever was cached last. **Run this after any ETL change, and before
+> presenting:**
+>
+> ```bash
+> # Reads the public OWID catalog (owid/etl#6764 merged on 2026-09-02); no VPN needed:
+> python data/scripts/refresh_from_etl.py
+>
+> # Only while a future ETL pull request that changes these datasets is still open:
+> python data/scripts/refresh_from_etl.py --staging <owid/etl branch name>
+>
+> # Change nothing, just report whether the committed figures are stale:
+> python data/scripts/refresh_from_etl.py --check
+> ```
+>
+> Then **commit `data/raw/etl/` and `data/figures/` together**. `--check` rebuilds
+> into a temporary directory, restores the committed figures whatever happens, and
+> exits non-zero when they no longer match the ETL — so it is safe to run any time
+> and works as a pre-talk sanity check.
+>
+> It runs the cache refresh and all six figure scripts in dependency order. Running
+> them by hand still works if you need one in isolation:
+>
+> ```bash
+> python data/scripts/20_cache_from_etl.py            # the ETL cache
+> python data/scripts/21_fig_bridging_from_etl.py     # Q2 figures
+> python data/scripts/22_fig_reference_year_trends.py # Q1 reference-year panel
+> python data/scripts/23_fig_explainers_from_etl.py   # the Q2 explainers
+> python data/scripts/24_fig_top_of_distribution_from_etl.py  # Q3
+> python data/scripts/25_fig_scatters_from_etl.py     # Q1 scatters
+> python data/scripts/26_fig_reference_year_observed.py  # Q1, observed only
+> ```
+>
+> **One trap the refresh cannot catch for you.** `etl_source.ETL_VERSION` pins the
+> dataset version (currently `2026-08-25`). New data flowing through the *same*
+> version folder is picked up automatically, but when the ETL mints a *new* version
+> folder — which it does whenever a derived step is repointed at newer dependencies
+> — that constant must be bumped first, or the refresh will faithfully rebuild the
+> old version and report no drift. This is the same trap `config.PIP_URL` set for
+> the old pipeline.
+>
+> **The original scripts (00–04, `mld.py`, `topadj.py`, `rescale.py`,
+> `consinc.py`, `scenarios.py`, `10_`/`14_fig_*`) are left untouched** and still
+> work off the committed raw caches. They are the reference implementation the
+> ETL port was verified against, and are safe to delete once you are happy with
+> the ETL-sourced figures. Everything they documented about method choices still
+> applies — the ETL preserves each one, including the MLD weighting convention
+> and the zero-income floor.
+>
+> One thing worth knowing about that floor: it is doing real work on the WID
+> **pre-tax** series, where the bottom ~5 percentiles are exactly zero in 185 of
+> 211 countries (4.3% of the sample population). Moving it from $0.001 to
+> $1.00/day moves the pre-tax between-country share by about 5 percentage points
+> (20.1% → 25.6%), and dropping zero bins instead gives 28.0%. It does not touch
+> the PIP-side series (no zero bins) and barely touches WID post-tax (0.05% of
+> population). The PIP-vs-WID contrast the deck draws survives every one of those
+> choices — the gap stays above 41 points — but the WID pre-tax *level* should be
+> read as a band, not a point.
+
 
 This folder contains the full, reproducible pipeline behind the data-driven
 figures in this deck. It produces **one dataset that everything downstream
@@ -61,6 +144,16 @@ hard-coded in component JS**. So the provenance chain for any figure is:
 ```
 slide → component (components/fig-*.js) → data/figures/fig_*.json → data/scripts/10+_fig_*.py → processed/ → raw/
 ```
+
+**Updated 2026-09-02, in the ETL:** the yardstick is now independent of both
+sources — Our World in Data's population series for total population and UN
+World Population Prospects for adults aged 20+, still matched to the series'
+basis and still applied to every series including PIP. WID's per-adult series
+are still converted to per capita with WID's own adult share. Measured effect:
+every between share moved by at most 0.02pp, because WID's counts are UN WPP
+too (Togo, revised by UN in 2026, and France, which WID counts with its overseas
+departments, are the only material differences). The paragraph below records
+the original convention the deck's local pipeline used.
 
 **MLD weighting convention (project-wide, decided 2026-08-11):** every MLD
 decomposition — for every series, including PIP — weights countries by

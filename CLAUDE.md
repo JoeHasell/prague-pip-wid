@@ -136,10 +136,12 @@ python data/scripts/99_verify.py                                          # any 
   listed in `components/manifest.json`. Scope emitted `<style>` under a unique
   class. One file may register several components.
 - **Figure components must fetch their data** from `data/figures/fig_*.json` — no
-  hard-coded numbers in new component JS. The provenance chain is:
-  `slide → components/fig-*.js → data/figures/fig_*.json → data/scripts/1N_fig_*.py → processed/ → raw/`.
-  (`gini-pip-wid-scatter.js` and `ineq-trend.js` predate this rule and still embed
-  their arrays.)
+  hard-coded numbers in component JS (since 2026-08-26 this holds for every chart,
+  the Q1 scatters included). The provenance chain is:
+  `slide → components/fig-*.js → data/figures/fig_*.json → data/scripts/2N_*.py → data/raw/etl/ (ETL cache) → OWID's ETL`,
+  refreshed by `python data/scripts/refresh_from_etl.py`. The `1N_fig_*.py →
+  processed/ → raw/` chain is the local-pipeline original, kept as the reference
+  implementation.
 - Region colours: Okabe-Ito colourblind-safe palette
   (`#0072B2 #E69F00 #009E73 #CC79A7 #56B4E9 #D55E00 #7A3E9D`). Validate any new
   categorical palette with the dataviz skill's `scripts/validate_palette.js` —
@@ -160,9 +162,13 @@ Full detail in `data/README.md`; the load-bearing ones:
 
 - **Never re-run `00_fetch_wid.py` casually** — needs Stata, takes 1–2 h. The raw
   WID pull is a committed cache (`data/raw/wid/`, refreshed 2026-08-11).
-- Everything builds on `data/processed/pip_wid_harmonized_2023.csv`.
-- **Every MLD decomposition goes through `data/scripts/mld.py`**, weighting
-  countries by WID demography matched to the series' basis. Never hand-roll one.
+- The deck's figures build on the ETL's `harmonized_income_distributions` (cached in
+  `data/raw/etl/`, see `data/README.md`); the local pipeline's
+  `data/processed/pip_wid_harmonized_2023.csv` is the reference implementation.
+- **Every MLD decomposition goes through `data/scripts/mld.py`** (or the ETL's
+  equivalent), weighting countries by one demographic yardstick matched to the
+  series' basis — WID's in the local pipeline, OWID population / UN WPP adults in
+  the ETL. Never hand-roll one.
 - Derived-series definitions live once, in their own module: `topadj.py`,
   `rescale.py`, `consinc.py`; the seven displayed scenarios in `scenarios.py`.
 - Zeros are retained in the harmonized file — each analysis script must state its

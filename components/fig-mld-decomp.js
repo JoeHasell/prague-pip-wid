@@ -125,7 +125,7 @@ Deck.registerComponent('fig-mld-decomp', (el, props, ctx) => {
         outSvg += `<text x="${MLDX}" y="${y + 4}" class="fmd-mldc" fill="${MLDC_C}">${c.within_mld.toFixed(2)}</text>`;
       });
 
-      // Annotated example gaps on the LAST row (Nigeria): x = P10 dot
+      // Annotated example gaps on the LAST row: x = P10 dot
       const nga = s.countries[s.countries.length - 1];
       const y = rowY(s.countries.length - 1) + 20;
       const xP10 = X(nga.deciles['p10p11']), xMean = X(nga.mean), xMu = X(s.mu);
@@ -136,8 +136,18 @@ Deck.registerComponent('fig-mld-decomp', (el, props, ctx) => {
       outSvg += arrow(xMean, xMu, BETWEEN_C, 'fmd-ab');
       const gapW = Math.log(nga.mean / nga.deciles['p10p11']);
       const gapB = Math.log(s.mu / nga.mean);
-      outSvg += `<text x="${(xP10 + xMean) / 2}" y="${y + 16}" text-anchor="middle" class="fmd-gaplab" fill="#4d729b">within gap ln(&mu;<tspan baseline-shift="sub" font-size="9">c</tspan>/x) = ${gapW.toFixed(1)}</text>`;
-      outSvg += `<text x="${(xMean + xMu) / 2}" y="${y + 16}" text-anchor="middle" class="fmd-gaplab" fill="${BETWEEN_C}">between gap ln(&mu;/&mu;<tspan baseline-shift="sub" font-size="9">c</tspan>) = ${gapB.toFixed(1)}</text>`;
+      // The two arrows are adjacent segments, so their centred labels collide
+      // whenever either segment is short. Keep them on one line when they fit
+      // and stack the second one otherwise; clamp both inside the plot.
+      const CW = 5.7;   // approx char width, italic 12px
+      const wGap = `within gap ln(mc/x) = ${gapW.toFixed(1)}`.length * CW;
+      const bGap = `between gap ln(m/mc) = ${gapB.toFixed(1)}`.length * CW;
+      const clampLab = (cx, w) => Math.min(Math.max(cx, X0 + w / 2), X1 - w / 2);
+      const cxW = clampLab((xP10 + xMean) / 2, wGap);
+      const cxB = clampLab((xMean + xMu) / 2, bGap);
+      const stack = Math.abs(cxW - cxB) < (wGap + bGap) / 2 + 6;
+      outSvg += `<text x="${cxW.toFixed(1)}" y="${y + 16}" text-anchor="middle" class="fmd-gaplab" fill="#4d729b">within gap ln(&mu;<tspan baseline-shift="sub" font-size="9">c</tspan>/x) = ${gapW.toFixed(1)}</text>`;
+      outSvg += `<text x="${cxB.toFixed(1)}" y="${y + (stack ? 31 : 16)}" text-anchor="middle" class="fmd-gaplab" fill="${BETWEEN_C}">between gap ln(&mu;/&mu;<tspan baseline-shift="sub" font-size="9">c</tspan>) = ${gapB.toFixed(1)}</text>`;
 
       // Mini stacked bar: the population-weighted average of all those gaps
       const yBase = p.bot - 26;
