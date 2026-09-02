@@ -3,7 +3,7 @@
 > Handoff notes for a future session. Read [`CLAUDE.md`](CLAUDE.md) first (how to
 > work in this repo), then this file, then `README.md` for the framework mechanics
 > and `data/README.md` for the pipeline. Last updated: 2026-09-02 (migrated from
-> Claude Cowork to Claude Code).
+> Claude Cowork to Claude Code; slide inventory and git protocol refreshed).
 
 ## 1. What this is
 
@@ -47,25 +47,28 @@ scaled to the window.
 
 ## 3. How we work together (OPERATIONAL PROTOCOL — important for a fresh session)
 
-**This project moved from Claude Cowork to Claude Code on 2026-09-02, and works
-LOCAL-FIRST.** The Cowork-era protocol (the `mcp__remote-devices__*` file bridge,
-staging into `/mnt/user-data/uploads`, `device_commit_files` with
-`expectedMtimeMs`, and the hard rule "the assistant must never run git") is
-**obsolete**. [`CLAUDE.md`](CLAUDE.md) holds the current rules; the essentials:
+**This project moved from Claude Cowork to Claude Code on 2026-09-02, and every
+session runs LOCALLY on Joe's Mac.** The Cowork-era protocol (the
+`mcp__remote-devices__*` file bridge, staging into `/mnt/user-data/uploads`,
+`device_commit_files` with `expectedMtimeMs`, and the hard rule "the assistant
+must never run git") is **obsolete**. [`CLAUDE.md`](CLAUDE.md) holds the current
+rules; the essentials:
 
-- **Default to a LOCAL session** — in the desktop app's **Code** tab, Environment
-  = **Local**, project folder `~/Documents/Claude/Projects/prague-pip-wid`. Claude
-  then reads and writes Joe's actual working copy, exactly as Cowork did, and can
-  run `git`. Joe never touches the command line: **Claude does the git work**,
-  including committing Joe's own browser edits ("I made changes in the browser —
-  push them" is a request Claude can simply carry out).
-- **A CLOUD session is an isolated VM with a fresh clone and no access to Joe's
-  Mac.** His browser edits are unreachable from there — he'd have to push them
-  from GitHub Desktop first. Reserve cloud sessions for long autonomous jobs he
-  wants running with the laptop shut. `$CLAUDE_CODE_REMOTE=true` marks one.
-- **Stata is only on the Mac**, so `00_fetch_wid.py` can *only* run in a local
-  session — the one pipeline step a cloud session can never do.
-- **The two-writer trap that survives both:** the `?edit` editor holds the whole
+- **Sessions are LOCAL** — in the desktop app's **Code** tab, Environment =
+  **Local**, project folder `~/Documents/Claude/Projects/prague-pip-wid`. Claude
+  reads and writes Joe's actual working copy, exactly as Cowork did.
+- **Git: work on `main`; Claude edits, Joe commits and pushes** from **GitHub
+  Desktop** (his credentials live there). Claude leaves its work uncommitted for
+  Joe to review, uses read-only `git` freely to orient, and doesn't commit, push
+  or branch unless asked. Full rules in [`CLAUDE.md`](CLAUDE.md).
+- **Cloud sessions are not used here** (decided 2026-09-02). A cloud container
+  can't reach the Mac, so it can't see Joe's browser edits, and Stata — hence
+  `00_fetch_wid.py` — exists only on the Mac. A SessionStart hook that set up
+  cloud containers was added on 2026-09-02 and **removed the same day**: there is
+  no `.claude/` directory, and these docs deliberately no longer branch on
+  local-vs-cloud. Don't reintroduce either.
+- **Stata is only on the Mac**, so `00_fetch_wid.py` can only run here.
+- **The two-writer trap:** the `?edit` editor holds the whole
   deck in the tab and writes the *whole file* on Save, so if Claude edits
   `slides.json` while an older tab is open, Joe's next Save silently reverts it —
   no conflict, no warning. **After Claude touches `slides.json`, Joe reloads the
@@ -80,57 +83,85 @@ staging into `/mnt/user-data/uploads`, `device_commit_files` with
 - **When Claude adds a NEW file** (e.g. anything under `content/images/`), say so
   explicitly in the reply — a missing image breaks the slide for everyone else.
 
-## 4. Current state of the deck (as of this handoff)
+## 4. Current state of the deck (as of 2026-09-02)
 
-**38 slides**, in four groups:
+**56 slides in three groups**, all in the one `slides.json`. Group A is the live
+work; B and C are older material kept in the same file.
 
-- **1–4 — a short (15 min) cut** of the talk, drafted separately: title, OWID's
-  role, "the two main sources give opposite answers", summary.
-- **5–28 — the full (60 min) talk in progress**, organised Q1 → Q2 → Q3.
-- **29–30 — literature review / reading list** (working notes).
-- **31–38 — original template demo slides** ("How to edit", the three `demo-*`
-  components). Leftover; safe to delete when Joe says so.
+- **A. 1–22 — the SHORT (15 min) talk, actively being drafted.** Narrowed to Q2
+  alone: the two sources' opposite answers, the MLD, why surveys and DINA
+  disagree, the bridging chain, and the survey/national-accounts income gap.
+- **B. 23–48 — the FULL (60 min) talk**, the earlier and broader draft: Q1 → Q2
+  → Q3, then a reading list.
+- **C. 49–56 — original template demo slides** ("How to edit…", the three
+  `demo-*` components). Leftover; safe to delete when Joe says so.
+
+**Figures are shared between A and B** — e.g. `fig-raw-comparison` appears in
+both — so editing a figure script or component changes both talks. Check where
+else a figure is used before adjusting it for one slide.
+
+### A. The short (15 min) talk — 1–22
 
 | # | id | what it is |
 |---|----|-----------|
-| 1 | slide-title-short | Short-cut title: "Where does global inequality lie: between or within countries?" [DRAFT] |
-| 2 | slide-owid-role | Goals / role of Our World in Data |
-| 3 | slide-two-sides | "The two main sources give opposite answers" |
-| 4 | slide-short-summary | Summary of the short cut |
-| 5 | slide-title-full | Full-talk title (60 min) [DRAFT] |
-| 6 | slide-title | Earlier title slide (same heading; superseded by 5) |
-| 7 | slide-rmm9en | Overview (bulleted, incl. nested bullets) |
-| 8 | slide-52qg9a | "Three basic questions" — `deck-table small` comparing PIP / WID headlines / triangulated across Q1–Q3 + income concept, sources, measure, strengths, weaknesses |
-| 9 | slide-scatter-gw | **Q1** scatter: PIP Gini (x) vs WID **pre-tax** Gini (y), ~2019, colour by WB region, 45° line. `gini-pip-wid-scatter {}` |
-| 10 | slide-scatter-gw-post | Same scatter, WID **post-tax** national income — `{measure:"posttax"}`. Flick 9↔10 to see the cloud drop toward the diagonal |
-| 11 | slide-scatter-gw-reg | Post-tax scatter, **register-income countries highlighted** — `{measure:"posttax", highlightGroup:"register"}`. (1 annotation) |
-| 12 | slide-riurji | **Two-panel** 1993-vs-2019 scatter (PIP left, WID right), 45°=no change; metric radio. `ineq-trend-scatter {metrics:["gini","top10","palma","top1"]}` |
-| 13 | slide-qs05wh | **Change-vs-change**: Δ PIP (x) vs Δ WID (y); metric + abs/rel radios. `ineq-change-scatter {}` |
-| 14–16 | slide-2bc0nk, slide-ckgbyw, slide-m37q6c | **Hand-drawn sketch slides** (24 / 27 / 27 pen-line-text annotations) Joe made with the draw tool |
-| 17 | slide-yp4gbg | **Q2** section opener: "Which is bigger — between or within countries?" (includes the two reference images in `content/images/`) |
-| 18 | slide-q2rawcmp | Raw WID-vs-PIP comparison, 3 countries: P10/P90/mean lollipops + between/within MLD bars. `fig-raw-comparison {title:""}` |
-| 19 | slide-q2mldex | Anatomy of the MLD decomposition. `fig-mld-decomp {}` |
-| 20 | slide-q2bridge | Bridging steps, 3-country sample — `fig-raw-comparison` with an explicit `sources` list |
-| 21 | slide-q2consinc | Consumption→income mapping explainer (per-country fits). `fig-consinc-explainer {}` |
-| 22 | slide-q2topadjex | Top-adjusted PIP series explainer. `fig-topadj-explainer {}` |
-| 23 | slide-q2bridgeall | Bridging steps over the **full 211-country sample** — `fig-raw-comparison {dataUrl:"data/figures/fig_bridging_all.json", ...}` (bars-only mode) |
-| 24 | slide-r2fdmx | **Q3** section opener: "Who are the richest 1% in the world?" |
-| 25 | slide-q3thresh | Entry income for the global top 10% / 1% / 0.1% across the seven scenarios. `fig-top-thresholds {title:""}` |
-| 26 | slide-q3treepip | Treemap of the global top 1%, **PIP** — `fig-top1-treemap {source:"PIP"}` |
-| 27 | slide-q3treewid | Same treemap, **WID post-tax per capita** — `{source:"WID_posttax_per_capita"}` |
-| 28 | slide-ct1u0k | Q3 wrap-up text |
-| 29–30 | slide-tjof1k, slide-3382ld | Literature review / reading list |
-| 31–38 | slide-ers737, slide-model, slide-chart, slide-1kotk6, slide-table, slide-row, slide-editing, slide-publish | **Original template demo slides** — placeholder, remove when ready |
+| 1 | slide-title-short | Title (`layout:title`): "Where does global inequality lie: between or within countries?" [DRAFT] — Hasell, Arriagada, Rohenkohl |
+| 2–3 | slide-owid-role, slide-g61p1r | About OWID — its role, and the case that better *presentation* of inequality data could unlock public value |
+| 4 | slide-two-sides | "The two main sources give opposite answers": WID 32% between-country (Chancel & Piketty 2021) vs World Bank 65% (2013). Uses both images in `content/images/` |
+| 5 | slide-4ovt9k | Mean Log Deviation — why the literature uses it (decomposability) and the normative choice that hides |
+| 6–7 | slide-f85v2c, slide-vk8p9y | "Why do survey data and DINA disagree?" — measurement vs concept. 7 duplicates 6 and adds 2 annotations |
+| 8 | slide-16foo7 | "'Survey income' is the more relevant concept here" (Anand & Segal; contra Sala-i-Martin) |
+| 9 | slide-s64zud | "Bridging" — can we keep the survey income concept while addressing its accuracy? |
+| 10 | slide-xdr0fh | Raw WID-vs-PIP comparison, 3 countries: P10/P90/mean lollipops + between/within MLD bars. `fig-raw-comparison {title:""}` |
+| 11–15 | slide-bridge-step1 … slide-bridge-step5 | **Progressive reveal** of the bridging chain over the same 3-country figure — each slide adds one series through the `reveal` prop (pre-tax/adult + PIP → +pre-tax/capita → +post-tax → +rescaled → +top-adjusted & consinc) |
+| 16–17 | slide-bridging-all-nomid, slide-2ewkz8 | The same chain for **all countries** (`dataUrl: data/figures/fig_bridging_all.json`); 16 reveals a subset, 17 shows every series |
+| 18 | slide-epyx2y | "How does survey/NA ratio vary with income?" — Deaton, early Milanovic, Concept-2 inequality |
+| 19–20 | slide-means-share-plain, slide-means-share | Survey mean as a **share of WID national income**, 2023, Venezuela hidden. 19 is stripped back (`bubbles:false`, unweighted fit only); 20 adds population bubbles and both fits. `fig-means-scatter` |
+| 21 | slide-m203r4 | The 3-country bridging figure again, all series shown (same props as 38) |
+| 22 | slide-means-share-1990 | The same share chart for **1990**, the start of the PIP record |
 
-24 of the 38 slides carry speaker `notes` (the **N** key).
+### B. The full (60 min) talk — 23–48
 
-`meta.title` is still the template default ("Deck framework — demo") — editorial
-TODO to rename.
+| # | id | what it is |
+|---|----|-----------|
+| 23 | slide-title-full | Full-talk title (`layout:title`): "What do we know about global income inequality?" [DRAFT] |
+| 24 | slide-title | Earlier title slide, same heading — superseded by 23 |
+| 25 | slide-rmm9en | Overview: the three questions and the two sources |
+| 26 | slide-52qg9a | "Three basic questions" — a `deck-table small` comparing PIP / WID headlines / triangulated across Q1–Q3 plus income concept, sources, measure, strengths, weaknesses. **Q3 row still has `??` cells** |
+| 27 | slide-scatter-gw | **Q1** scatter: PIP Gini (x) vs WID pre-tax Gini (y), ~2019, colour by WB region, 45° line — "inequality is a lot higher in WID". `gini-pip-wid-scatter {}` |
+| 28 | slide-scatter-gw-post | Same scatter, WID **post-tax** — `{measure:"posttax"}`. Flick 27↔28 to watch the cloud drop toward the diagonal |
+| 29 | slide-scatter-gw-reg | Post-tax with **register-income countries highlighted** — `{measure:"posttax", highlightGroup:"register"}` (1 annotation) |
+| 30 | slide-riurji | **Two-panel** 1993-vs-2019 scatter (PIP left, WID right), 45°=no change; metric radio. `ineq-trend-scatter {metrics:["gini","top10","palma","top1"]}` |
+| 31 | slide-qs05wh | **Change-vs-change**: Δ PIP (x) vs Δ WID (y); metric + abs/rel radios. `ineq-change-scatter {}` |
+| 32–34 | slide-2bc0nk, slide-ckgbyw, slide-m37q6c | **Hand-drawn sketch slides** (24 / 27 / 27 pen-line-text annotations) on varying the reference year |
+| 35 | slide-yp4gbg | **Q2** section opener |
+| 36 | slide-q2rawcmp | Raw 3-country comparison (same figure as 10) |
+| 37 | slide-q2mldex | Anatomy of the MLD decomposition. `fig-mld-decomp {}` |
+| 38 | slide-q2bridge | 3-country bridging chain, all series (same as 21) |
+| 39 | slide-q2consinc | Consumption→income mapping explainer, per-country fits. `fig-consinc-explainer {}` |
+| 40 | slide-q2topadjex | Top-adjusted PIP series explainer (kept below P95, replaced above). `fig-topadj-explainer {}` |
+| 41 | slide-q2bridgeall | All-country bridging chain (same as 17) |
+| 42 | slide-r2fdmx | **Q3** section opener: "Who are the richest 1% in the world?" |
+| 43 | slide-q3thresh | Top-1% income thresholds by source. `fig-top-thresholds {title:""}` |
+| 44–45 | slide-q3treepip, slide-q3treewid | Treemaps of who the global top 1% are — PIP vs WID post-tax per capita. `fig-top1-treemap {source:…}` |
+| 46 | slide-ct1u0k | Q3 placeholder — still template text |
+| 47–48 | slide-tjof1k, slide-3382ld | Literature review / reading list (47 is an empty stub; 48 has the actual list) |
+
+### C. Template demo slides — 49–56
+
+`slide-ers737`, `slide-model`, `slide-chart`, `slide-1kotk6`, `slide-table`,
+`slide-row`, `slide-editing`, `slide-publish`. The "How to edit…" walkthrough
+that shipped with the framework, plus the only slides using the three `demo-*`
+components (51 line chart, 53 sortable table, 54 row + scrubber).
 
 ## 5. Components built
 
 Registered in `components/manifest.json`: `gini-pip-wid-scatter.js`,
-`ineq-trend.js`, the six `fig-*.js` figure components, plus the three `demo-*.js`.
+`ineq-trend.js`, the **seven** `fig-*.js` figure components, plus the three
+`demo-*.js`. Newest: **`fig-means-scatter.js`** (added 2026-08-27, slides 19/20/22)
+— survey mean vs WID national-income mean, one dot per country, with
+`mode` (`levels`/`ratio`/`share`), `year` (`2023`/`1990`), `hide`, `yDomain`,
+`bubbles` and `fits` props. `fig-raw-comparison.js` also gained a **`reveal`**
+prop for building a figure up across consecutive slides (short talk, 11–17).
 
 Two generations, and the difference matters:
 
@@ -149,7 +180,7 @@ agree" line, hover tooltips. **58 countries** embedded in the file as
 `[{c, p (pip gini), wPre (wid pretax), wPost (wid posttax), r (region), y (year)}]`.
 Props (all optional):
 - `measure`: `"pretax"` (default) or `"posttax"` — which WID series on Y. Axes are
-  identical for both so slides 9/10 flick cleanly.
+  identical for both so slides 27/28 flick cleanly.
 - `highlight`: array of country names to keep in colour (others faded); or
   `highlightGroup:"register"` for the built-in register list.
 - `title`, `yLabel`, `source`, `min`, `max` (axis domain, default 0.2–0.8), `data`.
@@ -158,12 +189,12 @@ Props (all optional):
 Embedded data: **115 countries**, `[{c, r (WB region), <metric>_<pip|wid><93|19>}]`
 where metric ∈ {`gini`, `top10`, `palma`, `top1`}. Note **`top1` (top-1% share)
 exists for WID only** (all `top1_pip*` are null) — PIP has no top-1% series.
-- **`ineq-trend-scatter`** (slide 12): two panels (PIP left, WID right), each a
+- **`ineq-trend-scatter`** (slide 30): two panels (PIP left, WID right), each a
   scatter of a country's inequality in **1993 (x) vs 2019 (y)**; 45°=no change.
-  Prop `metrics` (default `["gini","top10","palma"]`; slide 12 adds `"top1"`),
+  Prop `metrics` (default `["gini","top10","palma"]`; slide 30 adds `"top1"`),
   `metric` (default first). Uses **max coverage per source** (97 PIP / 90 WID for
   Gini/Top10/Palma; 0 PIP / 90 WID for Top1 → PIP panel intentionally blank).
-- **`ineq-change-scatter`** (slide 13): one scatter, **Δ PIP (x) vs Δ WID (y)** with
+- **`ineq-change-scatter`** (slide 31): one scatter, **Δ PIP (x) vs Δ WID (y)** with
   zero quadrant lines + 45° agreement line. Props `metrics`, `metric`, `mode`
   (`"abs"` default | `"rel"`). Uses the **72-country intersection** (both sources,
   both years). `abs` = 2019−1993 in metric units; `rel` = (2019−1993)/1993 ×100%.
@@ -196,7 +227,7 @@ Columns follow the pattern:
   set). Top-1%: 90 WID, 0 PIP.
 - Slides 9–11 use the **~2019** point where both sources exist → **58 countries**.
 
-**Post-tax WID** (slides 10/11, `posttax`): the comparison dataset only has pre-tax
+**Post-tax WID** (slides 28/29, `posttax`): the comparison dataset only has pre-tax
 WID, so post-tax comes from the main WID dataset:
 ```
 grapher/wid/2026-06-18/world_inequality_database/inequality
@@ -204,7 +235,7 @@ grapher/wid/2026-06-18/world_inequality_database/inequality
   gini__welfare_type_after_tax__extrapolated_yes    # = POST-TAX national income (used for `posttax`)
   gini__welfare_type_after_tax_disposable__...       # alt: post-tax DISPOSABLE income (not yet used; offered as a future option)
 ```
-So slides 9→10 differ *only* in tax treatment (national income, per adult, same
+So slides 27→28 differ *only* in tax treatment (national income, per adult, same
 countries/years). Post-tax narrows the mean WID−PIP gap from ≈0.18 to ≈0.12.
 
 **Regions:** World Bank PIP `region_name` from
@@ -261,49 +292,38 @@ Freehand sketches store many points, so heavy drawing inflates `slides.json`
 
 ## 9. Environment & verification recipes
 
-Full environment tables in `CLAUDE.md`. The recipes below work in both a local
-and a cloud session; the differences are called out.
+Full detail in `CLAUDE.md`. Everything runs on Joe's Mac.
 
-- **Local session (Joe's Mac):** the Python and Node are his, not a clean
-  container — check before assuming a package is present, and prefer
-  `pip install -r data/requirements.txt` over ad-hoc installs. The SessionStart
-  hook deliberately does **not** run here. **Stata lives here**, so this is the
-  only place `00_fetch_wid.py` can run (still ~1–2 h; don't run it casually).
+- **It's his machine, not a clean container:** **Python 3.9.7**, **Node v16.9.1**
+  (checked 2026-09-02) — write pipeline scripts for Python 3.9. pandas and pyarrow
+  are installed; check before assuming anything else is, prefer
+  `pip install -r data/requirements.txt` over ad-hoc installs, and don't install
+  things without asking. **Stata lives here**, so this is the only place
+  `00_fetch_wid.py` can run (still ~1–2 h; don't run it casually).
   If `:4173` already answers, that's Joe's dev server — use it, don't kill it.
-- **Cloud session:** a **SessionStart hook does the setup**
-  (`.claude/hooks/session-start.sh`, registered in `.claude/settings.json`,
-  guarded on `$CLAUDE_CODE_REMOTE`). It installs pandas + pyarrow from
-  `data/requirements.txt` and playwright into `~/.deck-tools` — outside the repo,
-  reachable via the `$NODE_PATH` it exports, so the deck stays a zero-dependency
-  project. ~19 s cold, ~0.4 s warm, and the container image is cached afterwards.
-  Non-fatal by design: a failed install warns and lets the session start, so a
-  network blip never blocks slides work. Verified 2026-09-02:
-  `python data/scripts/99_verify.py` → 19/19 pass.
 - The catalog fetches read parquet/feather straight off
   `catalog.ourworldindata.org` — the `owid-catalog` library is **not** needed.
-- **Headless render harness** (localhost is reachable in both):
-  ```bash
-  node dev-server.js &          # LOCAL: only if :4173 isn't already Joe's
-  # cloud: playwright is installed by the hook and on $NODE_PATH
-  # chromium.launch({ executablePath: process.env.CHROMIUM_PATH })
-  # page.goto('http://localhost:4173/#<N>'); page.screenshot(...)
-  ```
-  Read the PNG back to eyeball layout/colours — the 1280×720 stage does not
-  scroll, so overflow is invisible otherwise. Use `page.evaluate` to poke
-  `Deck.data` / dispatch events to test interactivity (radios, dropdowns, draw
-  tools); add `?edit` to test editor tools.
-  In a **cloud** session **Google Fonts is blocked by the sandbox proxy**, so
-  screenshots fall back to system fonts (a console `ERR_CONNECTION_RESET`). Not a
-  bug — Playfair/Lato load fine on Joe's Mac and on Netlify. Don't "fix" it.
+- **Render harness = the built-in browser pane** pointed at the dev server. There
+  is **no Playwright or Chromium on the Mac** (they belonged to the deleted cloud
+  hook) — don't install any; the pane needs nothing:
+  `preview_start` → `http://localhost:4173/#<N>`, `resize_window` to 1280×720 for
+  a 1:1 stage, `screenshot` (returns 800×450, faithful for layout; `zoom` for
+  detail), `javascript_tool` to poke `Deck.data` or fire events for radios /
+  dropdowns / draw tools, `?edit` in the URL for editor tools, and
+  `resize_window` preset `desktop` when done. Verified end to end 2026-09-02.
+  Actually look at the image: the 1280×720 stage does not scroll, so overflow is
+  invisible otherwise. Playfair/Lato load normally here (they were blocked in the
+  old cloud sandbox).
 - **Palette validator**: dataviz skill →
   `node scripts/validate_palette.js "<hex,hex,...>" --mode light --pairs all`.
 - Always `node --check` edited JS and `JSON.parse` edited JSON before committing.
 
 ## 10. Open threads / next steps
 
-- **Q2 and Q3 are now built out** (slides 17–28: raw comparison, MLD explainer,
-  the bridging chain, consumption→income and top-adjustment explainers, top-1%
-  thresholds and treemaps), each backed by a `data/scripts/1N_fig_*.py` →
+- **Q2 and Q3 are built out** (full talk, slides 36–46: raw comparison, MLD
+  explainer, the bridging chain, consumption→income and top-adjustment
+  explainers, top-1% thresholds and treemaps), each backed by a
+  `data/scripts/1N_fig_*.py` →
   `data/figures/fig_*.json` → `components/fig-*.js` chain. The data
   foundation behind them — see §12. Joe's prior research project
   (`~/Documents/GitHub/data_work/global_inequality_pip_wid`) was "re-potted":
@@ -315,28 +335,46 @@ and a cloud session; the differences are called out.
   fix and are stale). New chart components must fetch their data from
   per-figure files produced by pipeline scripts — no more hard-coded data
   arrays in component JS.
-- Editorial TODOs (Joe's call, don't do unprompted): rename `meta.title`; give
-  slides 12 & 13 distinct headings (both currently under the Q1 kicker); the
-  slide-8 table's Q3 row still has `??` cells; decide the fate of the demo slides
-  (31–38) and the `demo-*` components, and of the superseded title slide 6.
+- **DONE 2026-08-27, committed 2026-09-02 — the PPP price-base fix.** WID
+  publishes incomes in constant LCU of the *latest database year*, so converting
+  them with `xlcusp(2023)` overstated every country by its inflation relative to
+  the US over 2023–25 — ~4x for Venezuela, Sudan and Argentina, ~2x for Turkey.
+  `config.PPP_YEAR = 2025` now drives the conversion; both processed CSVs and all
+  figure JSONs were regenerated and `99_verify.py` passes 19/19. See §12.
+- **DONE 2026-08-27 — the survey-vs-national-accounts figure**
+  (`17_fig_means_scatter.py` → `fig-means-scatter.js`, slides 19/20/22), the
+  project's first two-year figure: `config.COMPARISON_YEAR = 1990` alongside
+  `TARGET_YEAR`. The rest of the pipeline stays single-year.
+- **OPEN — two reproducibility gaps in that new figure** (found 2026-09-02, Joe's
+  call whether to close them):
+  - `18_fetch_wid_means.py` is cited three times (`config.py`,
+    `17_fig_means_scatter.py`) as the producer of
+    `data/raw/wid/WID_national_income_means.csv`, but **the script doesn't
+    exist**. The raw file is committed and correct; nothing regenerates it.
+  - `01_fetch_pip.py` only ever writes `TARGET_YEAR`, so it **cannot produce**
+    the committed `pip_thousand_bins_1990.csv.gz` that `PIP_RAW_FILE_EARLY`
+    points at. ~5 lines to loop over both years.
+- Editorial TODOs (Joe's call, don't do unprompted): rename `meta.title` (still
+  the template's "Deck framework — demo"); give slides 30 & 31 distinct headings
+  (both currently under the same Q1 kicker); the slide-26 table's Q3 row still
+  has `??` cells; slides 46 and 47 are still placeholders; decide the fate of the
+  demo slides (49–56) and the `demo-*` components, and of the superseded title
+  slide 24.
 - Offered-but-not-built: post-tax **disposable** WID variant (vs national income)
-  on slides 10/11; per-region marker shapes for stronger CVD separation; an
+  on slides 28/29; per-region marker shapes for stronger CVD separation; an
   "add row / add column" control for `deck-table` in the editor.
 
 ## 11. File map
 
 ```
 CLAUDE.md               # how Claude works in this repo (read first)
-.claude/
-  settings.json         # registers the SessionStart hook
-  hooks/session-start.sh  # web-session setup: python deps + playwright
 content/slides.json     # all slide content + per-slide annotations (SINGLE SOURCE OF TRUTH)
 components/
   manifest.json         # list of component files to load
-  gini-pip-wid-scatter.js   # Q1 slides 9–11 scatter (pre/post-tax, region highlight)
-  ineq-trend.js             # Q1 slides 12–13 (trend + change scatters; two components)
-  fig-*.js                  # Q2/Q3 figures — each FETCHES data/figures/fig_*.json
-  demo-*.js                 # template demos (used only by demo slides 33/35/36)
+  gini-pip-wid-scatter.js   # Q1 slides 27–29 scatter (pre/post-tax, region highlight)
+  ineq-trend.js             # Q1 slides 30–31 (trend + change scatters; two components)
+  fig-*.js                  # Q2/Q3 + short-talk figures — each FETCHES data/figures/fig_*.json
+  demo-*.js                 # template demos (used only by demo slides 51/53/54)
 data/                   # REPRODUCIBLE DATA PIPELINE (see §12 and data/README.md)
   scripts/              # numbered pipeline steps + verification suite
   raw/                  # committed raw caches (WID API pull, PIP extract)
@@ -369,6 +407,14 @@ concepts, and six known caveats. Key facts for a fresh session:
   A planned re-fetch may add `acainc/scainc` (post-tax DISPOSABLE income —
   closer concept to PIP; note `diinc` is post-tax NATIONAL income, an
   earlier project mislabeled it as disposable).
+- **PPP conversion uses `config.PPP_YEAR` (2025), NOT `TARGET_YEAR`**
+  (fixed 2026-08-27). WID reports incomes in constant local currency of the
+  latest year in the database, so the `xlcusp` factor must come from that
+  price-base year; using the data year overstated high-inflation countries
+  several-fold. `fetch_ppp.do` fetches both years and `02_process_wid.py`
+  selects `PPP_YEAR`. **Re-check this against wid.world's "Prices and currency
+  conversions" note after any WID refresh — if the base year moves, `PPP_YEAR`
+  moves with it.** Don't "simplify" it back to `TARGET_YEAR`.
 - **Always run `python data/scripts/99_verify.py` after touching the
   pipeline** (19 checks; encodes two historical bugs: missing PPP conversion,
   wrong bin population weights).
