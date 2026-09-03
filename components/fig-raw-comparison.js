@@ -105,6 +105,21 @@ Deck.registerComponent('fig-raw-comparison', (el, props, ctx) => {
     // laid out — SOURCES still drives nG, groupX and both scales.
     const REVEAL = Array.isArray(props.reveal) ? new Set(props.reveal) : null;
     const isOn = s => !REVEAL || REVEAL.has(s);
+    // Emphasis: everything NOT listed is drawn faint. Entries are either a
+    // source name ("PIP" — the whole column, lollipops and total included) or a
+    // single bar segment ("PIP.between" / "PIP.within"). Like `reveal`, this
+    // changes only what is painted — never the layout, scales or measurement,
+    // so an emphasis slide sits on top of a build-up frame without moving.
+    const EMPH = Array.isArray(props.emphasis) && props.emphasis.length ? props.emphasis : null;
+    const DIM = ` opacity="${props.dimOpacity != null ? props.dimOpacity : 0.16}"`;
+    // is this source mentioned at all (as a column or via one of its segments)?
+    const emphHas = src => EMPH.some(e => e === src || e.indexOf(src + '.') === 0);
+    // dim attribute for one piece; `part` null means the whole column
+    const dimFor = (src, part) => {
+      if (!EMPH) return '';
+      const hit = EMPH.indexOf(src) !== -1 || (part && EMPH.indexOf(src + '.' + part) !== -1);
+      return hit ? '' : DIM;
+    };
     const countries = data.meta.countries;
     const nG = SOURCES.length;
 
@@ -195,13 +210,15 @@ Deck.registerComponent('fig-raw-comparison', (el, props, ctx) => {
         return `<circle class="frc-pt" data-k="${k}" data-v="${v}"${pinned} data-c="${d.country}" data-s="${d.source}" cx="${x}" cy="${yv}" r="5.5" fill="#fff" stroke="${c}" stroke-width="2"/>`;
       }).join('');
       return (
+        `<g${dimFor(d.source, null)}>` +
         ext +
         `<line x1="${x}" x2="${x}" y1="${y1(d.p10)}" y2="${y1(d.p90)}" stroke="${c}" stroke-width="2.5" stroke-opacity="0.75"/>` +
         `<circle class="frc-pt" data-k="P90" data-v="${d.p90}" data-c="${d.country}" data-s="${d.source}" cx="${x}" cy="${y1(d.p90)}" r="6.5" fill="${c}" stroke="#fff" stroke-width="1.5"/>` +
         `<circle class="frc-pt" data-k="P10" data-v="${d.p10}" data-c="${d.country}" data-s="${d.source}" cx="${x}" cy="${y1(d.p10)}" r="6.5" fill="${c}" stroke="#fff" stroke-width="1.5"/>` +
         `<rect class="frc-pt" data-k="Mean" data-v="${d.mean}" data-c="${d.country}" data-s="${d.source}" x="${x - 6.5}" y="${y1(d.mean) - 6.5}" width="13" height="13" transform="rotate(45 ${x} ${y1(d.mean)})" fill="#fff" stroke="${c}" stroke-width="2.5"/>` +
         `<text x="${x}" y="${r1Bot + 20}" text-anchor="middle" class="frc-country">${cLabel(d.country)}</text>` +
-        ann
+        ann +
+        '</g>'
       );
     }).join('');
 
@@ -223,7 +240,7 @@ Deck.registerComponent('fig-raw-comparison', (el, props, ctx) => {
     const groupHeads = SOURCES.map(s => {
       const [l1, l2] = (nG >= 5 ? GROUP_LABEL_SM[s] : GROUP_LABEL[s]) || [s, ''];
       const cx = groupX[s] + halfW / 2;
-      const dim = isOn(s) ? '' : ' opacity="0.3"';
+      const dim = !isOn(s) ? ' opacity="0.3"' : (EMPH && !emphHas(s) ? DIM : '');
       return `<text x="${cx}" y="${headBase - 24}" text-anchor="middle"${dim} class="frc-group${nG > 2 ? ' frc-group-sm' : ''}">${l1}</text>` +
              `<text x="${cx}" y="${headBase - 9}" text-anchor="middle"${dim} class="frc-group-sub">${l2}</text>`;
     }).join('');
@@ -285,6 +302,13 @@ Deck.registerComponent('fig-raw-comparison', (el, props, ctx) => {
                  `<text x="${cx}" y="${yMid + 11}" text-anchor="middle" class="${cls}"${fs}>(${pctv}%)</text>`;
         if (hSeg > 26)
           return `<text x="${cx}" y="${yMid + 4}" text-anchor="middle" class="${cls}"${fs}>${val.toFixed(2)} (${pctv}%)</text>`;
+        // Last chance to stay INSIDE: value + share at a smaller size. Worth a
+        // tier of its own because the alternative below prints beside the bar,
+        // where it lands on top of the neighbouring column (the PIP within
+        // segment is ~22px tall in the six-column bridging frames, and its
+        // out-of-bar label overlapped PIP cons->income).
+        if (hSeg > 17)
+          return `<text x="${cx}" y="${yMid + 3.5}" text-anchor="middle" class="${cls}" style="font-size:10.5px">${val.toFixed(2)} (${pctv}%)</text>`;
         // Out-of-bar fallback: flip to the left side near the right edge so
         // the label never runs off the chart.
         return x + barW + 100 > W - MR
@@ -294,10 +318,17 @@ Deck.registerComponent('fig-raw-comparison', (el, props, ctx) => {
       const labB = segLabel(r2Bot - hB / 2, 'frc-seglab frc-seglab-dark', 'Between', m.between, pctB, hB);
       const labW = segLabel(yT + 2 + hW / 2, 'frc-seglab', 'Within', m.within, pctW, hW);
       return (
-        `<rect class="frc-seg" data-comp="Between countries" data-v="${m.between}" data-share="${pctB}" data-s="${m.source}" x="${x}" y="${yB}" width="${barW}" height="${hB}" rx="0" fill="${BETWEEN_C}"/>` +
-        `<rect class="frc-seg" data-comp="Within countries" data-v="${m.within}" data-share="${pctW}" data-s="${m.source}" x="${x}" y="${yT}" width="${barW}" height="${hW}" rx="4" fill="${WITHIN_C}"/>` +
-        labB + labW +
-        `<text x="${cx}" y="${yT - 8}" text-anchor="middle" class="frc-total">Total MLD ${m.total.toFixed(2)}</text>`
+        `<g${dimFor(m.source, 'between')}>` +
+          `<rect class="frc-seg" data-comp="Between countries" data-v="${m.between}" data-share="${pctB}" data-s="${m.source}" x="${x}" y="${yB}" width="${barW}" height="${hB}" rx="0" fill="${BETWEEN_C}"/>` +
+          labB +
+        `</g>` +
+        `<g${dimFor(m.source, 'within')}>` +
+          `<rect class="frc-seg" data-comp="Within countries" data-v="${m.within}" data-share="${pctW}" data-s="${m.source}" x="${x}" y="${yT}" width="${barW}" height="${hW}" rx="4" fill="${WITHIN_C}"/>` +
+          labW +
+        `</g>` +
+        `<g${EMPH && !emphHas(m.source) ? DIM : ''}>` +
+          `<text x="${cx}" y="${yT - 8}" text-anchor="middle" class="frc-total">Total MLD ${m.total.toFixed(2)}</text>` +
+        `</g>`
       );
     }).join('');
 

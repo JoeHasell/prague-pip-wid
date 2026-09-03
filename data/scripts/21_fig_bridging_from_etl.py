@@ -258,6 +258,44 @@ def main():
     }
     write(out2, "fig_bridging_all.json")
 
+    # ---- Figure 3: example countries above, GLOBAL bars below --------------
+    # The pairing the rebuilt bridge sequence is built on: the lollipop row
+    # illustrates what a distribution looks like in three countries, while the
+    # bars below report the decomposition over the WHOLE common sample. The two
+    # rows therefore have DIFFERENT scopes on purpose, which the row title and
+    # the source note both spell out.
+    out3 = {
+        "meta": {
+            **meta_common,
+            "title": "Three example countries, global decomposition",
+            "countries": es.EXAMPLE_COUNTRIES,
+            "row2_title": (
+                f"Global inequality across all {n_countries} countries&rsquo; "
+                "populations combined &mdash; MLD level, decomposed"
+            ),
+            "scope_note": (
+                f"all {n_countries} countries covered by both PIP and WID "
+                "&mdash; not the three shown above, which are examples"
+            ),
+            "n_countries": n_countries,
+            "units": (
+                "international-$ PER MONTH (PIP: 2021 PPPs; WID: latest PPP vintage); "
+                "converted from daily values at 365/12"
+            ),
+            "notes": [
+                "P10/P90 are the bin averages of p10p11 / p90p91.",
+                "MIXED SCOPE, deliberately: the lollipops above are three example "
+                f"countries; the bars below are the GLOBAL decomposition over all "
+                f"{n_countries} countries, NOT those three. Contrast "
+                "fig_raw_comparison.json, where both rows are the same three countries.",
+                *NOTES_COMMON,
+            ],
+        },
+        "lollipop": lollipop_records(bins, default_year),
+        "mld": global_mld_records(dec, default_year),
+    }
+    write(out3, "fig_examples_global_mld.json")
+
     # A quick look at the default year, so a run reports its own numbers.
     print(f"\n{default_year} between-country share of global MLD:")
     for rec in out2["mld"]:
