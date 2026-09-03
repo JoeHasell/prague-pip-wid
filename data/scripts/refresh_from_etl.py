@@ -13,6 +13,11 @@ figure script, in the right order. This does both and reports what moved.
     python data/scripts/refresh_from_etl.py --staging <branch>   # while an ETL PR is open
     python data/scripts/refresh_from_etl.py --check              # report drift, change nothing
 
+The committed figures currently come from an ETL branch, not the catalog: etl_source.WID_VERSION
+is 2026-09-02, which the catalog does not carry until owid/etl#6806 merges. Until then the catalog
+modes (including --check) stop with a message naming the missing path; use
+`--staging worktree-etl-data-wid-update`.
+
 AFTER RUNNING
 -------------
 Commit both data/raw/etl/ and data/figures/. The --check mode is the useful one in
