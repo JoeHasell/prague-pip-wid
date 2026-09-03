@@ -126,11 +126,33 @@ html, body {
   max-width: 62ch;
 }
 
+/* Bullet sizing, deck-wide (set 2026-09-02 from slide 2, which Joe sized by
+   hand and liked): 32px at the top level, stepping down one notch per nested
+   level via the rule below —  32 -> 28.8 -> 25.9 -> 23.3px.
+   line-height 1.45 matches the hand-set value that look was judged on. */
 .slide ul, .slide ol {
-  font-size: 22px;
-  line-height: 1.6;
+  font-size: 32px;
+  line-height: 1.45;
   margin: 0;
   padding-left: 1.2em;
+}
+
+/* Each nested level steps down one notch. The unit is `em`, so it is relative
+   to the list it sits inside and therefore COMPOUNDS at any depth without a
+   rule per level:  22 -> 19.8 -> 17.8 -> 16.0px.
+   `padding-left` is in em too, so the indent scales with the text.
+   Tune the whole ladder with this one number.
+
+   Descendant selectors, NOT `li > ul`: the browser editor nests a list as a
+   SIBLING of the li it belongs to (`<ul><li>a</li><ul><li>b</li></ul></ul>`),
+   so the child combinator never matches. This handles both that shape and
+   properly nested `li > ul`.
+
+   NOTE: an li carrying an inline `font-size` (the editor writes these — slides
+   2, 3, 6, 7, 9) pins itself and its children to that size instead. */
+.slide ul ul, .slide ul ol,
+.slide ol ul, .slide ol ol {
+  font-size: 0.9em;
 }
 
 .slide li { margin-bottom: 0.35em; }
@@ -139,16 +161,50 @@ html, body {
 
 .slide strong { font-weight: 700; }
 
+/* ---------- slide title ----------
+   ONE title per slide, at the top, in the deck's display face. 38px sits
+   between the old kicker (15px) and the old h2 (44px), and clears the body text
+   on every slide: 22px from the stylesheet, and the hand-set 32px bullets on
+   slides 2-3. The flourishes are dropped:
+   no red rule, no uppercase, no tracking, full-strength ink rather than muted.
+   Slides that still carry an h1/h2 below this now show two titles — delete the
+   heading block, this is the title.
+
+   On layout-title slides the kicker is NOT a duplicate title: it labels the
+   talk above the h1 ("Prague short presentation (15 min)"). Those keep the
+   original small uppercase label, below. */
 .slide .kicker {
+  font-family: var(--font-display);
+  font-size: 38px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+/* 28 kickers carry an inline `letter-spacing: 0.12em` span written by the
+   browser editor back when this was an uppercase label. An inline style beats a
+   stylesheet on specificity, so this is the one place !important is the correct
+   tool rather than a shortcut. Safe to drop once those spans are stripped. */
+.slide .kicker,
+.slide .kicker * {
+  letter-spacing: normal !important;
+}
+
+/* Title slides keep the original label treatment. */
+.slide.layout-title .kicker {
   font-family: var(--font-body);
   font-size: 15px;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.12em !important;
   text-transform: uppercase;
   color: var(--muted);
+  line-height: inherit;
 }
 
-.slide .kicker::before {
+.slide.layout-title .kicker::before {
   content: "";
   display: inline-block;
   width: 26px;
