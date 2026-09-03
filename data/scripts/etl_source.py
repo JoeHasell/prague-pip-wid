@@ -228,8 +228,11 @@ INEQUALITY_COMPARISON_URL = (
 )
 # Post-tax WID Gini is not in the comparison dataset (which carries pre-tax only),
 # so it comes from the WID dataset itself.
+# Bump this with the WID version. 2026-06-18 was removed from the ETL when 2026-09-02 landed, so a
+# stale version here points at a path that is no longer maintained.
+WID_VERSION = "2026-09-02"
 WID_INEQUALITY_URL = (
-    "https://catalog.ourworldindata.org/garden/wid/2026-06-18/"
+    f"https://catalog.ourworldindata.org/garden/wid/{WID_VERSION}/"
     "world_inequality_database/inequality.parquet"
 )
 

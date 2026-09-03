@@ -24,10 +24,12 @@ and the figures do not need all of it. What they need is:
   pip_dual_percentiles                 14k rows   PIP income/consumption
                                                   percentiles for the
                                                   consumption->income explainer
-  inequality_comparison               438 rows    PIP vs WID Gini, top-10% share,
+  inequality_comparison               ~800 rows   PIP vs WID Gini, top-10% share,
                                                   Palma and (WID only) top-1%
                                                   share at the matched 1993 and
-                                                  2019 observations
+                                                  2019 observations, for WID both
+                                                  with and without its data-quality
+                                                  filter (the deck uses the former)
   wid_posttax_gini                    ~34k rows   WID post-tax Gini, the second
                                                   y-axis on the Gini scatter
   pip_observed_inequality             ~2.4k rows  PIP's published measures at the

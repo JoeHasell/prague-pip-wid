@@ -46,16 +46,24 @@ VARIANT = "All data points"
 REF_YEARS = {"1993": "93", "2019": "19"}
 SCATTER_REF_YEAR = "2019"
 
-# comparison-dataset column -> (metric, source) in the figures' own vocabulary
+# comparison-dataset column -> (metric, source) in the figures' own vocabulary.
+#
+# The WID columns are the `widExtrapolated` ones: WID's full series, without filtering on its
+# data-quality score. That matches the rest of the deck — the harmonized distributions select WID's
+# `extrapolated = "yes"` slice, and the post-tax Gini on the same scatter is the with-extrapolations
+# series — and it is the only slice with usable coverage, since WID rates only a minority of
+# country-years as directly data-backed in recent years, while PIP's lined-up panel is itself partly
+# extrapolated by the World Bank. The score-filtered `..._wid_...` columns are still published in
+# inequality_comparison if a sensitivity check on them is ever wanted.
 MEASURES = {
     "gini_pip_disposable_percapita": ("gini", "pip"),
-    "gini_wid_pretaxnational_peradult": ("gini", "wid"),
+    "gini_widextrapolated_pretaxnational_peradult": ("gini", "wid"),
     "p90p100share_pip_disposable_percapita": ("top10", "pip"),
-    "p90p100share_wid_pretaxnational_peradult": ("top10", "wid"),
+    "p90p100share_widextrapolated_pretaxnational_peradult": ("top10", "wid"),
     "palmaratio_pip_disposable_percapita": ("palma", "pip"),
-    "palmaratio_wid_pretaxnational_peradult": ("palma", "wid"),
+    "palmaratio_widextrapolated_pretaxnational_peradult": ("palma", "wid"),
     # PIP has no top-1% counterpart; the figure's PIP panel is empty by design.
-    "p99p100share_wid_pretaxnational_peradult": ("top1", "wid"),
+    "p99p100share_widextrapolated_pretaxnational_peradult": ("top1", "wid"),
 }
 
 
@@ -156,10 +164,13 @@ def gini_scatter(collapsed, posttax, regions):
                 "welfare concept and reporting level).",
                 "PIP: disposable income or consumption, per capita. WID: national income, "
                 "per adult, pre-tax and post-tax.",
+                "The WID series include the country-years WID does not rate as directly "
+                "supported by data (its full published series). Restricting to the ones it "
+                "does would cut the sample by about a third here.",
                 "`y` is the observation year; where PIP and WID matched different years it "
                 "shows both, and yPip / yWid carry them separately.",
                 "Source: garden/poverty_inequality/2025-01-22/inequality_comparison, with "
-                "post-tax Gini from garden/wid/2026-06-18/world_inequality_database.",
+                f"post-tax Gini from garden/wid/{es.WID_VERSION}/world_inequality_database.",
             ],
             "generated_by": "25_fig_scatters_from_etl.py",
             "etl_version": es.COMPARISON_VERSION,
@@ -212,6 +223,9 @@ def trend_scatter(collapsed, regions):
                 "PIP panel of a top-1% view is blank by design.",
                 "PIP: disposable income or consumption, per capita. WID: pre-tax national "
                 "income, per adult.",
+                "The WID series include the country-years WID does not rate as directly "
+                "supported by data (its full published series), which is what carries the "
+                "sample to 211 countries; PIP's lined-up panel is itself partly extrapolated.",
                 "Source: garden/poverty_inequality/2025-01-22/inequality_comparison.",
             ],
             "generated_by": "25_fig_scatters_from_etl.py",
