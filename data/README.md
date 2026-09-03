@@ -31,12 +31,26 @@
 > # Reads the public OWID catalog (owid/etl#6764 merged on 2026-09-02); no VPN needed:
 > python data/scripts/refresh_from_etl.py
 >
-> # Only while a future ETL pull request that changes these datasets is still open:
-> python data/scripts/refresh_from_etl.py --staging <owid/etl branch name>
+> # While an ETL pull request that changes these datasets is still open — and this is
+> # where the committed figures come from today (owid/etl#6806, WID 2026-09-02):
+> python data/scripts/refresh_from_etl.py --staging worktree-etl-data-wid-update
 >
 > # Change nothing, just report whether the committed figures are stale:
 > python data/scripts/refresh_from_etl.py --check
 > ```
+>
+> **All four ETL datasets the figures read follow the same three tiers** (public
+> catalog → an ETL branch's staging server → the committed cache): the two harmonized
+> datasets, plus `inequality_comparison` and the WID dataset itself. So a figure
+> refresh never has to wait for an ETL pull request to merge — point it at the branch.
+> PIP's percentiles and inequality, the thousand-bins regions and OWID's regions are
+> long published and always come from the catalog.
+>
+> **Until owid/etl#6806 merges, the catalog modes stop with an error** naming the
+> missing path: `etl_source.WID_VERSION` is `2026-09-02`, which the catalog does not
+> carry yet. That is deliberate — the alternative is a raw pyarrow error, or silently
+> refreshing from a version that no longer exists. Use `--staging` until then; after
+> the merge, `refresh_from_etl.py` with no arguments is the normal route again.
 >
 > Then **commit `data/raw/etl/` and `data/figures/` together**. `--check` rebuilds
 > into a temporary directory, restores the committed figures whatever happens, and

@@ -24,10 +24,12 @@ and the figures do not need all of it. What they need is:
   pip_dual_percentiles                 14k rows   PIP income/consumption
                                                   percentiles for the
                                                   consumption->income explainer
-  inequality_comparison               438 rows    PIP vs WID Gini, top-10% share,
+  inequality_comparison               ~800 rows   PIP vs WID Gini, top-10% share,
                                                   Palma and (WID only) top-1%
                                                   share at the matched 1993 and
-                                                  2019 observations
+                                                  2019 observations, for WID both
+                                                  with and without its data-quality
+                                                  filter (the deck uses the former)
   wid_posttax_gini                    ~34k rows   WID post-tax Gini, the second
                                                   y-axis on the Gini scatter
   pip_observed_inequality             ~2.4k rows  PIP's published measures at the
@@ -136,14 +138,18 @@ def main():
     # PIP's own percentiles (the consumption->income explainer), the cross-source
     # comparison table (the scatters), and the regions used to colour countries.
     # ------------------------------------------------------------------
-    print("\nReading the comparison dataset, PIP percentiles and regions from the OWID catalog…")
+    # PIP's percentiles and the region groupings are long published, so they always come from
+    # the catalog. The comparison and WID datasets follow the same tier as the tables above,
+    # because an open ETL pull request can change them.
+    print(f"\nReading the comparison dataset and WID from {where}, PIP percentiles and regions "
+          "from the OWID catalog…")
     dual = es.load_pip_dual_percentiles()
     print(f"  {'pip_dual_percentiles':<38} {len(dual):>7,} rows -> {es.write_cache('pip_dual_percentiles', dual).name}")
 
-    comp = es.load_inequality_comparison()
+    comp = es.load_inequality_comparison(source=source, branch=args.staging)
     print(f"  {'inequality_comparison':<38} {len(comp):>7,} rows -> {es.write_cache('inequality_comparison', comp).name}")
 
-    posttax = es.load_wid_posttax_gini()
+    posttax = es.load_wid_posttax_gini(source=source, branch=args.staging)
     print(f"  {'wid_posttax_gini':<38} {len(posttax):>7,} rows -> {es.write_cache('wid_posttax_gini', posttax).name}")
 
     regions = es.load_country_regions()
@@ -153,7 +159,7 @@ def main():
     print(f"  {'pip_observed_inequality':<38} {len(pip_obs):>7,} rows -> "
           f"{es.write_cache('pip_observed_inequality', pip_obs).name}")
 
-    wid_obs = es.load_wid_observed_inequality()
+    wid_obs = es.load_wid_observed_inequality(source=source, branch=args.staging)
     print(f"  {'wid_observed_inequality':<38} {len(wid_obs):>7,} rows -> "
           f"{es.write_cache('wid_observed_inequality', wid_obs).name}")
 

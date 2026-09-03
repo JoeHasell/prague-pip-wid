@@ -32,18 +32,25 @@ into these docs.
 
 ## Git protocol
 
-**Joe commits and pushes; Claude edits files.** The division that actually
-operates on this project (confirmed 2026-09-02):
+**Two routes. Which one applies depends on whose clone the session is in**
+(updated 2026-09-03):
 
-- **Work directly on `main`.** No feature branches, no PRs — this is a one-author
-  deck, not a shared codebase.
-- **Claude leaves its work uncommitted.** Make the edits, verify them, and stop
-  there. Joe reviews the changes in **GitHub Desktop** and commits and pushes from
-  the app — that's where his GitHub credentials live (HTTPS password auth is
-  disabled, so a command-line push fails anyway).
-- **Don't commit, push, branch, merge, rebase or rewrite history unless Joe asks
-  for that specific thing.** Committing on his behalf takes the review step away
-  from him.
+- **On Joe's Mac: Joe commits and pushes; Claude edits files.** Work directly on
+  `main`, make the edits, verify them, and stop there. Joe reviews the changes in
+  **GitHub Desktop** and commits and pushes from the app — that's where his GitHub
+  credentials live (HTTPS password auth is disabled, so a command-line push from
+  his machine fails anyway).
+- **From a collaborator's clone, branches and pull requests against this repo are
+  fine.** That is how prague-pip-wid#1 (moving the figures onto OWID's ETL) and #2
+  (the WID 2026-09-02 refresh) landed. For anything large or mechanical the PR is
+  the *better* review surface: a figure refresh rewrites every JSON under
+  `data/figures/`, which reads as an unreviewable blob in Desktop's changes list
+  but as a described change with a diff on a PR.
+- **Either way, don't commit, push, branch or open a PR unless asked.** What both
+  routes protect is that Joe sees a change before it lands — that is the thing not
+  to take away, not git itself.
+- **Never merge, rebase or rewrite history unless Joe asks for that specific
+  thing.**
 - **Read-only `git` is free and encouraged** — `status`, `log`, `diff`,
   `merge-base`, `merge-tree`, `show`. Use it to orient and to explain the repo's
   state. (The old ban on running `git` at all was a Cowork-bridge artifact: the
@@ -165,6 +172,16 @@ Full detail in `data/README.md`; the load-bearing ones:
 
 - **Never re-run `00_fetch_wid.py` casually** — needs Stata, takes 1–2 h. The raw
   WID pull is a committed cache (`data/raw/wid/`, refreshed 2026-08-11).
+- **The figures can be refreshed from an unmerged ETL branch.**
+  `refresh_from_etl.py --staging <owid/etl branch>` reads all four ETL datasets the
+  figures use from that branch's staging server instead of the public catalog, so a
+  refresh does not have to wait for an ETL pull request to merge. The committed
+  figures come from `worktree-etl-data-wid-update` (owid/etl#6806) as of
+  2026-09-03. Staging is internal-network only and is torn down when the branch
+  merges or is deleted; after a merge the catalog carries the data and a plain
+  `refresh_from_etl.py` works again. Until #6806 merges the catalog modes stop with
+  an error naming the missing path, because `etl_source.WID_VERSION` is a version
+  the catalog does not have yet.
 - The deck's figures build on the ETL's `harmonized_income_distributions` (cached in
   `data/raw/etl/`, see `data/README.md`); the local pipeline's
   `data/processed/pip_wid_harmonized_2023.csv` is the reference implementation.
