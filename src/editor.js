@@ -79,6 +79,7 @@
         <button data-tool="pen" title="Freehand pen">&#9998;</button>
         <button data-tool="line" title="Line / arrow">&#8599;</button>
         <button data-tool="text" title="Text label — click to place, then drag">T</button>
+        <button data-tool="box" title="Text box — drag on empty space to draw one, then type. With this tool (or Select) active: drag a box to move it, drag a corner to resize, double-click to edit the text. Cmd+B / Cmd+I for bold and italic.">&#9647;</button>
         <button data-act="annot-undo" title="Undo last mark on this slide">&#8630;</button>
         <button data-act="annot-clear" class="danger" title="Clear all marks on this slide">Clear</button>
       </div>
@@ -129,11 +130,13 @@
    * through Deck; here we handle the drawing/selection UX.
    * ======================================================== */
   const AN_COLORS = ['rgb(29, 61, 99)', 'rgb(206, 38, 30)', 'rgb(87, 114, 145)', 'rgb(87, 129, 69)', 'rgb(230, 159, 0)'];
-  let tool = null;                       // null | 'select' | 'pen' | 'line' | 'text'
+  let tool = null;                       // null | 'select' | 'pen' | 'line' | 'text' | 'box'
   let anStyle = { color: AN_COLORS[0], width: 3.5, size: 28, arrow: true };
   let selectedAid = null;
   let drawState = null;                  // transient pen/line drawing
   let dragState = null;                  // transient select-drag
+  let resizeState = null;                // transient box corner-drag
+  const BOX_MIN_W = 90, BOX_MIN_H = 44;  // smallest box the handles allow
   const anId = () => 'a-' + Math.random().toString(36).slice(2, 8);
 
   function activeSvg() { return document.querySelector('.slide.active .slide-annot'); }
@@ -173,7 +176,7 @@
 
   function applyToolToActiveSvg() {
     document.querySelectorAll('.slide-annot').forEach(s => {
-      s.classList.remove('tool-active', 't-pen', 't-line', 't-text', 't-select');
+      s.classList.remove('tool-active', 't-pen', 't-line', 't-text', 't-select', 't-box');
     });
     const svg = activeSvg();
     if (svg && tool) { svg.classList.add('tool-active', 't-' + tool); }
@@ -221,11 +224,11 @@
 
   function updatePalette() {
     const p = $('.annot-palette'); if (!p) return;
-    const show = tool === 'pen' || tool === 'line' || tool === 'text';
+    const show = tool === 'pen' || tool === 'line' || tool === 'text' || tool === 'box';
     p.hidden = !show;
     if (!show) return;
     p.querySelector('.ap-widths').style.display = (tool === 'pen' || tool === 'line') ? '' : 'none';
-    p.querySelector('.ap-sizes').style.display = (tool === 'text') ? '' : 'none';
+    p.querySelector('.ap-sizes').style.display = (tool === 'text' || tool === 'box') ? '' : 'none';
     p.querySelector('.ap-arrow').style.display = (tool === 'line') ? '' : 'none';
     p.querySelectorAll('.ap-sw').forEach(b => b.classList.toggle('on', b.dataset.color === anStyle.color));
     p.querySelectorAll('[data-width]').forEach(b => b.classList.toggle('on', parseFloat(b.dataset.width) === anStyle.width));
@@ -252,7 +255,12 @@
   function onAnnotDown(e) {
     if (!tool) return;
     const svg = activeSvg(); if (!svg) return;
-    if (e.target.closest('.editor-bar') || e.target.closest('.annot-palette') || e.target.closest('.annot-textedit')) return;
+    if (e.target.closest('.editor-bar') || e.target.closest('.annot-palette')
+      || e.target.closest('.annot-textedit') || e.target.closest('.annot-boxedit')) return;
+    // A click anywhere else finishes an open text edit and does nothing more.
+    // Needed because this handler calls preventDefault(), which would otherwise
+    // stop the editor losing focus — so the box would never commit.
+    if (textEdit) { commitTextEdit(); return; }
     const p = toStage(e, svg); if (!p || p.x < 0 || p.x > Deck.STAGE_W || p.y < 0 || p.y > Deck.STAGE_H) return;
     e.preventDefault();
 
@@ -266,7 +274,45 @@
       setLine(drawState.el, drawState);
     } else if (tool === 'text') {
       openTextEditor(null, r1(p.x), r1(p.y));
+    } else if (tool === 'box') {
+      // Clicking an existing box moves or resizes it, exactly as the Select
+      // tool would — so you can draw, nudge and retype without tool-switching.
+      // A new box is only drawn on empty space.
+      const oh = e.target.closest('.annot-handle');
+      if (oh) {
+        const sel = findAnnot(selectedAid);
+        if (sel && sel.type === 'box') {
+          resizeState = { corner: oh.dataset.corner, x0: sel.x, y0: sel.y, w0: sel.w, h0: sel.h };
+          return;
+        }
+      }
+      const onBox = e.target.closest('.annot-box[data-aid]');
+      if (onBox) {
+        selectedAid = onBox.dataset.aid;
+        const a = findAnnot(selectedAid);
+        if (a) { syncStyleFrom(a); updatePalette(); }
+        dragState = { last: p };
+        drawSelection();
+        return;
+      }
+      // drag out the card, like drawing a rectangle
+      drawState = { type: 'box', x1: r1(p.x), y1: r1(p.y), x2: r1(p.x), y2: r1(p.y), el: mkTemp('rect') };
+      const el = drawState.el;
+      el.setAttribute('fill', 'rgba(255,255,255,0.85)');
+      el.setAttribute('stroke', anStyle.color);
+      el.setAttribute('stroke-width', '1.5');
+      el.setAttribute('stroke-dasharray', '6 4');
+      setRect(el, drawState);
     } else if (tool === 'select') {
+      // a corner handle takes priority over the mark underneath it
+      const h = e.target.closest('.annot-handle');
+      if (h && selectedAid) {
+        const a = findAnnot(selectedAid);
+        if (a && a.type === 'box') {
+          resizeState = { corner: h.dataset.corner, x0: a.x, y0: a.y, w0: a.w, h0: a.h };
+          return;
+        }
+      }
       const hit = e.target.closest('[data-aid]');
       if (hit) {
         selectedAid = hit.dataset.aid;
@@ -279,7 +325,7 @@
   }
 
   function onAnnotMove(e) {
-    if (!drawState && !dragState) return;
+    if (!drawState && !dragState && !resizeState) return;
     const svg = activeSvg(); if (!svg) return;
     const p = toStage(e, svg); if (!p) return;
     if (drawState && drawState.type === 'pen') {
@@ -287,6 +333,11 @@
       drawState.el.setAttribute('d', Deck.penPath(drawState.pts));
     } else if (drawState && drawState.type === 'line') {
       drawState.x2 = r1(p.x); drawState.y2 = r1(p.y); setLine(drawState.el, drawState);
+    } else if (drawState && drawState.type === 'box') {
+      drawState.x2 = r1(p.x); drawState.y2 = r1(p.y); setRect(drawState.el, drawState);
+    } else if (resizeState && selectedAid) {
+      resizeBox(findAnnot(selectedAid), resizeState, p);
+      Deck.renderAnnotations(); drawSelection();
     } else if (dragState && selectedAid) {
       const dx = p.x - dragState.last.x, dy = p.y - dragState.last.y;
       translateAnnot(findAnnot(selectedAid), dx, dy);
@@ -303,15 +354,32 @@
       } else if (drawState.type === 'line' && Math.hypot(drawState.x2 - drawState.x1, drawState.y2 - drawState.y1) > 4) {
         annots().push({ id: anId(), type: 'line', x1: drawState.x1, y1: drawState.y1, x2: drawState.x2, y2: drawState.y2, arrow: anStyle.arrow, color: anStyle.color, width: anStyle.width });
         commitAnnot();
+      } else if (drawState.type === 'box') {
+        const x = Math.min(drawState.x1, drawState.x2), y = Math.min(drawState.y1, drawState.y2);
+        const w = Math.abs(drawState.x2 - drawState.x1), h = Math.abs(drawState.y2 - drawState.y1);
+        if (w > 24 && h > 20) {
+          const a = { id: anId(), type: 'box', x: r1(x), y: r1(y),
+                      w: r1(Math.max(BOX_MIN_W, w)), h: r1(Math.max(BOX_MIN_H, h)),
+                      text: '', color: anStyle.color, size: anStyle.size };
+          annots().push(a);
+          if (drawState.el && drawState.el.parentNode) drawState.el.parentNode.removeChild(drawState.el);
+          drawState = null;
+          commitAnnot();
+          openBoxEditor(a.id, true);     // type immediately, as the text tool does
+          return;
+        }
       }
       if (drawState.el && drawState.el.parentNode) drawState.el.parentNode.removeChild(drawState.el);
       drawState = null;
     }
     if (dragState) { dragState = null; markDirty(); }
+    if (resizeState) { resizeState = null; markDirty(); }
   }
 
   function onAnnotDblClick(e) {
-    if (tool !== 'select') return;
+    if (tool !== 'select' && tool !== 'box') return;
+    const bx = e.target.closest('.annot-box[data-aid]');
+    if (bx) { selectedAid = bx.dataset.aid; openBoxEditor(bx.dataset.aid, false); return; }
     const t = e.target.closest('.annot-text[data-aid]');
     if (!t) return;
     const a = findAnnot(t.dataset.aid); if (!a) return;
@@ -332,11 +400,34 @@
     if (a.type === 'text') { a.x = r1(a.x + dx); a.y = r1(a.y + dy); }
     else if (a.type === 'line') { a.x1 = r1(a.x1 + dx); a.y1 = r1(a.y1 + dy); a.x2 = r1(a.x2 + dx); a.y2 = r1(a.y2 + dy); }
     else if (a.type === 'pen') { a.pts = a.pts.map(pt => [r1(pt[0] + dx), r1(pt[1] + dy)]); }
+    else if (a.type === 'box') { a.x = r1(a.x + dx); a.y = r1(a.y + dy); }
+  }
+
+  function setRect(el, s) {
+    el.setAttribute('x', Math.min(s.x1, s.x2)); el.setAttribute('y', Math.min(s.y1, s.y2));
+    el.setAttribute('width', Math.abs(s.x2 - s.x1)); el.setAttribute('height', Math.abs(s.y2 - s.y1));
+  }
+
+  // Resize from one corner: the opposite corner stays put, and the box never
+  // goes below BOX_MIN_W/H (the text needs somewhere to wrap into).
+  function resizeBox(a, st, p) {
+    if (!a) return;
+    const right = st.x0 + st.w0, bottom = st.y0 + st.h0;
+    if (st.corner === 'se' || st.corner === 'ne') a.w = r1(Math.max(BOX_MIN_W, p.x - st.x0));
+    if (st.corner === 'sw' || st.corner === 'nw') {
+      const nx = Math.min(p.x, right - BOX_MIN_W);
+      a.x = r1(nx); a.w = r1(right - nx);
+    }
+    if (st.corner === 'se' || st.corner === 'sw') a.h = r1(Math.max(BOX_MIN_H, p.y - st.y0));
+    if (st.corner === 'ne' || st.corner === 'nw') {
+      const ny = Math.min(p.y, bottom - BOX_MIN_H);
+      a.y = r1(ny); a.h = r1(bottom - ny);
+    }
   }
   function syncStyleFrom(a) {
     if (a.color) anStyle.color = a.color;
     if (a.type !== 'text' && a.width) anStyle.width = a.width;
-    if (a.type === 'text' && a.size) anStyle.size = a.size;
+    if ((a.type === 'text' || a.type === 'box') && a.size) anStyle.size = a.size;
     if (a.type === 'line') anStyle.arrow = !!a.arrow;
   }
 
@@ -361,7 +452,8 @@
   function drawSelection() {
     const svg = activeSvg(); if (!svg) return;
     const old = svg.querySelector('.annot-selbox'); if (old) old.remove();
-    if (!selectedAid || tool !== 'select') return;
+    // shown under Select and under the Box tool (which can also move/resize)
+    if (!selectedAid || (tool !== 'select' && tool !== 'box')) return;
     const el = svg.querySelector(`[data-aid="${selectedAid}"]`); if (!el) return;
     let b; try { b = el.getBBox(); } catch (_) { return; }
     const pad = 6;
@@ -370,6 +462,20 @@
     rect.setAttribute('x', b.x - pad); rect.setAttribute('y', b.y - pad);
     rect.setAttribute('width', b.width + pad * 2); rect.setAttribute('height', b.height + pad * 2);
     svg.appendChild(rect);
+
+    // boxes also get draggable corners
+    const a = findAnnot(selectedAid);
+    if (a && a.type === 'box') {
+      [['nw', a.x, a.y], ['ne', a.x + a.w, a.y],
+       ['sw', a.x, a.y + a.h], ['se', a.x + a.w, a.y + a.h]].forEach(([corner, hx, hy]) => {
+        const hRect = document.createElementNS(Deck.SVG_NS, 'rect');
+        hRect.setAttribute('class', 'annot-handle h-' + corner);
+        hRect.dataset.corner = corner;
+        hRect.setAttribute('x', hx - 5); hRect.setAttribute('y', hy - 5);
+        hRect.setAttribute('width', 10); hRect.setAttribute('height', 10);
+        svg.appendChild(hRect);
+      });
+    }
   }
 
   /* ---- text place / edit via a positioned input ---- */
@@ -399,16 +505,23 @@
   }
   function commitTextEdit() {
     if (!textEdit) return;
-    const { input, aid, isNew } = textEdit; textEdit = null;
+    const { input, aid, isNew, rich } = textEdit; textEdit = null;
     const a = findAnnot(aid);
-    const val = input.value.trim();
+    // A rich (contenteditable) editor stores a small HTML subset; a plain input
+    // stores its text. "Empty" is judged on the visible text either way.
+    const val = rich ? Deck.sanitizeRich(input.innerHTML) : input.value.trim();
+    const visible = rich ? input.textContent.trim() : val;
     input.remove();
     if (a) {
-      if (!val) { const i = annots().findIndex(x => x.id === aid); if (i >= 0) annots().splice(i, 1); }
+      if (!visible) { const i = annots().findIndex(x => x.id === aid); if (i >= 0) annots().splice(i, 1); }
       else { a.text = val; }
     }
     Deck.renderAnnotations();
-    if (a && input.value.trim()) { selectedAid = aid; if (tool === 'text') setTool('select'); else drawSelection(); }
+    if (a && a.type === 'box' && visible) growBoxToFitText(a);
+    if (a && visible) {
+      selectedAid = aid;
+      if (tool === 'text' || tool === 'box') setTool('select'); else drawSelection();
+    }
     markDirty();
   }
   function cancelTextEdit() {
@@ -416,6 +529,67 @@
     const { input, aid, isNew } = textEdit; textEdit = null;
     if (isNew) { const i = annots().findIndex(x => x.id === aid); if (i >= 0) annots().splice(i, 1); }
     input.remove(); Deck.renderAnnotations(); markDirty();
+  }
+
+  // A foreignObject CLIPS anything past its edge, so text that no longer fits
+  // would just vanish. Grow the box instead: measure what the text actually
+  // needs and extend the height. Width is left alone — that is the thing the
+  // author chose by dragging, and it is what the wrap is based on.
+  function growBoxToFitText(a) {
+    const svg = activeSvg(); if (!svg) return;
+    const div = svg.querySelector(`[data-aid="${a.id}"] foreignObject div`);
+    if (!div) return;
+    const pad = a.pad != null ? a.pad : 14;
+    const needed = div.scrollHeight + pad * 2;
+    if (needed > a.h + 1) {
+      a.h = r1(Math.min(Deck.STAGE_H - a.y, needed));
+      Deck.renderAnnotations(); drawSelection();
+    }
+  }
+
+  /* ---- box text: a textarea laid over the box's own text area ---- */
+  function openBoxEditor(aid, isNew) {
+    commitTextEdit();
+    const svg = activeSvg(); if (!svg) return;
+    const a = findAnnot(aid); if (!a || a.type !== 'box') return;
+    const pad = a.pad != null ? a.pad : 14;
+    const tl = toScreen(a.x + pad, a.y + pad, svg);
+    const sc = tl.scale;
+    // A contenteditable div rather than a textarea: that is what makes the
+    // browser's own Cmd+B / Cmd+I work inside the box, exactly as they do in a
+    // slide's text blocks. styleWithCSS(false) makes Chrome emit <b>/<i>
+    // instead of styled spans, which is the subset sanitizeRich keeps.
+    const ta = document.createElement('div');
+    ta.className = 'annot-boxedit';
+    ta.contentEditable = 'true';
+    ta.innerHTML = Deck.sanitizeRich(a.text);
+    ta.style.left = tl.x + 'px';
+    ta.style.top = tl.y + 'px';
+    ta.style.width = Math.max(40, (a.w - pad * 2) * sc) + 'px';
+    ta.style.height = Math.max(24, (a.h - pad * 2) * sc) + 'px';
+    ta.style.fontSize = (a.size || 20) * sc + 'px';
+    ta.style.lineHeight = '1.45';
+    ta.style.color = a.color || AN_COLORS[0];
+    document.body.appendChild(ta);
+    ta.focus();
+    try { document.execCommand('styleWithCSS', false, false); } catch (_) {}
+    // caret to the end
+    const sel = window.getSelection(); const rng = document.createRange();
+    rng.selectNodeContents(ta); rng.collapse(false); sel.removeAllRanges(); sel.addRange(rng);
+    textEdit = { input: ta, aid: a.id, isNew: !!isNew, rich: true };
+    // hide only the text, so the card stays visible behind the textarea
+    const g = svg.querySelector(`[data-aid="${a.id}"]`);
+    const fo = g && g.querySelector('foreignObject');
+    if (fo) fo.style.opacity = '0';
+    ta.addEventListener('keydown', (ev) => {
+      // Enter makes a new line here (a box is multi-line); commit with
+      // Cmd/Ctrl+Enter, or by clicking away. Cmd+B / Cmd+I are left to the
+      // browser, which is the whole point of using contenteditable.
+      if (ev.key === 'Escape') { ev.preventDefault(); cancelTextEdit(); }
+      else if (ev.key === 'Enter' && (ev.metaKey || ev.ctrlKey)) { ev.preventDefault(); commitTextEdit(); }
+      else if (ev.key === 'Enter') { ev.preventDefault(); document.execCommand('insertLineBreak'); }
+    });
+    ta.addEventListener('blur', commitTextEdit);
   }
 
   /* ----------------------------------------------------------

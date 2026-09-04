@@ -238,6 +238,7 @@ html, body {
 
 .block-component[style*="height"] { flex: 0 0 auto; }
 
+
 .component-pending,
 .component-missing {
   position: absolute;
@@ -431,4 +432,23 @@ html, body {
 
 @media (prefers-reduced-motion: reduce) {
   .progress-fill { transition: none; }
+}
+
+/* ---------- annotation text box (type: "box") ----------
+   A card drawn on top of any slide: SVG rect for the frame, HTML text inside a
+   foreignObject so it wraps to the box width. Styled to match the hand-built
+   overlay cards on the quote / statement slides. */
+.slide-annot .annot-box-bg {
+  fill: rgba(255, 255, 255, 0.97);
+  stroke: var(--line);
+  stroke-width: 1;
+}
+
+.slide-annot .annot-box-text {
+  font-family: var(--font-body);
+  line-height: 1.45;
+  white-space: pre-wrap;      /* honour typed newlines AND wrap long lines */
+  overflow-wrap: break-word;
+  height: 100%;
+  margin: 0;
 }

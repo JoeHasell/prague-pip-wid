@@ -11,7 +11,7 @@
         {
           "id": "b-ts2",
           "type": "html",
-          "html": "<h1>Where does global inequality lie: <i>between</i> or <i>within</i> countries?</h1>"
+          "html": "<h1>Reconciling opposing decompositions of global inequality</h1>"
         },
         {
           "id": "b-ts3",
@@ -39,24 +39,24 @@
         {
           "id": "b-owid-body",
           "type": "html",
-          "html": "<div style=\"max-width:1040px;\"><div><span style=\"font-size: 32px;\"><br></span></div><ul style=\"line-height: 1.45; margin: 0px; padding-left: 30px;\"><li>Goal: Making data and research more accessible and understandable</li><ul style=\"\"><li><span style=\"font-size: 32px;\">Present </span><i style=\"font-size: 32px;\">existing</i><span style=\"font-size: 32px;\"> research in new ways</span></li><li><span style=\"font-size: 32px;\">Not doing methodologically innovative research ourselves</span></li><li><span style=\"font-size: 32px;\">Occasionally, some rough-and-ready modelling&nbsp;</span></li><ul style=\"font-size: 32px;\"><li><span style=\"font-size: 0.9em;\">Extend well-established methods to new cases</span></li><li><span style=\"font-size: 0.9em;\">E.g., simple demographic models, historical income distributions</span></li></ul></ul></ul></div>"
+          "html": "<div style=\"max-width:1040px;\"><div><span style=\"font-size: 32px;\"><br></span></div><ul style=\"line-height: 1.45; margin: 0px; padding-left: 30px;\"><li>Goal: Making data and research more accessible and understandable</li><li>Communicating existing data and research</li><ul><li>Data visualization</li><li>Explaining and combining existing research in new ways&nbsp;</li></ul><li>(Occasionally) Our own modeling/analysis</li><ul style=\"\"><ul style=\"\"><li style=\"font-size: 32px;\"><span style=\"font-size: 28.8px;\">Extending established methodologies to cover important gaps</span></li><li style=\"font-size: 32px;\"><span style=\"font-size: 0.9em;\">E.g., demographic models, historical income distributions</span></li></ul></ul></ul></div>"
         }
       ]
     },
     {
-      "id": "slide-g61p1r",
+      "id": "slide-baz6de",
       "layout": "default",
       "notes": "Expectation-setting slide, placed before the problem setup.\n\nSays up front what the talk is not, so the contribution claim is honest: the value is in re-presenting existing work clearly, not in new data or new method.\n\n(Notes to fill in — Joe's framing.)",
       "blocks": [
         {
-          "id": "b-e9z0yp",
+          "id": "b-1xnkdp",
           "type": "html",
-          "html": "<p class=\"kicker\">Getting more public value from global inequality datasets</p>"
+          "html": "<p class=\"kicker\">How to communicate the research on global income inequality?</p>"
         },
         {
-          "id": "b-nmjwtn",
+          "id": "b-gp6z5a",
           "type": "html",
-          "html": "<div style=\"max-width:1040px;\"><div><ul style=\"line-height: 1.45; padding-left: 30px;\"><li style=\"margin-bottom: 14px; font-size: 32px;\">Huge improvements in the available data</li><ul><li style=\"margin-bottom: 14px; font-size: 32px;\">Coverage, accessibility, comparability</li></ul></ul></div><div><span style=\"font-size: 32px;\"><br></span></div><ul style=\"line-height: 1.45; margin: 0px; padding-left: 30px;\"><li style=\"font-size: 32px; margin-bottom: 14px;\">Bewildering terrain for anyone other than real specialists&nbsp;</li><ul><li style=\"font-size: 32px; margin-bottom: 14px;\">Different sources, metrics, definitions.&nbsp;</li><li style=\"font-size: 32px; margin-bottom: 14px;\">Hefty assumptions/caveats buried in technical notes</li><li style=\"font-size: 32px; margin-bottom: 14px;\">Qs about <i>accuracy</i> mixed up with normative Qs about <i>concepts</i></li><li style=\"font-size: 32px; margin-bottom: 14px;\">Incommensurable \"worlds\" of measurement (Survey \"vs\" DINA/top incomes)</li></ul></ul></div>"
+          "html": "<div style=\"max-width:1040px;\"><ul style=\"\"><li>Two key <i>global</i> datasets:</li><ul><li>World Bank's Poverty and Inequality Platform</li><ul><li>Survey data</li><li>Mix of consumption / after-tax income data</li><li>Drawback: missing top incomes</li></ul><li><span style=\"font-size: 25.92px;\">World Inequality Database</span></li><ul><li><span style=\"font-size: 25.92px;\">DINA (tax, NA and survey data)</span></li><li><span style=\"font-size: 25.92px;\">Pre- and post-tax <i>national</i> income</span></li><li><span style=\"font-size: 25.92px;\">Drawback: Extensively modeled; NA concepts less relevant to welfare</span></li></ul></ul><li>Conflicting takeaways about global inequality</li></ul></div>"
         }
       ]
     },
@@ -68,12 +68,29 @@
         {
           "id": "b-2s-k",
           "type": "html",
-          "html": "<p class=\"kicker\">Two opposing decompositions of global inequality</p>"
+          "html": "<p class=\"kicker\">Example: Two opposing decompositions of global inequality</p>"
         },
         {
           "id": "b-2s-fig",
           "type": "html",
           "html": "<div style=\"display:flex; gap:36px; width:100%; margin-top:4px; align-items:flex-start;\"><div style=\"flex:165 1 0; min-width:0; display:flex; flex-direction:column;\"><p style=\"font-size:16px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin:0 0 10px 0;\">World Inequality Database</p><div style=\"background:var(--wash); border:1px solid var(--line); padding:8px;\"><img src=\"content/images/WID%20full.png\" alt=\"Chancel and Piketty (2021) Figure 5: the between- versus within-country split of global income inequality, 1820 to 2020, as shares of the total Theil index\" style=\"width:100%; height:auto; display:block;\"></div><p style=\"font-size:13px; line-height:1.4; margin:10px 0 0 0;\"><span style=\"color: rgb(87, 114, 145); font-size: 13px;\"><b>Chancel &amp; Piketty (2021),</b> </span><font color=\"#577291\" style=\"font-size: 13px; font-weight: 400;\"><span style=\"font-size: 13px;\"><i>Global Income Inequality, 1820-2020: </i></span></font><i style=\"font-weight: 400; font-size: 13px; color: rgb(87, 114, 145);\">The Persistence and Mutation of Extreme Inequality</i></p></div><div style=\"flex:154 1 0; min-width:0; display:flex; flex-direction:column;\"><p style=\"font-size:16px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin:0 0 10px 0;\">World Bank Poverty &amp; Inequality Platform</p><div style=\"background:var(--wash); border:1px solid var(--line); padding:8px;\"><img src=\"content/images/PIP%20full.png\" alt=\"Decomposition of global income inequality into within- and between-country contributions, 1990 to 2019, stacked mean log deviation\" style=\"width:100%; height:auto; display:block;\"></div><p style=\"font-size:13px; line-height:1.4; margin:10px 0 0 0;\"><font color=\"#577291\"><span style=\"font-size: 13px;\"><b>Garcia Rojas, Yonzan &amp; Lakner (2025), </b><i>World Bank Policy Research Working Paper</i></span></font></p><p style=\"font-size:13px; line-height:1.4; margin:3px 0 0 0;\"><font color=\"#577291\"><span style=\"font-size: 13px;\"><i>Earlier: World Bank Poverty and Shared Prosperity (2016)</i>, </span></font><span style=\"color: rgb(87, 114, 145); font-size: 13px;\"><i>Lakner and Milanovic </i><i>(2016); Milanovic (2024)</i></span></p></div></div>"
+        }
+      ]
+    },
+    {
+      "id": "slide-puered",
+      "layout": "default",
+      "notes": "Setup slide. ~60-75 seconds.\n\nThe two main sources answer the same question in opposite ways, and both are respectable. Left: WID/DINA, between-country has fallen to about a third of the total. Right: the World Bank's own flagship report, on PovcalNet (the ancestor of PIP), where between-country is about two-thirds.\n\nNote for questions: this is not a clean apples-to-apples gap. It mixes (i) the data source, (ii) the inequality index (Theil/GE(1) on the left, mean log deviation/GE(0) on the right), (iii) the year, and (iv) the income concept. That is the point of the talk: the headline disagreement bundles measurement problems together with methodological choices. In both figures the warm colour is between-country, which helps when pointing at them.",
+      "blocks": [
+        {
+          "id": "b-20lgkk",
+          "type": "html",
+          "html": "<p class=\"kicker\">Example: Two opposing decompositions of global inequality</p>"
+        },
+        {
+          "id": "b-ijw1us",
+          "type": "html",
+          "html": "<div style=\"display:flex; gap:36px; width:100%; margin-top:4px; align-items:flex-start;\"><div style=\"flex:165 1 0; min-width:0; display:flex; flex-direction:column;\"><p style=\"font-size:16px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin:0 0 10px 0;\">World Inequality Database</p><div style=\"background:var(--wash); border:1px solid var(--line); padding:8px;\"><img src=\"content/images/WID%20focus%201990-2020.png\" alt=\"Chancel and Piketty (2021) Figure 5: the between- versus within-country split of global income inequality, 1820 to 2020, with the 1990 to 2020 period highlighted and the rest faded; the 2020 callout reads 32% between-country\" style=\"width:100%; height:auto; display:block;\"></div><p style=\"font-size:13px; line-height:1.4; margin:10px 0 0 0;\"><span style=\"color: rgb(87, 114, 145); font-size: 13px;\"><b>Chancel &amp; Piketty (2021),</b> </span><font color=\"#577291\" style=\"font-size: 13px; font-weight: 400;\"><span style=\"font-size: 13px;\"><i>Global Income Inequality, 1820-2020: </i></span></font><i style=\"font-weight: 400; font-size: 13px; color: rgb(87, 114, 145);\">The Persistence and Mutation of Extreme Inequality</i></p></div><div style=\"flex:154 1 0; min-width:0; display:flex; flex-direction:column;\"><p style=\"font-size:16px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin:0 0 10px 0;\">World Bank Poverty &amp; Inequality Platform</p><div style=\"background:var(--wash); border:1px solid var(--line); padding:8px;\"><img src=\"content/images/PIP%20full.png\" alt=\"Decomposition of global income inequality into within- and between-country contributions, 1990 to 2019, stacked mean log deviation\" style=\"width:100%; height:auto; display:block;\"></div><p style=\"font-size:13px; line-height:1.4; margin:10px 0 0 0;\"><font color=\"#577291\"><span style=\"font-size: 13px;\"><b>Garcia Rojas, Yonzan &amp; Lakner (2025), </b><i>World Bank Policy Research Working Paper</i></span></font></p><p style=\"font-size:13px; line-height:1.4; margin:3px 0 0 0;\"><font color=\"#577291\"><span style=\"font-size: 13px;\"><i>Earlier: World Bank Poverty and Shared Prosperity (2016)</i>, </span></font><span style=\"color: rgb(87, 114, 145); font-size: 13px;\"><i>Lakner and Milanovic </i><i>(2016); Milanovic (2024)</i></span></p></div></div>"
         }
       ]
     },
@@ -85,7 +102,7 @@
         {
           "id": "b-75ld4i",
           "type": "html",
-          "html": "<p class=\"kicker\">Two opposing decompositions of global inequality</p>"
+          "html": "<p class=\"kicker\">Example: Two opposing decompositions of global inequality</p>"
         },
         {
           "id": "b-0txiaf",
@@ -96,21 +113,21 @@
       "annotations": []
     },
     {
-      "id": "slide-f0cx9m",
+      "id": "slide-g8tejd",
       "layout": "default",
+      "notes": "Expectation-setting slide, placed before the problem setup.\n\nSays up front what the talk is not, so the contribution claim is honest: the value is in re-presenting existing work clearly, not in new data or new method.\n\n(Notes to fill in — Joe's framing.)",
       "blocks": [
         {
-          "id": "b-5lja7w",
+          "id": "b-32vx0v",
           "type": "html",
-          "html": "<p class=\"kicker\">Two questions</p>"
+          "html": "<p class=\"kicker\">How to communicate the research on global income inequality?</p>"
         },
         {
-          "id": "b-066t7z",
+          "id": "b-zj80ud",
           "type": "html",
-          "html": "<p><span style=\"font-size: 26px;\">1. Why do WID and PIP disagree?</span></p><ol style=\"font-size: 24px;\"><ul><li><i>'Accuracy'</i> issues:</li><ul><li>Top incomes (DINA/tax data vs survey data)</li><li>Data gaps (Income vs consumption; poor coverage)</li><li>Methodological assumptions</li></ul><li><i>Normative</i> issues about concepts:&nbsp;</li><ul><li>Before/after tax; Survey vs National Accounts concepts</li></ul><li>Boring stuff (country coverage, population weights, prices, year, percentile resolution...)</li></ul></ol><p><br></p><p><span style=\"font-size: 26px;\">2. What's the \"right\" answer?</span></p><ol style=\"font-size: 24px;\"><ul><li>Cake-and-eat-it viewpoint:&nbsp; Anchored to 'survey income' + rough-and-ready allowance for missing top incomes (Anand &amp; Segal 2008; Lakner &amp; Milanovic (2016); Gradin 2024)</li><li><b>Result: Much closer to a 50/50 split</b></li></ul></ol><p></p>"
+          "html": "<div style=\"max-width:1040px;\"><div><span style=\"font-size: 32px;\">Challenges:</span></div><div><span style=\"font-size: 32px;\"><br></span></div><ul><li>Qs about&nbsp;<b>accuracy</b> and Qs about&nbsp;<b>concepts</b>&nbsp;both in play (as well as many other implementation details)</li><li>Two literatures don't engage with each other all that much</li></ul></div>"
         }
-      ],
-      "notes": ""
+      ]
     },
     {
       "id": "slide-incommensurable",
@@ -118,12 +135,12 @@
         {
           "id": "b-inc-k",
           "type": "html",
-          "html": "<p class=\"kicker\">Existing studies don't engage with each other</p>"
+          "html": "<p class=\"kicker\">Two literatures don't engage with each other all that much</p>"
         },
         {
           "id": "b-inc-q",
           "type": "html",
-          "html": "<div style=\"display:flex; gap:36px; width:100%; margin-top:4px; align-items:flex-start;\"><div style=\"flex:165 1 0; min-width:0; display:flex; flex-direction:column;\"><p style=\"font-size:16px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin:0 0 10px 0;\">World Inequality Database</p><p style=\"margin:0; border-left:3px solid var(--line); padding:0 0 0 18px; font-size:18px; line-height:1.55; color:var(--ink); max-width:none;\">“The main difference with earlier series is the use of historical<b> tax data, more precise than household surveys</b> used in earlier long run studies on global inequality.”</p><p style=\"font-size:13px; line-height:1.4; margin:10px 0 0 21px; color:var(--muted);\">Chancel &amp; Piketty (2021), Footnote 21</p></div><div style=\"flex:154 1 0; min-width:0; display:flex; flex-direction:column;\"><p style=\"font-size:16px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin:0 0 10px 0;\"><span style=\"letter-spacing: 1.6px;\">World Bank Poverty &amp; Inequality Platform</span></p><p style=\"margin:0; border-left:3px solid var(--line); padding:0 0 0 18px; font-size:18px; line-height:1.55; color:var(--ink); max-width:none;\">“...&nbsp;However, with the data currently available, <b>it is not possible to do these kinds of adjustments comprehensively</b> for all countries in the world (Anand &amp; Segal, 2008; Deaton, 2005; World Bank, 2017). Therefore, <b>our analysis is based on survey data unadjusted for missing top incomes.</b>”</p><p style=\"font-size: 13px; line-height: 1.4; margin: 10px 0px 0px 21px; color: rgb(87, 114, 145);\">Garcia Rojas, Yonzan &amp; Lakner (2025)</p></div></div>"
+          "html": "<div style=\"display:flex; gap:36px; width:100%; margin-top:4px; align-items:flex-start;\"><div style=\"flex:118 1 0; min-width:0; display:flex; flex-direction:column;\"><p style=\"font-size:16px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin:0 0 10px 0;\">World Inequality Database</p><p style=\"margin:0; border-left:3px solid var(--line); padding:0 0 0 18px; font-size:18px; line-height:1.55; color:var(--ink); max-width:none;\">“The main difference with earlier series is the use of historical<b> tax data, more precise than household surveys</b> used in earlier long run studies on global inequality.”</p><p style=\"font-size:13px; line-height:1.4; margin:10px 0 0 21px; color:var(--muted);\">Chancel &amp; Piketty (2021), Footnote 21</p></div><div style=\"flex:201 1 0; min-width:0; display:flex; flex-direction:column;\"><p style=\"font-size:16px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin:0 0 10px 0;\"><span style=\"letter-spacing: 1.6px;\">World Bank Poverty &amp; Inequality Platform</span></p><p style=\"margin:0; border-left:3px solid var(--line); padding:0 0 0 18px; font-size:16px; line-height:1.5; color:var(--ink); max-width:none;\">“We do not use [WID] estimates for several reasons. First, many <b>strong assumptions</b> are needed to go from a household survey distribution to an annual income estimate that is consistent with national accounts.... Second, in many of the low- and middle-income countries, information for top incomes, such as from administrative tax records, is <b>rarely available </b>or might be of limited relevance since the tax base is small and evasion common. Third, and most importantly, in the WID database, it is not possible to disentangle the adjustment for the missing top from the adjustment to national accounts. <b>Surveys provide the most appropriate measure of household welfare</b>, since national accounts aggregates include many other components that are only vaguely related to household welfare...”</p><p style=\"margin:0; border-left:3px solid var(--line); padding:0 0 0 18px; font-size:16px; line-height:1.5; color:var(--ink); max-width:none; margin-top:14px;\">[On top-adjusting the survey data:]<br>“...&nbsp;However, with the data currently available, <b>it is not possible to do these kinds of adjustments comprehensively</b> for all countries in the world (Anand &amp; Segal, 2008; Deaton, 2005; World Bank, 2017). Therefore, our analysis is based on survey data unadjusted for missing top incomes.”</p><p style=\"font-size: 13px; line-height: 1.4; margin: 10px 0px 0px 21px; color: rgb(87, 114, 145);\">Garcia Rojas, Yonzan &amp; Lakner (2025)</p></div></div>"
         },
         {
           "id": "b-9x2gcj",
@@ -133,22 +150,70 @@
       ]
     },
     {
-      "id": "slide-di36hf",
+      "id": "slide-hpxadk",
+      "layout": "default",
+      "notes": "Expectation-setting slide, placed before the problem setup.\n\nSays up front what the talk is not, so the contribution claim is honest: the value is in re-presenting existing work clearly, not in new data or new method.\n\n(Notes to fill in — Joe's framing.)",
       "blocks": [
         {
-          "id": "b-1j9b3t",
+          "id": "b-9ja836",
           "type": "html",
-          "html": "<p class=\"kicker\">Existing studies don't engage with each other</p>"
+          "html": "<p class=\"kicker\">How to communicate the research on global income inequality?</p>"
         },
         {
-          "id": "b-xcjpz9",
+          "id": "b-92veg9",
           "type": "html",
-          "html": "<div style=\"display:flex; gap:36px; width:100%; margin-top:4px; align-items:flex-start;\"><div style=\"flex:165 1 0; min-width:0; display:flex; flex-direction:column;\"><p style=\"font-size:16px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin:0 0 10px 0;\">World Inequality Database</p><p style=\"margin:0; border-left:3px solid var(--line); padding:0 0 0 18px; font-size:18px; line-height:1.55; color:var(--ink); max-width:none;\">“The main difference with earlier series is the use of historical<b> tax data, more precise than household surveys</b> used in earlier long run studies on global inequality.”</p><p style=\"font-size:13px; line-height:1.4; margin:10px 0 0 21px; color:var(--muted);\">Chancel &amp; Piketty (2021), Footnote 21</p></div><div style=\"flex:154 1 0; min-width:0; display:flex; flex-direction:column;\"><p style=\"font-size:16px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin:0 0 10px 0;\"><span style=\"letter-spacing: 1.6px;\">World Bank Poverty &amp; Inequality Platform</span></p><p style=\"margin:0; border-left:3px solid var(--line); padding:0 0 0 18px; font-size:18px; line-height:1.55; color:var(--ink); max-width:none;\">“...&nbsp;However, with the data currently available, <b>it is not possible to do these kinds of adjustments comprehensively</b> for all countries in the world (Anand &amp; Segal, 2008; Deaton, 2005; World Bank, 2017). Therefore, <b>our analysis is based on survey data unadjusted for missing top incomes.</b>”</p><p style=\"font-size: 13px; line-height: 1.4; margin: 10px 0px 0px 21px; color: rgb(87, 114, 145);\">Garcia Rojas, Yonzan &amp; Lakner (2025)</p></div></div>"
+          "html": "<div style=\"max-width:1040px;\"><div><span style=\"font-size: 32px;\">Challenges:</span></div><div><span style=\"font-size: 32px;\"><br></span></div><ul><li>Qs about&nbsp;<b>accuracy</b> and Qs about&nbsp;<b>concepts</b>&nbsp;both in play (and many other implementation details)</li><li>Two literatures don't engage with each other all that much</li></ul></div>"
+        }
+      ]
+    },
+    {
+      "id": "slide-5j2d0p",
+      "layout": "default",
+      "notes": "Expectation-setting slide, placed before the problem setup.\n\nSays up front what the talk is not, so the contribution claim is honest: the value is in re-presenting existing work clearly, not in new data or new method.\n\n(Notes to fill in — Joe's framing.)",
+      "blocks": [
+        {
+          "id": "b-7zbwrk",
+          "type": "html",
+          "html": "<p class=\"kicker\">How to communicate the research on global income inequality?</p>"
         },
         {
-          "id": "b-8h9d2k",
+          "id": "b-imm4tb",
           "type": "html",
-          "html": "<p><ul><li>True that it's not possible to 'top adjust' the survey data reliably</li><li>But we <i>can</i> say more about how big an impact missing top incomes might have relative to other differences</li></ul></p>"
+          "html": "<div style=\"max-width:1040px;\"><div><span style=\"font-size: 32px;\">Challenges:</span></div><div><span style=\"font-size: 32px;\"><br></span></div><ul><li>Qs about&nbsp;<b>accuracy</b> and Qs about&nbsp;<b>concepts</b>&nbsp;both in play (and many other implementation details)</li><li>Two literatures don't engage with each other all that much</li><ul><li>Many exceptions:&nbsp;</li><ul><li>Country-level studies:&nbsp;</li><li>Global inequality: Anand &amp; Segal (2008); Lakner &amp; Milanovic (2016); Gradin (2024)</li></ul></ul></ul></div>"
+        }
+      ]
+    },
+    {
+      "id": "slide-h3k292",
+      "layout": "default",
+      "notes": "Expectation-setting slide, placed before the problem setup.\n\nSays up front what the talk is not, so the contribution claim is honest: the value is in re-presenting existing work clearly, not in new data or new method.\n\n(Notes to fill in — Joe's framing.)",
+      "blocks": [
+        {
+          "id": "b-02dew6",
+          "type": "html",
+          "html": "<p class=\"kicker\">How to communicate the research on global income inequality?</p>"
+        },
+        {
+          "id": "b-5m0uj1",
+          "type": "html",
+          "html": "<div style=\"max-width:1040px;\"><div><span style=\"font-size: 32px;\">Challenges:</span></div><div><span style=\"font-size: 32px;\"><br></span></div><ul><li>Qs about&nbsp;<b>accuracy</b> and Qs about&nbsp;<b>concepts</b>&nbsp;both in play (and many other implementation details)</li><li>Two literatures don't engage with each other all that much</li><ul><li>Many exceptions:&nbsp;</li><ul><li>Country-level studies: Alvaredo</li><li>Global inequality: Anand &amp; Segal (2008); Lakner &amp; Milanovic (2016); Gradin (2024); Alvaredo</li></ul></ul><li>Unclear <i>where</i> the differences lie / quantification</li></ul></div>"
+        }
+      ]
+    },
+    {
+      "id": "slide-3godue",
+      "layout": "default",
+      "notes": "Expectation-setting slide, placed before the problem setup.\n\nSays up front what the talk is not, so the contribution claim is honest: the value is in re-presenting existing work clearly, not in new data or new method.\n\n(Notes to fill in — Joe's framing.)",
+      "blocks": [
+        {
+          "id": "b-wxo75q",
+          "type": "html",
+          "html": "<p class=\"kicker\">\"Triangulation\"</p>"
+        },
+        {
+          "id": "b-t8hcz3",
+          "type": "html",
+          "html": "<ul><li>Borrowed from Atkinson (2019)&nbsp;<i>Measuring Poverty Around the World</i></li><li>An approach to <i>communicatin<u>g</u></i> diverging sources</li><ul><li>Do <i>what we can</i> to line them up</li><li>Unpick reasons for divergence, and their relative importance</li><li>Highlight areas of <i>agreement</i>, as well as disagreement</li><li>Treat as <i>complements</i>, rather than substitutes</li><ul><li>What can Source X help us understand about Source Y?</li></ul></ul></ul><div><span style=\"font-size: 25.92px;\"><br></span></div><div><span style=\"font-size: 25.92px;\"><br></span></div><ul><li>What would a \"triangulated\" view on the within/between split look like?</li></ul>"
         }
       ]
     },
@@ -169,48 +234,39 @@
         {
           "id": "b-siutud",
           "type": "html",
-          "html": "<p></p><ul style=\"font-size: 24px;\"><li><span>WID (Stata package)</span></li><ul><li><span>Pre- &amp; post-tax&nbsp;</span></li><li><span>Per adult ('equal split')</span></li><li>99 percentiles + 10 tenth-of-a-percentiles at the top</li></ul><li>PIP ('1000 bins' dataset)</li><ul><li>Mix of (~post-tax) income and consumption surveys</li><li><span>Per capita</span></li><li>Aggregated to same percentile resolution as WID</li></ul><li><span>Both:&nbsp;</span></li><ul><li><span>Extrapolated/interpolated to give an annual series</span></li><li><span>-&gt; ~ 100% of world population is covered! (~90% +/-3 years; 96% +/- 10 years)</span></li></ul></ul><p></p>"
+          "html": "<p></p><ul style=\"\"><li style=\"font-size: 24px;\"><span>WID (Stata package)</span></li><ul style=\"font-size: 24px;\"><li><span>Pre- &amp; post-tax national income; p</span>er adult ('equal split')</li><li>99 + 10 fractiles: 99 percentiles + P99.1, P99.2... P99.9</li></ul><li style=\"font-size: 24px;\">PIP ('1000 bins' dataset)</li><ul style=\"font-size: 24px;\"><li>Mix of post-tax income and consumption surveys; per capita</li><li>Aggregated to same percentile resolution as WID</li></ul><li style=\"font-size: 24px;\"><span>Both provide fully e</span>xtrapolated/interpolated annual series</li><ul style=\"font-size: 24px;\"><li><span>~ 100% of world population is covered!</span></li><li><span>PIP: ~90% survey within -3 years; 96% within 10 years</span></li></ul><li style=\"\"><span style=\"font-size: 21.6px;\">Mean Log Deviation:&nbsp;</span></li><ul><li style=\"\"><span style=\"font-size: 21.6px;\">Standard in the literature because of its decomposability</span></li><li style=\"\"><span style=\"font-size: 21.6px;\">Set 0 incomes (in WID) to $0.01</span></li><li style=\"\"><span style=\"font-size: 21.6px;\">Still a normative choice concerning the 'right' inequality measure (sensitivity to top; relative vs absolute)</span></li></ul></ul><p></p>"
         }
       ],
       "notes": ""
     },
     {
-      "id": "slide-th8212",
+      "id": "slide-03o7kd",
       "layout": "default",
       "blocks": [
         {
-          "id": "b-mx329y",
+          "id": "b-jar64u",
           "type": "html",
           "html": "<p class=\"kicker\">Data &amp; Methods</p>"
         },
         {
-          "id": "b-zpu5r2",
+          "id": "b-isjcom",
           "type": "html",
           "html": "<h2></h2>"
         },
         {
-          "id": "b-7j0o61",
+          "id": "b-y3nuvr",
           "type": "html",
-          "html": "<p></p><ul style=\"font-size: 24px;\"><li>Mean Log deviation</li><ul><li>Standard in the literature because of its decomposability</li><li>Convenience of MLD hides a normative choice concerning the 'right' inequality measure</li><ul><li>Measures more sensitive to the top would tell a different picture about global inequality</li><li>Relative, not absolute, measure</li></ul></ul></ul><p></p>"
-        },
-        {
-          "id": "b-mld-box",
-          "type": "html",
-          "html": "<div style=\"background:var(--wash); border:1px solid var(--line); padding:18px 22px; display:flex; flex-direction:column; gap:18px;\"><div><div style=\"font-size:26px; line-height:1.35; color:var(--ink);\">MLD&nbsp; =&nbsp; (1/<i>N</i>)&nbsp; &Sigma;<sub><i>i</i></sub>&nbsp; ln&thinsp;(&thinsp;<i>&mu;</i>&thinsp;/&thinsp;<i>y</i><sub><i>i</i></sub>&thinsp;)</div><p style=\"font-size:14px; line-height:1.45; color:var(--muted); margin:6px 0 0 0;\"><i>y</i><sub><i>i</i></sub> income of person <i>i</i> &middot;&nbsp; <i>&mu;</i> overall mean &middot;&nbsp; <i>N</i> population</p></div><div><div style=\"display:flex; align-items:flex-start; gap:16px; flex-wrap:wrap; font-size:26px; line-height:1.35; color:var(--ink);\"><div style=\"padding-top:1px;\">MLD&nbsp; =</div><div style=\"display:flex; flex-direction:column; align-items:center;\"><div>&Sigma;<sub><i>c</i></sub>&nbsp; <i>p</i><sub><i>c</i></sub>&thinsp;&middot;&thinsp;MLD<sub><i>c</i></sub></div><div style=\"margin-top:9px; border-top:3px solid #A9C0D6; padding-top:6px; font-size:12px; font-weight:700; letter-spacing:0.09em; text-transform:uppercase; color:var(--muted); width:100%; text-align:center;\">Within countries</div></div><div style=\"padding-top:1px;\">+</div><div style=\"display:flex; flex-direction:column; align-items:center;\"><div>&Sigma;<sub><i>c</i></sub>&nbsp; <i>p</i><sub><i>c</i></sub>&thinsp;&middot;&thinsp;ln&thinsp;(&thinsp;<i>&mu;</i>&thinsp;/&thinsp;<i>&mu;</i><sub><i>c</i></sub>&thinsp;)</div><div style=\"margin-top:9px; border-top:3px solid #3E5C76; padding-top:6px; font-size:12px; font-weight:700; letter-spacing:0.09em; text-transform:uppercase; color:var(--muted); width:100%; text-align:center;\">Between countries</div></div></div><p style=\"font-size:14px; line-height:1.45; color:var(--muted); margin:6px 0 0 0;\"><i>p</i><sub><i>c</i></sub> country <i>c</i>’s share of population &middot;&nbsp; <i>&mu;</i><sub><i>c</i></sub> its mean income &middot;&nbsp; MLD<sub><i>c</i></sub> the MLD within it &middot;&nbsp; the identity is exact</p></div></div>"
+          "html": "<p></p><ul style=\"\"><li style=\"font-size: 24px;\">\"Triangulation\":</li><ul style=\"\"><li style=\"font-size: 24px;\">Line up what we can (coverage, year, pop weights, prices)</li><li style=\"font-size: 24px;\">Unpick relative importance of remaining differences:</li><ul style=\"\"><li style=\"font-size: 24px;\"><b>Straightforward: </b>Before/after tax; Survey vs NA means</li><li style=\"font-size: 24px;\"><b>Messy: </b>mix&nbsp;income &amp; consumption survey data in PI; Missing top</li><ul><li style=\"font-size: 24px;\">Goal: <u>Upper bound</u> on how much PIP data might change <i>if</i> we could account for missing top?</li></ul></ul></ul><li><span style=\"font-size: 19.44px;\">Four takeaways:</span></li><ul style=\"\"><li><span style=\"font-size: 19.44px;\">#1: Means matter a little (though in the&nbsp;<i>reverse</i>&nbsp;direction of what is usually assumed)</span></li><li><span style=\"font-size: 19.44px;\">#2: Pre- vs post-tax <i>does</i> matter</span></li><li><span style=\"font-size: 19.44px;\">#3: Even with (upper bound) allowance for 'missing top', WID (within-country) inequality &gt;&gt; PIP inequality</span></li><li><span style=\"font-size: 19.44px;\">#4: From a \"cake-and-eat-it\" perspective (~ anchored to post-tax survey income, allowing for missing top): much closer to 50/50% split</span></li></ul></ul><p></p>"
         }
       ],
       "notes": ""
     },
     {
-      "id": "slide-extremes-global",
+      "id": "slide-gbridge-step5",
+      "notes": "Global bridging sequence, step 5: + top-adjusted",
       "blocks": [
         {
-          "id": "b-exg-k",
-          "type": "html",
-          "html": "<p class=\"kicker\"><span style=\"letter-spacing: 0.12em;\">WIP/PIP comparison \"off the shelf\"</span></p>"
-        },
-        {
-          "id": "b-exg-fig",
+          "id": "b-gb5-fig",
           "type": "component",
           "component": "fig-raw-comparison",
           "props": {
@@ -218,6 +274,18 @@
             "dataUrl": "data/figures/fig_examples_global_mld.json",
             "sources": [
               "WID_pretax_per_adult",
+              "WID_pretax_per_capita",
+              "WID_posttax_per_capita",
+              "PIP_topadj",
+              "PIP_consinc",
+              "PIP"
+            ],
+            "reveal": [
+              "WID_pretax_per_adult",
+              "WID_pretax_per_capita",
+              "WID_posttax_per_capita",
+              "PIP_topadj",
+              "PIP_consinc",
               "PIP"
             ]
           }
@@ -228,11 +296,6 @@
       "id": "slide-gbridge-step1",
       "notes": "Global bridging sequence, step 1: WID pre-tax/adult vs PIP",
       "blocks": [
-        {
-          "id": "b-gb1-k",
-          "type": "html",
-          "html": "<p class=\"kicker\"><span style=\"letter-spacing: 0.12em;\">Bridging</span></p>"
-        },
         {
           "id": "b-gb1-fig",
           "type": "component",
@@ -261,11 +324,6 @@
       "notes": "Global bridging sequence, step 2: + per capita",
       "blocks": [
         {
-          "id": "b-gb2-k",
-          "type": "html",
-          "html": "<p class=\"kicker\"><span style=\"letter-spacing: 0.12em;\">Bridging</span></p>"
-        },
-        {
           "id": "b-gb2-fig",
           "type": "component",
           "component": "fig-raw-comparison",
@@ -290,6 +348,75 @@
       ]
     },
     {
+      "id": "slide-gbridge-step3",
+      "notes": "Global bridging sequence, step 3: + post-tax",
+      "blocks": [
+        {
+          "id": "b-gb3-fig",
+          "type": "component",
+          "component": "fig-raw-comparison",
+          "props": {
+            "title": "",
+            "dataUrl": "data/figures/fig_examples_global_mld.json",
+            "sources": [
+              "WID_pretax_per_adult",
+              "WID_pretax_per_capita",
+              "WID_posttax_per_capita",
+              "PIP_topadj",
+              "PIP_consinc",
+              "PIP"
+            ],
+            "reveal": [
+              "WID_pretax_per_adult",
+              "WID_pretax_per_capita",
+              "WID_posttax_per_capita",
+              "PIP"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "slide-jv46fc-emph",
+      "notes": "Same frame as the previous slide, with everything faint except the between-country segment of WID post-tax per capita and of PIP — the two ends of the \"is it between or within?\" disagreement.",
+      "blocks": [
+        {
+          "id": "b-emph-2",
+          "type": "component",
+          "component": "fig-raw-comparison",
+          "props": {
+            "title": "",
+            "dataUrl": "data/figures/fig_examples_global_mld.json",
+            "sources": [
+              "WID_pretax_per_adult",
+              "WID_pretax_per_capita",
+              "WID_posttax_per_capita",
+              "PIP_topadj",
+              "PIP_consinc",
+              "PIP"
+            ],
+            "emphasis": [
+              "WID_posttax_per_capita.between",
+              "PIP.between"
+            ]
+          }
+        }
+      ],
+      "annotations": [
+        {
+          "id": "a-rncvdo",
+          "type": "box",
+          "x": 111.4,
+          "y": 224.3,
+          "w": 713.2,
+          "h": 113.3,
+          "text": "#1: Survey vs NA means matters a little — though in the reverse direction of what is usually assumed",
+          "color": "rgb(29, 61, 99)",
+          "size": 28
+        }
+      ]
+    },
+    {
       "id": "slide-e9ttwu",
       "layout": "default",
       "blocks": [
@@ -301,7 +428,7 @@
         {
           "id": "b-zmrw4t",
           "type": "html",
-          "html": "<p><ul><li>Opposes a fairly established result: (Milanovic, 2002; Deaton, 2005)</li><li>\"...the means from household surveys are <b>less dispersed</b> than the means obtained from National Accounts... It is due both to higher saving and investment rates in richer countries and to the underestimation of income from self-employment and own consumption by National Accounts.\" Milanovic (2024)</li></ul></p>"
+          "html": "<p></p><ul><li>Opposite of a fairly established result: (Milanovic, 2002; Deaton, 2005)</li><li>\"...the means from household surveys are <b>less dispersed</b> than the means obtained from National Accounts... It is due both to higher saving and investment rates in richer countries and to the underestimation of income from self-employment and own consumption by National Accounts.\" Milanovic (2024)</li></ul><p></p>"
         }
       ],
       "notes": ""
@@ -367,195 +494,6 @@
       ]
     },
     {
-      "id": "slide-gbridge-step3",
-      "notes": "Global bridging sequence, step 3: + post-tax",
-      "blocks": [
-        {
-          "id": "b-gb3-k",
-          "type": "html",
-          "html": "<p class=\"kicker\"><span style=\"letter-spacing: 0.12em;\">Bridging</span></p>"
-        },
-        {
-          "id": "b-gb3-fig",
-          "type": "component",
-          "component": "fig-raw-comparison",
-          "props": {
-            "title": "",
-            "dataUrl": "data/figures/fig_examples_global_mld.json",
-            "sources": [
-              "WID_pretax_per_adult",
-              "WID_pretax_per_capita",
-              "WID_posttax_per_capita",
-              "PIP_topadj",
-              "PIP_consinc",
-              "PIP"
-            ],
-            "reveal": [
-              "WID_pretax_per_adult",
-              "WID_pretax_per_capita",
-              "WID_posttax_per_capita",
-              "PIP"
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "id": "slide-gbridge-step4",
-      "notes": "Global bridging sequence, step 4: + income basis",
-      "blocks": [
-        {
-          "id": "b-gb4-k",
-          "type": "html",
-          "html": "<p class=\"kicker\"><span style=\"letter-spacing: 0.12em;\">Bridging</span></p>"
-        },
-        {
-          "id": "b-gb4-fig",
-          "type": "component",
-          "component": "fig-raw-comparison",
-          "props": {
-            "title": "",
-            "dataUrl": "data/figures/fig_examples_global_mld.json",
-            "sources": [
-              "WID_pretax_per_adult",
-              "WID_pretax_per_capita",
-              "WID_posttax_per_capita",
-              "PIP_topadj",
-              "PIP_consinc",
-              "PIP"
-            ],
-            "reveal": [
-              "WID_pretax_per_adult",
-              "WID_pretax_per_capita",
-              "WID_posttax_per_capita",
-              "PIP_consinc",
-              "PIP"
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "id": "slide-gbridge-step5",
-      "notes": "Global bridging sequence, step 5: + top-adjusted",
-      "blocks": [
-        {
-          "id": "b-gb5-k",
-          "type": "html",
-          "html": "<p class=\"kicker\"><span style=\"letter-spacing: 0.12em;\">Bridging</span></p>"
-        },
-        {
-          "id": "b-gb5-fig",
-          "type": "component",
-          "component": "fig-raw-comparison",
-          "props": {
-            "title": "",
-            "dataUrl": "data/figures/fig_examples_global_mld.json",
-            "sources": [
-              "WID_pretax_per_adult",
-              "WID_pretax_per_capita",
-              "WID_posttax_per_capita",
-              "PIP_topadj",
-              "PIP_consinc",
-              "PIP"
-            ],
-            "reveal": [
-              "WID_pretax_per_adult",
-              "WID_pretax_per_capita",
-              "WID_posttax_per_capita",
-              "PIP_topadj",
-              "PIP_consinc",
-              "PIP"
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "id": "slide-vs7hvr",
-      "layout": "default",
-      "blocks": [
-        {
-          "id": "b-3hyqn7",
-          "type": "html",
-          "html": "<p class=\"kicker\">Two questions</p>"
-        },
-        {
-          "id": "b-eegjuo",
-          "type": "html",
-          "html": "<p><ol><li>Why do PIP and WID disagree?</li><li>What's the \"right\" answer?</li></ol></p>"
-        }
-      ],
-      "notes": ""
-    },
-    {
-      "id": "slide-alobsk",
-      "layout": "default",
-      "blocks": [
-        {
-          "id": "b-xmeqqj",
-          "type": "html",
-          "html": "<p class=\"kicker\">Two questions</p>"
-        },
-        {
-          "id": "b-2iwx3s",
-          "type": "html",
-          "html": "<p></p><ol><li><b>Why do PIP and WID disagree?</b></li><li>What's the \"right\" answer?</li></ol><p></p>"
-        }
-      ],
-      "notes": ""
-    },
-    {
-      "id": "slide-wcu2mf",
-      "layout": "default",
-      "blocks": [
-        {
-          "id": "b-0q3jy4",
-          "type": "html",
-          "html": "<p class=\"kicker\">Two questions</p>"
-        },
-        {
-          "id": "b-d5nck7",
-          "type": "html",
-          "html": "<p></p><ol><li><b>Why do PIP and WID disagree? -&gt; 4 takeaways</b></li><li>What's the \"right\" answer?</li></ol><p></p>"
-        }
-      ],
-      "notes": ""
-    },
-    {
-      "id": "slide-jv46fc-emph",
-      "notes": "Same frame as the previous slide, with everything faint except the between-country segment of WID post-tax per capita and of PIP — the two ends of the \"is it between or within?\" disagreement.",
-      "blocks": [
-        {
-          "id": "b-emph-1",
-          "type": "html",
-          "html": "<p class=\"kicker\"><span style=\"letter-spacing: 0.12em;\">#1: Means matter (but not <i>that</i> much)</span></p>"
-        },
-        {
-          "id": "b-emph-2",
-          "type": "component",
-          "component": "fig-raw-comparison",
-          "props": {
-            "title": "",
-            "dataUrl": "data/figures/fig_examples_global_mld.json",
-            "sources": [
-              "WID_pretax_per_adult",
-              "WID_pretax_per_capita",
-              "WID_posttax_per_capita",
-              "PIP_topadj",
-              "PIP_consinc",
-              "PIP"
-            ],
-            "emphasis": [
-              "WID_posttax_per_capita.between",
-              "PIP.between"
-            ]
-          }
-        }
-      ],
-      "annotations": []
-    },
-    {
       "id": "slide-emph-tax",
       "notes": "Highlight #2: the WITHIN component of WID pre-tax vs post-tax, both per capita — how much of the within-country component the tax system accounts for.",
       "blocks": [
@@ -595,7 +533,7 @@
         {
           "id": "b-nwkq3u",
           "type": "html",
-          "html": "<p class=\"kicker\">#2: Before/after tax&nbsp;matters</p><div style=\"position:absolute; left:150px; top:84px; width:700px; background:rgba(255,255,255,0.97); border:1px solid var(--line); box-shadow:0 12px 34px rgba(0,12,28,0.14); padding:26px 30px; z-index:3;\"><p style=\"margin:0; font-size:19px; line-height:1.55; color:var(--ink); max-width:none;\">“We have also produced estimates using the concept of <b>post-tax national income</b>, where we deduct all taxes and add all transfers (including in-kind transfers and collective expenditures). These computations involve a number of assumptions and should be viewed as exploratory and incomplete...</p><p style=\"margin:0; font-size:19px; line-height:1.55; color:var(--ink); max-width:none; margin-top:14px;\"><b>The results on between-countries and within-countries inequality trends and on regional decomposition are <u>virtually unchanged.</u></b>”</p><p style=\"margin:18px 0 0 0; font-size:14px; line-height:1.4; color:var(--muted);\">Chancel &amp; Piketty (2021)</p></div>"
+          "html": "<p class=\"kicker\">#2: Before/after tax&nbsp;matters</p><div style=\"position:absolute; left:150px; top:84px; width:700px; background:rgba(255,255,255,0.97); border:1px solid var(--line); box-shadow:0 12px 34px rgba(0,12,28,0.14); padding:26px 30px; z-index:3;\"><p style=\"margin:0; font-size:19px; line-height:1.55; color:var(--ink); max-width:none;\">“We have also produced estimates using the concept of <b>post-tax</b> national income...&nbsp;<span style=\"color: var(--ink);\">The results on between-countries and within-countries inequality</span><b style=\"color: var(--ink);\"> trends </b><span style=\"color: var(--ink);\">and on regional decomposition are <b>virtually unchanged.</b></span><span style=\"color: var(--ink);\">”</span></p><p style=\"margin:18px 0 0 0; font-size:14px; line-height:1.4; color:var(--muted);\">Chancel &amp; Piketty (2021)</p></div>"
         },
         {
           "id": "b-cpbmvm",
@@ -690,40 +628,6 @@
       "annotations": []
     },
     {
-      "id": "slide-bwwixz",
-      "layout": "default",
-      "blocks": [
-        {
-          "id": "b-4xxcyo",
-          "type": "html",
-          "html": "<p class=\"kicker\">Two questions</p>"
-        },
-        {
-          "id": "b-tiffep",
-          "type": "html",
-          "html": "<p></p><ol><li><b>Why do PIP and WID disagree?</b></li><ol><li><span style=\"font-size: 28.8px;\">Means matter (but not that much)</span></li><li><span style=\"font-size: 28.8px;\">Before/after tax matters</span></li><li><span style=\"font-size: 28.8px;\">...roughly as much as 'missing top' guestimates</span></li><li>WID inequality &gt;&gt; PIP inequality — even (generously) allowing for 'missing top'</li></ol><li>What's the \"right\" answer?</li></ol><p></p>"
-        }
-      ],
-      "notes": ""
-    },
-    {
-      "id": "slide-90zth5",
-      "layout": "default",
-      "blocks": [
-        {
-          "id": "b-soafzo",
-          "type": "html",
-          "html": "<p class=\"kicker\">Two questions</p>"
-        },
-        {
-          "id": "b-pt34vx",
-          "type": "html",
-          "html": "<p></p><ol><li>Why do PIP and WID disagree?</li><ol><li><span style=\"font-size: 28.8px;\">Means matter (but not that much)</span></li><li><span style=\"font-size: 28.8px;\">Before/after tax matters</span></li><li><span style=\"font-size: 28.8px;\">...roughly as much as 'missing top' guestimates</span></li><li>WID inequality &gt;&gt; PIP inequality — even (generously) allowing for 'missing top'</li></ol><li><b>What's the \"right\" answer?</b></li></ol><p></p>"
-        }
-      ],
-      "notes": ""
-    },
-    {
       "id": "slide-emph-pip-topadj",
       "notes": "PIP's within component nearly doubles under a generous top-income allowance: 0.21 -> 0.36, so the between share falls 69% -> 55%. The 'mostly between' reading does not survive it.",
       "blocks": [
@@ -790,6 +694,299 @@
       "annotations": []
     },
     {
+      "id": "slide-b6lwri",
+      "layout": "default",
+      "blocks": [
+        {
+          "id": "b-t4lh5z",
+          "type": "html",
+          "html": "<p class=\"kicker\">Summary</p>"
+        },
+        {
+          "id": "b-pgyjo6",
+          "type": "html",
+          "html": "<h2></h2>"
+        },
+        {
+          "id": "b-wy165c",
+          "type": "html",
+          "html": "<p></p><ul><li><span style=\"font-size: 19.44px;\">Casual reading of PIP/WID analyses can yield opposing answers, without much hope of reconciliation</span></li><li><span style=\"font-size: 19.44px;\">Even basic / messy steps can help identify the relative importance of different factors</span></li><ul><li><span style=\"font-size: 19.44px;\">#1: Means matter a little (though in the&nbsp;</span><i style=\"font-size: 19.44px;\">reverse</i><span style=\"font-size: 19.44px;\">&nbsp;direction of what is usually assumed)</span></li><li><span style=\"font-size: 19.44px;\">#2: Pre- vs post-tax <i>does</i> matter</span></li><li><span style=\"font-size: 19.44px;\">#3: Even with (upper bound) allowance for 'missing top', WID (within-country) inequality &gt;&gt; PIP inequality</span></li></ul><li><span style=\"font-size: 19.44px;\">This allows a \"triangulated\" viewpoint, stronger than&nbsp;either dataset alone provides</span></li><ul><li><span style=\"font-size: 19.44px;\">#4: From a \"cake-and-eat-it\" perspective (~ anchored to post-tax survey income, allowing for missing top): much closer to 50/50% split</span></li></ul><li><span style=\"font-size: 19.44px;\">More valuable to public understanding than presenting PIP/WID datasets singularly or as irreconcilable alternatives.</span></li></ul><p></p>"
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "slide-k7rzn7",
+      "layout": "default",
+      "blocks": [
+        {
+          "id": "b-oh2e2h",
+          "type": "html",
+          "html": "<p><b>END</b></p>"
+        }
+      ],
+      "notes": "",
+      "annotations": []
+    },
+    {
+      "id": "slide-f0cx9m",
+      "layout": "default",
+      "blocks": [
+        {
+          "id": "b-5lja7w",
+          "type": "html",
+          "html": "<p class=\"kicker\">Two questions</p>"
+        },
+        {
+          "id": "b-066t7z",
+          "type": "html",
+          "html": "<p><span style=\"font-size: 26px;\">1. Why do WID and PIP disagree?</span></p><ol style=\"font-size: 24px;\"><ul><li><i>'Accuracy'</i> issues:</li><ul><li>Top incomes (DINA/tax data vs survey data)</li><li>Data gaps (Income vs consumption; poor coverage)</li><li>Methodological assumptions</li></ul><li><i>Normative</i> issues about concepts:&nbsp;</li><ul><li>Before/after tax; Survey vs National Accounts concepts</li></ul><li>Boring stuff (country coverage, population weights, prices, year, percentile resolution...)</li></ul></ol><p><br></p><p><span style=\"font-size: 26px;\">2. What's the \"right\" answer?</span></p><ol style=\"font-size: 24px;\"><ul><li>Cake-and-eat-it viewpoint:&nbsp; Anchored to 'survey income' + rough-and-ready allowance for missing top incomes (Anand &amp; Segal 2008; Lakner &amp; Milanovic (2016); Gradin 2024)</li><li><b>Result: Much closer to a 50/50 split</b></li></ul></ol><p></p>"
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "slide-di36hf",
+      "blocks": [
+        {
+          "id": "b-1j9b3t",
+          "type": "html",
+          "html": "<p class=\"kicker\">Existing studies don't engage with each other</p>"
+        },
+        {
+          "id": "b-xcjpz9",
+          "type": "html",
+          "html": "<div style=\"display:flex; gap:36px; width:100%; margin-top:4px; align-items:flex-start;\"><div style=\"flex:165 1 0; min-width:0; display:flex; flex-direction:column;\"><p style=\"font-size:16px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin:0 0 10px 0;\">World Inequality Database</p><p style=\"margin:0; border-left:3px solid var(--line); padding:0 0 0 18px; font-size:18px; line-height:1.55; color:var(--ink); max-width:none;\">“The main difference with earlier series is the use of historical<b> tax data, more precise than household surveys</b> used in earlier long run studies on global inequality.”</p><p style=\"font-size:13px; line-height:1.4; margin:10px 0 0 21px; color:var(--muted);\">Chancel &amp; Piketty (2021), Footnote 21</p></div><div style=\"flex:154 1 0; min-width:0; display:flex; flex-direction:column;\"><p style=\"font-size:16px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin:0 0 10px 0;\"><span style=\"letter-spacing: 1.6px;\">World Bank Poverty &amp; Inequality Platform</span></p><p style=\"margin:0; border-left:3px solid var(--line); padding:0 0 0 18px; font-size:18px; line-height:1.55; color:var(--ink); max-width:none;\">“...&nbsp;However, with the data currently available, <b>it is not possible to do these kinds of adjustments comprehensively</b> for all countries in the world (Anand &amp; Segal, 2008; Deaton, 2005; World Bank, 2017). Therefore, <b>our analysis is based on survey data unadjusted for missing top incomes.</b>”</p><p style=\"font-size: 13px; line-height: 1.4; margin: 10px 0px 0px 21px; color: rgb(87, 114, 145);\">Garcia Rojas, Yonzan &amp; Lakner (2025)</p></div></div>"
+        },
+        {
+          "id": "b-8h9d2k",
+          "type": "html",
+          "html": "<p><ul><li>True that it's not possible to 'top adjust' the survey data reliably</li><li>But we <i>can</i> say more about how big an impact missing top incomes might have relative to other differences</li></ul></p>"
+        }
+      ]
+    },
+    {
+      "id": "slide-a76vai",
+      "layout": "default",
+      "notes": "Expectation-setting slide, placed before the problem setup.\n\nSays up front what the talk is not, so the contribution claim is honest: the value is in re-presenting existing work clearly, not in new data or new method.\n\n(Notes to fill in — Joe's framing.)",
+      "blocks": [
+        {
+          "id": "b-070eqt",
+          "type": "html",
+          "html": "<p class=\"kicker\">How to communicate the research on global income inequality?</p>"
+        },
+        {
+          "id": "b-x86hpf",
+          "type": "html",
+          "html": "<div style=\"max-width:1040px;\"><ul style=\"padding-left: 0px; list-style: none;\"><li style=\"display: flex; gap: 14px; align-items: baseline;\"><span style=\"color: rgb(206, 38, 30); font-weight: 700; flex: 0 0 auto;\">✗</span>Just PIP? (Missing top)</li><li style=\"display: flex; gap: 14px; align-items: baseline;\"><span style=\"color: rgb(206, 38, 30); font-weight: 700; flex: 0 0 auto;\">✗</span>Just WID (\"Corrected for top incomes\" is a misleading oversimplification)</li><li style=\"display: flex; gap: 14px; align-items: baseline;\"><span style=\"color: rgb(206, 38, 30); font-weight: 700; flex: 0 0 auto;\">✗</span>Disconnected literatures (\"Experts disagree...\")</li><li style=\"display: flex; gap: 14px; align-items: baseline;\"><span style=\"color: rgb(0, 158, 115); font-weight: 700; flex: 0 0 auto;\">✓</span><i>Triangulation</i>: Using the datasets as complements rather than substitutes<br>(Alvaredo et al x2; Gradin 2024)</li></ul></div>"
+        }
+      ]
+    },
+    {
+      "id": "slide-g61p1r",
+      "layout": "default",
+      "notes": "Expectation-setting slide, placed before the problem setup.\n\nSays up front what the talk is not, so the contribution claim is honest: the value is in re-presenting existing work clearly, not in new data or new method.\n\n(Notes to fill in — Joe's framing.)",
+      "blocks": [
+        {
+          "id": "b-e9z0yp",
+          "type": "html",
+          "html": "<p class=\"kicker\">Getting more public value from global inequality datasets</p>"
+        },
+        {
+          "id": "b-nmjwtn",
+          "type": "html",
+          "html": "<div style=\"max-width:1040px;\"><div><ul style=\"line-height: 1.45; padding-left: 30px;\"><li style=\"margin-bottom: 14px; font-size: 32px;\">Huge improvements in the available data</li><ul><li style=\"margin-bottom: 14px; font-size: 32px;\">Coverage, accessibility, comparability</li></ul></ul></div><div><span style=\"font-size: 32px;\"><br></span></div><ul style=\"line-height: 1.45; margin: 0px; padding-left: 30px;\"><li style=\"font-size: 32px; margin-bottom: 14px;\">Bewildering terrain for anyone other than real specialists&nbsp;</li><ul><li style=\"font-size: 32px; margin-bottom: 14px;\">Different sources, metrics, definitions.&nbsp;</li><li style=\"font-size: 32px; margin-bottom: 14px;\">Hefty assumptions/caveats buried in technical notes</li><li style=\"font-size: 32px; margin-bottom: 14px;\">Qs about <i>accuracy</i> mixed up with normative Qs about <i>concepts</i></li><li style=\"font-size: 32px; margin-bottom: 14px;\">Incommensurable \"worlds\" of measurement (Survey \"vs\" DINA/top incomes)</li></ul></ul></div>"
+        }
+      ]
+    },
+    {
+      "id": "slide-th8212",
+      "layout": "default",
+      "blocks": [
+        {
+          "id": "b-mx329y",
+          "type": "html",
+          "html": "<p class=\"kicker\">Data &amp; Methods</p>"
+        },
+        {
+          "id": "b-zpu5r2",
+          "type": "html",
+          "html": "<h2></h2>"
+        },
+        {
+          "id": "b-7j0o61",
+          "type": "html",
+          "html": "<p></p><ul style=\"font-size: 24px;\"><li>Mean Log deviation</li><ul><li>Standard in the literature because of its decomposability</li><li>Convenience of MLD hides a normative choice concerning the 'right' inequality measure</li><ul><li>Measures more sensitive to the top would tell a different picture about global inequality</li><li>Relative, not absolute, measure</li></ul></ul></ul><p></p>"
+        },
+        {
+          "id": "b-mld-box",
+          "type": "html",
+          "html": "<div style=\"background:var(--wash); border:1px solid var(--line); padding:18px 22px; display:flex; flex-direction:column; gap:18px;\"><div><div style=\"font-size:26px; line-height:1.35; color:var(--ink);\">MLD&nbsp; =&nbsp; (1/<i>N</i>)&nbsp; &Sigma;<sub><i>i</i></sub>&nbsp; ln&thinsp;(&thinsp;<i>&mu;</i>&thinsp;/&thinsp;<i>y</i><sub><i>i</i></sub>&thinsp;)</div><p style=\"font-size:14px; line-height:1.45; color:var(--muted); margin:6px 0 0 0;\"><i>y</i><sub><i>i</i></sub> income of person <i>i</i> &middot;&nbsp; <i>&mu;</i> overall mean &middot;&nbsp; <i>N</i> population</p></div><div><div style=\"display:flex; align-items:flex-start; gap:16px; flex-wrap:wrap; font-size:26px; line-height:1.35; color:var(--ink);\"><div style=\"padding-top:1px;\">MLD&nbsp; =</div><div style=\"display:flex; flex-direction:column; align-items:center;\"><div>&Sigma;<sub><i>c</i></sub>&nbsp; <i>p</i><sub><i>c</i></sub>&thinsp;&middot;&thinsp;MLD<sub><i>c</i></sub></div><div style=\"margin-top:9px; border-top:3px solid #A9C0D6; padding-top:6px; font-size:12px; font-weight:700; letter-spacing:0.09em; text-transform:uppercase; color:var(--muted); width:100%; text-align:center;\">Within countries</div></div><div style=\"padding-top:1px;\">+</div><div style=\"display:flex; flex-direction:column; align-items:center;\"><div>&Sigma;<sub><i>c</i></sub>&nbsp; <i>p</i><sub><i>c</i></sub>&thinsp;&middot;&thinsp;ln&thinsp;(&thinsp;<i>&mu;</i>&thinsp;/&thinsp;<i>&mu;</i><sub><i>c</i></sub>&thinsp;)</div><div style=\"margin-top:9px; border-top:3px solid #3E5C76; padding-top:6px; font-size:12px; font-weight:700; letter-spacing:0.09em; text-transform:uppercase; color:var(--muted); width:100%; text-align:center;\">Between countries</div></div></div><p style=\"font-size:14px; line-height:1.45; color:var(--muted); margin:6px 0 0 0;\"><i>p</i><sub><i>c</i></sub> country <i>c</i>’s share of population &middot;&nbsp; <i>&mu;</i><sub><i>c</i></sub> its mean income &middot;&nbsp; MLD<sub><i>c</i></sub> the MLD within it &middot;&nbsp; the identity is exact</p></div></div>"
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "slide-extremes-global",
+      "blocks": [
+        {
+          "id": "b-exg-k",
+          "type": "html",
+          "html": "<p class=\"kicker\"><span style=\"letter-spacing: 0.12em;\">WIP/PIP comparison \"off the shelf\"</span></p>"
+        },
+        {
+          "id": "b-exg-fig",
+          "type": "component",
+          "component": "fig-raw-comparison",
+          "props": {
+            "title": "",
+            "dataUrl": "data/figures/fig_examples_global_mld.json",
+            "sources": [
+              "WID_pretax_per_adult",
+              "PIP"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "slide-gbridge-step4",
+      "notes": "Global bridging sequence, step 4: + income basis",
+      "blocks": [
+        {
+          "id": "b-gb4-k",
+          "type": "html",
+          "html": "<p class=\"kicker\"><span style=\"letter-spacing: 0.12em;\">Bridging</span></p>"
+        },
+        {
+          "id": "b-gb4-fig",
+          "type": "component",
+          "component": "fig-raw-comparison",
+          "props": {
+            "title": "",
+            "dataUrl": "data/figures/fig_examples_global_mld.json",
+            "sources": [
+              "WID_pretax_per_adult",
+              "WID_pretax_per_capita",
+              "WID_posttax_per_capita",
+              "PIP_topadj",
+              "PIP_consinc",
+              "PIP"
+            ],
+            "reveal": [
+              "WID_pretax_per_adult",
+              "WID_pretax_per_capita",
+              "WID_posttax_per_capita",
+              "PIP_consinc",
+              "PIP"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "slide-rv2fw4",
+      "layout": "default",
+      "notes": "Expectation-setting slide, placed before the problem setup.\n\nSays up front what the talk is not, so the contribution claim is honest: the value is in re-presenting existing work clearly, not in new data or new method.\n\n(Notes to fill in — Joe's framing.)",
+      "blocks": [
+        {
+          "id": "b-zem0dr",
+          "type": "html",
+          "html": "<p class=\"kicker\">How to communicate the research on global income inequality?</p>"
+        },
+        {
+          "id": "b-vglkd3",
+          "type": "html",
+          "html": "<ul><li>Just PIP?</li><ul><li>We know between/within split is impacted by missing top incomes</li></ul><li>Just WID?</li><ul><li>\"Corrected for top incomes\" is a misleading oversimplification&nbsp;</li><li>National Accounts less relevant for welfare (Anand &amp; Segal (2008); Deaton (2005); contra Sala-i-Martin )&nbsp;</li></ul><li>Both — \"Experts disagree\"?</li><ul><li>Exaggerates the uncertainty / Not clear <i style=\"font-size: 0.9em;\">what</i><span style=\"font-size: 0.9em;\">&nbsp;they disagree about</span></li></ul><li>Both — Alternative measures?</li><ul><li>Downplays the uncertainty / role of mismeasurement</li></ul></ul>"
+        }
+      ]
+    },
+    {
+      "id": "slide-vs7hvr",
+      "layout": "default",
+      "blocks": [
+        {
+          "id": "b-3hyqn7",
+          "type": "html",
+          "html": "<p class=\"kicker\">Two questions</p>"
+        },
+        {
+          "id": "b-eegjuo",
+          "type": "html",
+          "html": "<p><ol><li>Why do PIP and WID disagree?</li><li>What's the \"right\" answer?</li></ol></p>"
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "slide-alobsk",
+      "layout": "default",
+      "blocks": [
+        {
+          "id": "b-xmeqqj",
+          "type": "html",
+          "html": "<p class=\"kicker\">Two questions</p>"
+        },
+        {
+          "id": "b-2iwx3s",
+          "type": "html",
+          "html": "<p></p><ol><li><b>Why do PIP and WID disagree?</b></li><li>What's the \"right\" answer?</li></ol><p></p>"
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "slide-wcu2mf",
+      "layout": "default",
+      "blocks": [
+        {
+          "id": "b-0q3jy4",
+          "type": "html",
+          "html": "<p class=\"kicker\">Two questions</p>"
+        },
+        {
+          "id": "b-d5nck7",
+          "type": "html",
+          "html": "<p></p><ol><li><b>Why do PIP and WID disagree? -&gt; 4 takeaways</b></li><li>What's the \"right\" answer?</li></ol><p></p>"
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "slide-bwwixz",
+      "layout": "default",
+      "blocks": [
+        {
+          "id": "b-4xxcyo",
+          "type": "html",
+          "html": "<p class=\"kicker\">Two questions</p>"
+        },
+        {
+          "id": "b-tiffep",
+          "type": "html",
+          "html": "<p></p><ol><li><b>Why do PIP and WID disagree?</b></li><ol><li><span style=\"font-size: 28.8px;\">Means matter (but not that much)</span></li><li><span style=\"font-size: 28.8px;\">Before/after tax matters</span></li><li><span style=\"font-size: 28.8px;\">...roughly as much as 'missing top' guestimates</span></li><li>WID inequality &gt;&gt; PIP inequality — even (generously) allowing for 'missing top'</li></ol><li>What's the \"right\" answer?</li></ol><p></p>"
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "slide-90zth5",
+      "layout": "default",
+      "blocks": [
+        {
+          "id": "b-soafzo",
+          "type": "html",
+          "html": "<p class=\"kicker\">Two questions</p>"
+        },
+        {
+          "id": "b-pt34vx",
+          "type": "html",
+          "html": "<p></p><ol><li>Why do PIP and WID disagree?</li><ol><li><span style=\"font-size: 28.8px;\">Means matter (but not that much)</span></li><li><span style=\"font-size: 28.8px;\">Before/after tax matters</span></li><li><span style=\"font-size: 28.8px;\">...roughly as much as 'missing top' guestimates</span></li><li>WID inequality &gt;&gt; PIP inequality — even (generously) allowing for 'missing top'</li></ol><li><b>What's the \"right\" answer?</b></li></ol><p></p>"
+        }
+      ],
+      "notes": ""
+    },
+    {
       "id": "slide-i2uuz9",
       "layout": "default",
       "blocks": [
@@ -802,23 +999,6 @@
           "id": "b-y0bf3x",
           "type": "html",
           "html": "<p></p><ol><li>Why do PIP and WID disagree?</li><ol><li><span style=\"font-size: 28.8px;\">Means matter (but not that much)</span></li><li><span style=\"font-size: 28.8px;\">Before/after tax matters</span></li><li><span style=\"font-size: 28.8px;\">...roughly as much as 'missing top' guestimates</span></li><li>WID inequality &gt;&gt; PIP inequality — even (generously) allowing for 'missing top'</li></ol><li><b>What's the \"right\" answer?</b></li><ol><li>PIP: \"Mostly between\" result nis ot robust to (generous) allowance for missing top</li><li><span style=\"font-size: 28.8px;\">WID: Any step towards \"survey income\" would shift the within component closer to 50%</span></li><li><span style=\"font-size: 28.8px;\">The \"right\" answer (anchored to survey income, allowing for missing top) lies closer to a 50/50 split.</span></li></ol></ol><p></p>"
-        }
-      ],
-      "notes": ""
-    },
-    {
-      "id": "slide-2wslkq",
-      "layout": "default",
-      "blocks": [
-        {
-          "id": "b-l619l0",
-          "type": "html",
-          "html": "<p class=\"kicker\">Addendum: How should we <i>communicate</i> the different global datasets?</p>"
-        },
-        {
-          "id": "b-g5qo3j",
-          "type": "html",
-          "html": "<ul style=\"list-style:none; padding-left:0; margin:0;\"><li style=\"display:flex; gap:14px; align-items:baseline;\"><span style=\"color:var(--owid-red); font-weight:700; flex:0 0 auto;\">✗</span><span>Just PIP (Missing top)</span></li><li style=\"display:flex; gap:14px; align-items:baseline;\"><span style=\"color:var(--owid-red); font-weight:700; flex:0 0 auto;\">✗</span><span>Just WID (\"Corrected for top incomes\" is a misleading oversimplification)</span></li><li style=\"display:flex; gap:14px; align-items:baseline;\"><span style=\"color:var(--owid-red); font-weight:700; flex:0 0 auto;\">✗</span><span>Disconnected literatures (\"Experts disagree...\")</span></li><li style=\"display:flex; gap:14px; align-items:baseline;\"><span style=\"color:#009E73; font-weight:700; flex:0 0 auto;\">✓</span><span><i>Triangulation</i>: Using the datasets as complements rather than substitutes<br>(Alvaredo et al x2; Gradin 2024)</span></li></ul>"
         }
       ],
       "notes": ""

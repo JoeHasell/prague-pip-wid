@@ -144,8 +144,43 @@ window.Deck = (() => {
     return `<polygon points="${x2},${y2} ${px1},${py1} ${px2},${py2}" fill="${color}"/>`;
   }
 
+  const ANNOT_BOX_DEFS =
+    '<defs><filter id="annot-box-shadow" x="-25%" y="-25%" width="150%" height="170%">'
+    + '<feDropShadow dx="0" dy="6" stdDeviation="7" flood-color="rgb(0,12,28)" flood-opacity="0.16"/>'
+    + '</filter></defs>';
+
+  /* Rich text inside annotation boxes: a deliberately tiny subset — bold,
+     italic and line breaks. Authored via the browser's own Cmd+B / Cmd+I in the
+     box editor, so what gets stored is whatever contenteditable produced; this
+     reduces it to the subset, on BOTH commit and render, so nothing unexpected
+     (pasted spans, styles, scripts) can reach the slide. */
+  const RICH_TAGS = { B: 'b', STRONG: 'b', I: 'i', EM: 'i', BR: 'br' };
+
+  function sanitizeRich(html) {
+    const src = document.createElement('div');
+    src.innerHTML = String(html == null ? '' : html);
+    const out = document.createElement('div');
+    (function walk(from, to) {
+      from.childNodes.forEach(n => {
+        if (n.nodeType === 3) { to.appendChild(document.createTextNode(n.nodeValue)); return; }
+        if (n.nodeType !== 1) return;
+        // never carry across the CONTENT of these, not just the tag
+        if (/^(SCRIPT|STYLE|IFRAME|OBJECT)$/.test(n.tagName)) return;
+        const tag = RICH_TAGS[n.tagName];
+        if (tag === 'br') { to.appendChild(document.createElement('br')); return; }
+        if (tag) { const el = document.createElement(tag); to.appendChild(el); walk(n, el); return; }
+        // Anything else (div/p/span from a paste): keep the text, drop the tag,
+        // but preserve the visual break a block element implied.
+        if (/^(DIV|P|LI)$/.test(n.tagName) && to.childNodes.length) to.appendChild(document.createElement('br'));
+        walk(n, to);
+      });
+    })(src, out);
+    return out.innerHTML;
+  }
+
   function annotMarkup(list) {
-    return (list || []).map(a => {
+    const defs = (list || []).some(a => a.type === 'box') ? ANNOT_BOX_DEFS : '';
+    return defs + (list || []).map(a => {
       const color = a.color || 'rgb(29, 61, 99)', width = a.width || 3.5;
       if (a.type === 'pen') {
         return `<path class="annot annot-pen" data-aid="${a.id}" d="${penPath(a.pts)}" fill="none" `
@@ -155,6 +190,21 @@ window.Deck = (() => {
         return `<g class="annot annot-line" data-aid="${a.id}">`
           + `<line x1="${a.x1}" y1="${a.y1}" x2="${a.x2}" y2="${a.y2}" stroke="${color}" stroke-width="${width}" stroke-linecap="round"/>`
           + (a.arrow ? arrowHead(a.x1, a.y1, a.x2, a.y2, width, color) : '') + `</g>`;
+      }
+      if (a.type === 'box') {
+        // A movable, resizable card with WRAPPING text. The card itself is an
+        // SVG rect (crisp, and takes the drop-shadow filter); the text is an
+        // HTML div inside a foreignObject, which is what gives us real line
+        // wrapping and `pre-wrap` newlines without hand-breaking into tspans.
+        const w = Math.max(40, a.w || 260), h = Math.max(30, a.h || 90);
+        const pad = a.pad != null ? a.pad : 14;
+        const iw = Math.max(1, w - pad * 2), ih = Math.max(1, h - pad * 2);
+        return `<g class="annot annot-box" data-aid="${a.id}">`
+          + `<rect class="annot-box-bg" x="${a.x}" y="${a.y}" width="${w}" height="${h}" filter="url(#annot-box-shadow)"/>`
+          + `<foreignObject x="${a.x + pad}" y="${a.y + pad}" width="${iw}" height="${ih}">`
+          + `<div xmlns="http://www.w3.org/1999/xhtml" class="annot-box-text" `
+          + `style="font-size:${a.size || 20}px;color:${color}">${sanitizeRich(a.text)}</div>`
+          + `</foreignObject></g>`;
       }
       if (a.type === 'text') {
         return `<text class="annot annot-text" data-aid="${a.id}" x="${a.x}" y="${a.y}" `
@@ -391,6 +441,7 @@ window.Deck = (() => {
     remountCurrentSlide,
     renderAnnotations,
     penPath,
+    sanitizeRich,
     onChange,
     escapeHtml,
     SVG_NS,

@@ -311,3 +311,31 @@ body.editing .block:hover > .block-controls { display: flex; }
 }
 
 #editor-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* resize handles on a selected text box */
+.slide-annot .annot-handle {
+  fill: #fff;
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  cursor: nwse-resize;
+}
+.slide-annot .annot-handle.h-ne,
+.slide-annot .annot-handle.h-sw { cursor: nesw-resize; }
+
+/* textarea used to type into a box — matches the box's own metrics so the
+   wrapping you see while typing is the wrapping you get */
+.annot-boxedit {
+  position: fixed;
+  z-index: 62;
+  background: rgba(255, 255, 255, 0.98);
+  border: 1px solid var(--accent);
+  border-radius: 2px;
+  font-family: Lato, sans-serif;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 12, 28, 0.18);
+  /* contenteditable, not a textarea — so Cmd+B / Cmd+I work. These two keep
+     its wrapping identical to the rendered box. */
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  outline: none;
+}
