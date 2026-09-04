@@ -147,8 +147,8 @@ def main():
             "max_distance_years": MAX_DISTANCE,
             "etl_version": es.COMPARISON_VERSION,
             "etl_dataset": (
-                "garden/wb/2026-06-26/world_bank_pip#inequality and "
-                "garden/wid/2026-06-18/world_inequality_database#inequality"
+                f"garden/wb/{es.PIP_VERSION}/world_bank_pip#inequality and "
+                f"garden/wid/{es.WID_VERSION}/world_inequality_database#inequality"
             ),
             "units": "counts of countries; population shares of the countries covered",
             "notes": [

@@ -171,10 +171,16 @@ DAILY_TO_MONTHLY = 365 / 12
 # The single year the top-of-distribution and explainer figures show.
 DISPLAY_YEAR = 2023
 
+# The World Bank PIP release the figures read directly from the catalog. Named once
+# here so a version bump cannot leave one URL — or a figure's stated provenance —
+# behind.
+PIP_VERSION = "2026-06-26"
+PIP_DATASET = ("wb", PIP_VERSION, "world_bank_pip")
+
 # Two other OWID datasets the figures draw on directly. Both are long published,
 # so these read from the public catalog rather than needing the staging fallback.
 PIP_PERCENTILES_URL = (
-    "https://catalog.ourworldindata.org/garden/wb/2026-06-26/world_bank_pip/percentiles.parquet"
+    f"https://catalog.ourworldindata.org/garden/wb/{PIP_VERSION}/world_bank_pip/percentiles.parquet"
 )
 OWID_REGIONS_URL = (
     "https://catalog.ourworldindata.org/garden/regions/2023-01-01/regions/regions.parquet"
@@ -217,7 +223,7 @@ PIP_PPP_VERSION = 2021
 # reference-year figures, which only ever read a country-year the source actually
 # surveyed or observed — never an interpolated or extrapolated one.
 PIP_INEQUALITY_URL = (
-    "https://catalog.ourworldindata.org/garden/wb/2026-06-26/world_bank_pip/inequality.parquet"
+    f"https://catalog.ourworldindata.org/garden/wb/{PIP_VERSION}/world_bank_pip/inequality.parquet"
 )
 # PIP's headline series: surveys consolidated across welfare types, no comparability
 # spells. The "intra/extrapolated" table is deliberately NOT used.
