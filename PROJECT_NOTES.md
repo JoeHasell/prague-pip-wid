@@ -15,9 +15,13 @@ watches the ETL. After any ETL change, and before presenting, run:
 # reads the public OWID catalog (owid/etl#6764 merged 2026-09-02); no VPN needed:
 python data/scripts/refresh_from_etl.py
 
-# only while a future ETL pull request that changes these datasets is still open:
-python data/scripts/refresh_from_etl.py --staging <owid/etl branch name>
+# while an ETL pull request that changes these datasets is still open — and this is
+# where the committed figures come from today (owid/etl#6806, the WID 2026-09-02 update):
+python data/scripts/refresh_from_etl.py --staging worktree-etl-data-wid-update
 ```
+
+Until owid/etl#6806 merges the catalog modes stop with an error, because
+`etl_source.WID_VERSION` is a version the catalog does not carry yet — use `--staging`.
 
 Commit `data/raw/etl/` and `data/figures/` together. `python data/scripts/refresh_from_etl.py --check`
 reports staleness without changing anything (non-zero exit when the figures are behind).
@@ -77,10 +81,13 @@ rules; the essentials:
 - **Sessions are LOCAL** — in the desktop app's **Code** tab, Environment =
   **Local**, project folder `~/Documents/Claude/Projects/prague-pip-wid`. Claude
   reads and writes Joe's actual working copy, exactly as Cowork did.
-- **Git: work on `main`; Claude edits, Joe commits and pushes** from **GitHub
-  Desktop** (his credentials live there). Claude leaves its work uncommitted for
-  Joe to review, uses read-only `git` freely to orient, and doesn't commit, push
-  or branch unless asked. Full rules in [`CLAUDE.md`](CLAUDE.md).
+- **Git: two routes.** On Joe's Mac, work on `main` — Claude edits and leaves the
+  work uncommitted, Joe commits and pushes from **GitHub Desktop** (his credentials
+  live there). From a collaborator's clone, **branches and pull requests against
+  this repo are fine**: prague-pip-wid#1 and #2 both landed that way, and a PR is
+  the better review surface for a change that rewrites every figure JSON. Either
+  way Claude uses read-only `git` freely to orient and doesn't commit, push or open
+  a PR unless asked. Full rules in [`CLAUDE.md`](CLAUDE.md).
 - **Cloud sessions are not used here** (decided 2026-09-02). A cloud container
   can't reach the Mac, so it can't see Joe's browser edits, and Stata — hence
   `00_fetch_wid.py` — exists only on the Mac. A SessionStart hook that set up
