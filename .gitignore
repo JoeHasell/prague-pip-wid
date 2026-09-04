@@ -6,3 +6,9 @@ content/slides.json.bak
 data/raw/wid/temp_country_data/
 data/raw/wid/fetch_progress.json
 data/scripts/__pycache__/
+
+# Raw screen recordings: straight off a Retina display these run to 100 MB+,
+# which GitHub REJECTS outright (100 MiB hard limit per file). Compress and
+# convert before committing, and give the result a real name — then it is not
+# matched by this rule.
+content/images/Screen Recording*.mov

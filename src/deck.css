@@ -452,3 +452,12 @@ html, body {
   height: 100%;
   margin: 0;
 }
+
+/* ---------- corner box (a media card pinned to a slide corner) ----------
+   Positions against the SLIDE BODY, not against the block it happens to live
+   in. The editor sets `.block { position: relative }` for its hover controls
+   (src/editor.css), which would otherwise make such a box anchor to its block
+   and sit halfway up the slide while editing — correct when presenting, wrong
+   in ?edit. Three classes here, so this wins over that single-class rule
+   whatever order the stylesheets load in. */
+.slide-body > .block:has(> .deck-corner-box) { position: static; }

@@ -11,12 +11,12 @@
         {
           "id": "b-ts2",
           "type": "html",
-          "html": "<h1>Reconciling opposing decompositions of global inequality</h1>"
+          "html": "<h1>Triangulating Global Inequality</h1>"
         },
         {
           "id": "b-ts3",
           "type": "html",
-          "html": "<p class=\"muted\">Triangulating between two key global datasets: the World Bank's <i>Poverty and Inequality Platform</i>, and the&nbsp;<i>World Inequality Database</i>.</p>"
+          "html": "<p class=\"muted\">Reconciling World Inequality Database and World Bank Data on Global Incomes</p>"
         },
         {
           "id": "b-ts4",
@@ -27,19 +27,508 @@
       "notes": "SHORT TALK — 15 min, academic audience (inequality researchers). Aim to talk for 12-13 min so Q&A can happen.\n\nAbstract / opening framing:\n\nWhere does global inequality lie: between or within countries? Despite a new wealth of data, we're still in the dark: PIP survey data says 'mostly between', WID/DINA says 'mostly within'.\n\nThe divergence mixes known measurement problems with differing methodological choices. That has left unexplored what is arguably the most attractive vantage point of all, lying between these two worlds of measurement: one anchored to a traditional ‘survey income’ concept, while allowing for underestimation at the top. Recent expansion of both datasets makes such bridging far more feasible than it used to be. Seen from such a triangulated vantage point, the between/within split looks close to even.\n\nRunning order: framing → why now (coverage + DINA) → Q2 walkthrough (between/within) → one ask for the room about OWID."
     },
     {
-      "id": "slide-owid-role",
-      "layout": "default",
-      "notes": "Expectation-setting slide, placed before the problem setup.\n\nSays up front what the talk is not, so the contribution claim is honest: the value is in re-presenting existing work clearly, not in new data or new method.\n\n(Notes to fill in — Joe's framing.)",
+      "id": "slide-q2a1hu",
+      "layout": "title",
       "blocks": [
         {
-          "id": "b-owid-k",
+          "id": "b-iucxfo",
           "type": "html",
-          "html": "<p class=\"kicker\">About Our World in Data&nbsp;</p>"
+          "html": "<h1>Triangulating Global Inequality</h1>"
         },
         {
-          "id": "b-owid-body",
+          "id": "b-qlppxa",
           "type": "html",
-          "html": "<div style=\"max-width:1040px;\"><div><span style=\"font-size: 32px;\"><br></span></div><ul style=\"line-height: 1.45; margin: 0px; padding-left: 30px;\"><li>Goal: Making data and research more accessible and understandable</li><li>Communicating existing data and research</li><ul><li>Data visualization</li><li>Explaining and combining existing research in new ways&nbsp;</li></ul><li>(Occasionally) Our own modeling/analysis</li><ul style=\"\"><ul style=\"\"><li style=\"font-size: 32px;\"><span style=\"font-size: 28.8px;\">Extending established methodologies to cover important gaps</span></li><li style=\"font-size: 32px;\"><span style=\"font-size: 0.9em;\">E.g., demographic models, historical income distributions</span></li></ul></ul></ul></div>"
+          "html": "<p class=\"muted\">Reconciling World Inequality Database and World Bank Data on Global Incomes</p>"
+        },
+        {
+          "id": "b-g5jcpi",
+          "type": "html",
+          "html": "<p style=\"font-size: 20px; line-height: 1.6; margin-top: 14px; color: var(--muted);\"><strong style=\"color: var(--ink); font-weight: 700;\">Joe Hasell</strong> &middot; Oxford Martin School, Our World in Data<br><strong style=\"color: var(--ink); font-weight: 700;\">Pablo Arriagada</strong> &middot; Our World in Data<br><strong style=\"color: var(--ink); font-weight: 700;\">Bertha Rohenkohl</strong> &middot; Our World in Data</p>"
+        }
+      ],
+      "notes": "SHORT TALK — 15 min, academic audience (inequality researchers). Aim to talk for 12-13 min so Q&A can happen.\n\nAbstract / opening framing:\n\nWhere does global inequality lie: between or within countries? Despite a new wealth of data, we're still in the dark: PIP survey data says 'mostly between', WID/DINA says 'mostly within'.\n\nThe divergence mixes known measurement problems with differing methodological choices. That has left unexplored what is arguably the most attractive vantage point of all, lying between these two worlds of measurement: one anchored to a traditional ‘survey income’ concept, while allowing for underestimation at the top. Recent expansion of both datasets makes such bridging far more feasible than it used to be. Seen from such a triangulated vantage point, the between/within split looks close to even.\n\nRunning order: framing → why now (coverage + DINA) → Q2 walkthrough (between/within) → one ask for the room about OWID.",
+      "annotations": [
+        {
+          "id": "a-9lcud9",
+          "type": "pen",
+          "pts": [
+            [
+              523.1,
+              304.6
+            ],
+            [
+              523.1,
+              304.2
+            ],
+            [
+              523,
+              302.6
+            ],
+            [
+              523.1,
+              300.3
+            ],
+            [
+              523.7,
+              297.6
+            ],
+            [
+              524.6,
+              294.5
+            ],
+            [
+              525.9,
+              291.1
+            ],
+            [
+              526.9,
+              288.5
+            ],
+            [
+              527.7,
+              286.3
+            ],
+            [
+              528.6,
+              283.7
+            ],
+            [
+              529.4,
+              281.6
+            ],
+            [
+              529.8,
+              280
+            ],
+            [
+              530.1,
+              278.6
+            ],
+            [
+              530.3,
+              277.8
+            ],
+            [
+              530.6,
+              277
+            ],
+            [
+              530.7,
+              276.7
+            ],
+            [
+              530.9,
+              276.4
+            ],
+            [
+              530.9,
+              276.2
+            ],
+            [
+              530.9,
+              275.8
+            ],
+            [
+              531,
+              275.4
+            ],
+            [
+              531.1,
+              274.8
+            ],
+            [
+              531.3,
+              274
+            ],
+            [
+              531.5,
+              273.2
+            ],
+            [
+              531.8,
+              272.5
+            ],
+            [
+              532,
+              272.1
+            ],
+            [
+              532.1,
+              271.7
+            ],
+            [
+              532.3,
+              271.2
+            ],
+            [
+              532.4,
+              270.9
+            ],
+            [
+              532.4,
+              270.7
+            ],
+            [
+              532.5,
+              270.6
+            ],
+            [
+              532.7,
+              270.6
+            ],
+            [
+              532.9,
+              270.6
+            ],
+            [
+              533,
+              270.6
+            ],
+            [
+              533.2,
+              270.9
+            ],
+            [
+              534,
+              271.6
+            ],
+            [
+              535.2,
+              272.8
+            ],
+            [
+              536.6,
+              274.5
+            ],
+            [
+              538.1,
+              276.6
+            ],
+            [
+              540.1,
+              279.4
+            ],
+            [
+              548,
+              290.5
+            ],
+            [
+              550.4,
+              293.6
+            ],
+            [
+              554,
+              298.1
+            ],
+            [
+              556.8,
+              301.8
+            ],
+            [
+              559,
+              304.7
+            ],
+            [
+              561.3,
+              307.6
+            ],
+            [
+              563.3,
+              310
+            ],
+            [
+              564.7,
+              311.6
+            ],
+            [
+              565.7,
+              312.7
+            ],
+            [
+              566.4,
+              313.5
+            ],
+            [
+              566.9,
+              313.9
+            ],
+            [
+              567.3,
+              314.1
+            ],
+            [
+              567.5,
+              314.3
+            ],
+            [
+              567.6,
+              314.5
+            ]
+          ],
+          "color": "rgb(206, 38, 30)",
+          "width": 3.5
+        },
+        {
+          "id": "a-g0h8nu",
+          "type": "text",
+          "x": 323.6,
+          "y": 186.9,
+          "text": "between/within country decompositions of...",
+          "color": "rgb(206, 38, 30)",
+          "size": 28
+        }
+      ]
+    },
+    {
+      "id": "slide-fptn78",
+      "layout": "title",
+      "blocks": [
+        {
+          "id": "b-yh4c29",
+          "type": "html",
+          "html": "<h1>Triangulating Global Inequality</h1>"
+        },
+        {
+          "id": "b-zrkv9o",
+          "type": "html",
+          "html": "<p class=\"muted\">Reconciling World Inequality Database and World Bank Data on Global Incomes</p>"
+        },
+        {
+          "id": "b-msuzoz",
+          "type": "html",
+          "html": "<p style=\"font-size: 20px; line-height: 1.6; margin-top: 14px; color: var(--muted);\"><strong style=\"color: var(--ink); font-weight: 700;\">Joe Hasell</strong> &middot; Oxford Martin School, Our World in Data<br><strong style=\"color: var(--ink); font-weight: 700;\">Pablo Arriagada</strong> &middot; Our World in Data<br><strong style=\"color: var(--ink); font-weight: 700;\">Bertha Rohenkohl</strong> &middot; Our World in Data</p><div class=\"deck-corner-box\" style=\"position:absolute; right:0; bottom:0; width:420px;\"><div style=\"background:var(--wash); border:1px solid var(--line); padding:6px; line-height:0;\"><video src=\"content/images/compressed-owid-screen-recording.mov\" autoplay muted loop playsinline preload=\"auto\" style=\"width:100%; height:auto; display:block;\"></video></div><p style=\"margin:9px 0 0 0; font-size:18px; font-weight:700; color:var(--muted); text-align:center;\">OurWorldInData.org</p></div>"
+        }
+      ],
+      "notes": "SHORT TALK — 15 min, academic audience (inequality researchers). Aim to talk for 12-13 min so Q&A can happen.\n\nAbstract / opening framing:\n\nWhere does global inequality lie: between or within countries? Despite a new wealth of data, we're still in the dark: PIP survey data says 'mostly between', WID/DINA says 'mostly within'.\n\nThe divergence mixes known measurement problems with differing methodological choices. That has left unexplored what is arguably the most attractive vantage point of all, lying between these two worlds of measurement: one anchored to a traditional ‘survey income’ concept, while allowing for underestimation at the top. Recent expansion of both datasets makes such bridging far more feasible than it used to be. Seen from such a triangulated vantage point, the between/within split looks close to even.\n\nRunning order: framing → why now (coverage + DINA) → Q2 walkthrough (between/within) → one ask for the room about OWID.",
+      "annotations": [
+        {
+          "id": "a-9lcud9",
+          "type": "pen",
+          "pts": [
+            [
+              523.1,
+              304.6
+            ],
+            [
+              523.1,
+              304.2
+            ],
+            [
+              523,
+              302.6
+            ],
+            [
+              523.1,
+              300.3
+            ],
+            [
+              523.7,
+              297.6
+            ],
+            [
+              524.6,
+              294.5
+            ],
+            [
+              525.9,
+              291.1
+            ],
+            [
+              526.9,
+              288.5
+            ],
+            [
+              527.7,
+              286.3
+            ],
+            [
+              528.6,
+              283.7
+            ],
+            [
+              529.4,
+              281.6
+            ],
+            [
+              529.8,
+              280
+            ],
+            [
+              530.1,
+              278.6
+            ],
+            [
+              530.3,
+              277.8
+            ],
+            [
+              530.6,
+              277
+            ],
+            [
+              530.7,
+              276.7
+            ],
+            [
+              530.9,
+              276.4
+            ],
+            [
+              530.9,
+              276.2
+            ],
+            [
+              530.9,
+              275.8
+            ],
+            [
+              531,
+              275.4
+            ],
+            [
+              531.1,
+              274.8
+            ],
+            [
+              531.3,
+              274
+            ],
+            [
+              531.5,
+              273.2
+            ],
+            [
+              531.8,
+              272.5
+            ],
+            [
+              532,
+              272.1
+            ],
+            [
+              532.1,
+              271.7
+            ],
+            [
+              532.3,
+              271.2
+            ],
+            [
+              532.4,
+              270.9
+            ],
+            [
+              532.4,
+              270.7
+            ],
+            [
+              532.5,
+              270.6
+            ],
+            [
+              532.7,
+              270.6
+            ],
+            [
+              532.9,
+              270.6
+            ],
+            [
+              533,
+              270.6
+            ],
+            [
+              533.2,
+              270.9
+            ],
+            [
+              534,
+              271.6
+            ],
+            [
+              535.2,
+              272.8
+            ],
+            [
+              536.6,
+              274.5
+            ],
+            [
+              538.1,
+              276.6
+            ],
+            [
+              540.1,
+              279.4
+            ],
+            [
+              548,
+              290.5
+            ],
+            [
+              550.4,
+              293.6
+            ],
+            [
+              554,
+              298.1
+            ],
+            [
+              556.8,
+              301.8
+            ],
+            [
+              559,
+              304.7
+            ],
+            [
+              561.3,
+              307.6
+            ],
+            [
+              563.3,
+              310
+            ],
+            [
+              564.7,
+              311.6
+            ],
+            [
+              565.7,
+              312.7
+            ],
+            [
+              566.4,
+              313.5
+            ],
+            [
+              566.9,
+              313.9
+            ],
+            [
+              567.3,
+              314.1
+            ],
+            [
+              567.5,
+              314.3
+            ],
+            [
+              567.6,
+              314.5
+            ]
+          ],
+          "color": "rgb(206, 38, 30)",
+          "width": 3.5
+        },
+        {
+          "id": "a-g0h8nu",
+          "type": "text",
+          "x": 321.8,
+          "y": 189.8,
+          "text": "between/within country decompositions of...",
+          "color": "rgb(206, 38, 30)",
+          "size": 28
         }
       ]
     },
@@ -500,7 +989,7 @@
         {
           "id": "b-emph2-1",
           "type": "html",
-          "html": "<p class=\"kicker\">#2: Before/after tax&nbsp;matters</p>"
+          "html": "<p class=\"kicker\">#2: Before/after tax <i>does</i> matter</p>"
         },
         {
           "id": "b-emph2-2",
@@ -533,7 +1022,7 @@
         {
           "id": "b-nwkq3u",
           "type": "html",
-          "html": "<p class=\"kicker\">#2: Before/after tax&nbsp;matters</p><div style=\"position:absolute; left:150px; top:84px; width:700px; background:rgba(255,255,255,0.97); border:1px solid var(--line); box-shadow:0 12px 34px rgba(0,12,28,0.14); padding:26px 30px; z-index:3;\"><p style=\"margin:0; font-size:19px; line-height:1.55; color:var(--ink); max-width:none;\">“We have also produced estimates using the concept of <b>post-tax</b> national income...&nbsp;<span style=\"color: var(--ink);\">The results on between-countries and within-countries inequality</span><b style=\"color: var(--ink);\"> trends </b><span style=\"color: var(--ink);\">and on regional decomposition are <b>virtually unchanged.</b></span><span style=\"color: var(--ink);\">”</span></p><p style=\"margin:18px 0 0 0; font-size:14px; line-height:1.4; color:var(--muted);\">Chancel &amp; Piketty (2021)</p></div>"
+          "html": "<p class=\"kicker\">#2: Before/after tax <i>does</i> matter</p><div style=\"position:absolute; left:150px; top:84px; width:700px; background:rgba(255,255,255,0.97); border:1px solid var(--line); box-shadow:0 12px 34px rgba(0,12,28,0.14); padding:26px 30px; z-index:3;\"><p style=\"margin:0; font-size:19px; line-height:1.55; color:var(--ink); max-width:none;\">“We have also produced estimates using the concept of <b>post-tax</b> national income...&nbsp;<span style=\"color: var(--ink);\">The results on between-countries and within-countries inequality</span><b style=\"color: var(--ink);\"> trends </b><span style=\"color: var(--ink);\">and on regional decomposition are <b>virtually unchanged.</b></span><span style=\"color: var(--ink);\">”</span></p><p style=\"margin:18px 0 0 0; font-size:14px; line-height:1.4; color:var(--muted);\">Chancel &amp; Piketty (2021)</p></div>"
         },
         {
           "id": "b-cpbmvm",
@@ -558,6 +1047,124 @@
         }
       ],
       "annotations": []
+    },
+    {
+      "id": "slide-fb9m1i",
+      "notes": "Global bridging sequence, step 3: + post-tax",
+      "blocks": [
+        {
+          "id": "b-pqezmc",
+          "type": "component",
+          "component": "fig-raw-comparison",
+          "props": {
+            "title": "",
+            "dataUrl": "data/figures/fig_examples_global_mld.json",
+            "sources": [
+              "WID_pretax_per_adult",
+              "WID_pretax_per_capita",
+              "WID_posttax_per_capita",
+              "PIP_topadj",
+              "PIP_consinc",
+              "PIP"
+            ],
+            "reveal": [
+              "WID_pretax_per_adult",
+              "WID_pretax_per_capita",
+              "WID_posttax_per_capita",
+              "PIP"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "slide-gbridge-step4",
+      "notes": "Global bridging sequence, step 4: + income basis",
+      "blocks": [
+        {
+          "id": "b-gb4-fig",
+          "type": "component",
+          "component": "fig-raw-comparison",
+          "props": {
+            "title": "",
+            "dataUrl": "data/figures/fig_examples_global_mld.json",
+            "sources": [
+              "WID_pretax_per_adult",
+              "WID_pretax_per_capita",
+              "WID_posttax_per_capita",
+              "PIP_topadj",
+              "PIP_consinc",
+              "PIP"
+            ],
+            "reveal": [
+              "WID_pretax_per_adult",
+              "WID_pretax_per_capita",
+              "WID_posttax_per_capita",
+              "PIP_consinc",
+              "PIP"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "slide-gbridge-all",
+      "notes": "The completed bridging chain: all six columns at full strength, no reveal. WID pre-tax/adult 22% between -> PIP 69% between, total MLD 1.30 -> 0.69.",
+      "blocks": [
+        {
+          "id": "b-gball-1",
+          "type": "component",
+          "component": "fig-raw-comparison",
+          "props": {
+            "title": "",
+            "dataUrl": "data/figures/fig_examples_global_mld.json",
+            "sources": [
+              "WID_pretax_per_adult",
+              "WID_pretax_per_capita",
+              "WID_posttax_per_capita",
+              "PIP_topadj",
+              "PIP_consinc",
+              "PIP"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "slide-q2topadjex",
+      "layout": "default",
+      "notes": "Top adjustment explainer, CHAINED method (2026-08-11): base = PIP_consinc (income basis), splice P95 (anchor p94-p95, first adjusted bin p95-p96). Chart shows consumption (observed), income basis (imputed), and top-adjusted; income countries show two lines. Scripts: topadj.py, consinc.py, 11_fig_topadj_explainer.py. Default country: Indonesia.",
+      "blocks": [
+        {
+          "id": "b-q2tae-k",
+          "type": "html",
+          "html": "<p class=\"kicker\"><span style=\"letter-spacing: 0.12em;\">Guesstimated upper bound for missing top</span></p>"
+        },
+        {
+          "id": "b-q2tae-t",
+          "type": "html",
+          "html": "<p><b>- Consumption -&gt; Income:&nbsp;</b></p><p>- <b>'Upper bound' top adjustment:</b>&nbsp;Above P95, incomes assumed to follow the <em>shape</em> of WID’s post-tax distribution, anchored at the P94–95 value</p><p>&nbsp;- adj(P<sub>y</sub>) = inc(P94–95) × WID(P<sub>y</sub>) / WID(P94–95).&nbsp;</p>"
+        },
+        {
+          "id": "b-q2tae-c",
+          "type": "component",
+          "component": "fig-topadj-explainer",
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "slide-oy22n7",
+      "layout": "default",
+      "notes": "Top adjustment explainer, CHAINED method (2026-08-11): base = PIP_consinc (income basis), splice P95 (anchor p94-p95, first adjusted bin p95-p96). Chart shows consumption (observed), income basis (imputed), and top-adjusted; income countries show two lines. Scripts: topadj.py, consinc.py, 11_fig_topadj_explainer.py. Default country: Indonesia.",
+      "blocks": [
+        {
+          "id": "b-t145qf",
+          "type": "component",
+          "component": "fig-topadj-explainer",
+          "props": {}
+        }
+      ]
     },
     {
       "id": "slide-emph-tops",
@@ -729,6 +1336,23 @@
       "annotations": []
     },
     {
+      "id": "slide-owid-role",
+      "layout": "default",
+      "notes": "Expectation-setting slide, placed before the problem setup.\n\nSays up front what the talk is not, so the contribution claim is honest: the value is in re-presenting existing work clearly, not in new data or new method.\n\n(Notes to fill in — Joe's framing.)",
+      "blocks": [
+        {
+          "id": "b-owid-k",
+          "type": "html",
+          "html": "<p class=\"kicker\">About Our World in Data&nbsp;</p>"
+        },
+        {
+          "id": "b-owid-body",
+          "type": "html",
+          "html": "<div style=\"max-width:1040px;\"><div><span style=\"font-size: 32px;\"><br></span></div><ul style=\"line-height: 1.45; margin: 0px; padding-left: 30px;\"><li>Goal: Making data and research more accessible and understandable</li><li>Communicating existing data and research</li><ul><li>Data visualization</li><li>Explaining and combining existing research in new ways&nbsp;</li></ul><li>(Occasionally) Our own modeling/analysis</li><ul style=\"\"><ul style=\"\"><li style=\"font-size: 32px;\"><span style=\"font-size: 28.8px;\">Extending established methodologies to cover important gaps</span></li><li style=\"font-size: 32px;\"><span style=\"font-size: 0.9em;\">E.g., demographic models, historical income distributions</span></li></ul></ul></ul></div>"
+        }
+      ]
+    },
+    {
       "id": "slide-f0cx9m",
       "layout": "default",
       "blocks": [
@@ -843,41 +1467,6 @@
             "dataUrl": "data/figures/fig_examples_global_mld.json",
             "sources": [
               "WID_pretax_per_adult",
-              "PIP"
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "id": "slide-gbridge-step4",
-      "notes": "Global bridging sequence, step 4: + income basis",
-      "blocks": [
-        {
-          "id": "b-gb4-k",
-          "type": "html",
-          "html": "<p class=\"kicker\"><span style=\"letter-spacing: 0.12em;\">Bridging</span></p>"
-        },
-        {
-          "id": "b-gb4-fig",
-          "type": "component",
-          "component": "fig-raw-comparison",
-          "props": {
-            "title": "",
-            "dataUrl": "data/figures/fig_examples_global_mld.json",
-            "sources": [
-              "WID_pretax_per_adult",
-              "WID_pretax_per_capita",
-              "WID_posttax_per_capita",
-              "PIP_topadj",
-              "PIP_consinc",
-              "PIP"
-            ],
-            "reveal": [
-              "WID_pretax_per_adult",
-              "WID_pretax_per_capita",
-              "WID_posttax_per_capita",
-              "PIP_consinc",
               "PIP"
             ]
           }
@@ -30205,29 +30794,6 @@
           "id": "b-q2ci-c",
           "type": "component",
           "component": "fig-consinc-explainer",
-          "props": {}
-        }
-      ]
-    },
-    {
-      "id": "slide-q2topadjex",
-      "layout": "default",
-      "notes": "Top adjustment explainer, CHAINED method (2026-08-11): base = PIP_consinc (income basis), splice P95 (anchor p94-p95, first adjusted bin p95-p96). Chart shows consumption (observed), income basis (imputed), and top-adjusted; income countries show two lines. Scripts: topadj.py, consinc.py, 11_fig_topadj_explainer.py. Default country: Indonesia.",
-      "blocks": [
-        {
-          "id": "b-q2tae-k",
-          "type": "html",
-          "html": "<p class=\"kicker\"><span style=\"letter-spacing: 0.12em;\">Q2: Which is bigger: inequality between countries, or within countries?</span></p>"
-        },
-        {
-          "id": "b-q2tae-t",
-          "type": "html",
-          "html": "<p><strong>How the top-adjusted series is built:</strong> starting from the income-basis series (previous slide), everything below P95 is kept as is. Above P95, incomes are assumed to follow the <em>shape</em> of WID&rsquo;s post-tax distribution, anchored at the P94&ndash;95 value: adj(P<sub>y</sub>) = inc(P94&ndash;95) &times; WID(P<sub>y</sub>) / WID(P94&ndash;95). This is an <em>additional</em> step on top of the consumption&rarr;income adjustment: the bottom 95% is untouched; the top 5% &mdash; and hence the mean &mdash; is reshaped.</p>"
-        },
-        {
-          "id": "b-q2tae-c",
-          "type": "component",
-          "component": "fig-topadj-explainer",
           "props": {}
         }
       ]
