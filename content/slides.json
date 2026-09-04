@@ -30987,6 +30987,217 @@
       "notes": ""
     },
     {
+      "id": "slide-9q50vh",
+      "layout": "default",
+      "notes": "Appendix divider — not part of the talk.\n\nThese seven slides were in the deck until commit 4968bf3 (\"Update to many slides\", 2026-09-03), which rewrote slides.json wholesale and dropped them. Nothing else was removed with them, and nothing downstream broke: the components stayed registered and the figure data kept being rebuilt, so the charts were being refreshed with no slide to render them.\n\nWhat each one needs, if you move it back into the talk:\n- fig-reference-year-composition and fig-reference-year-change (both in components/fig-reference-year-trends.js), reading data/figures/fig_reference_year_trends.json (complete panel, 211 countries, compared with 2024) and data/figures/fig_reference_year_observed.json (observed surveys only, 79-155 countries depending on the reference year, compared with 2019). Written by data/scripts/22_fig_reference_year_trends.py and 26_fig_reference_year_observed.py.\n- fig-between-share-trend (components/fig-between-share-trend.js), reading data/figures/fig_between_share_trend.json, written by data/scripts/27_fig_between_share_trend.py.\n\nOriginal slide ids, in case you want to trace them in git history: slide-q1refyear-counts, -counts-obs, -alpha, -alpha-obs, -change, -change-obs, slide-q2trend. The restored slides carry fresh ids.\n\nThree numbers in the speaker notes below were re-checked against the current figure files and corrected: observed coverage now runs 79-155 countries (was 83-155 — WID's observed set is defined by its data-quality score since the 2026-09-02 release), the between-share trend now reads PIP 75.8% -> 66.5% -> 69.3% and WID pre-tax per adult 40.5% -> 22.9% -> 21.1% (was 40.6 -> 23.2 -> 21.6), and that chart draws seven series, not eight.\n\nOne known wart, harmless while nothing renders it: 26_fig_reference_year_observed.py hardcodes \"garden/wid/2026-06-18/...\" into the figure's meta.etl_dataset, though the data comes from WID 2026-09-02.\n\n[appendix-dropped-figures]",
+      "blocks": [
+        {
+          "id": "b-fhendg",
+          "type": "html",
+          "html": "<p class=\"kicker\">Appendix: charts built for the deck, not in the running order</p>"
+        },
+        {
+          "id": "b-q7lld8",
+          "type": "html",
+          "html": "<div style=\"max-width:1040px;\"><p>Three figures the pipeline still builds and refreshes, currently unused in the talk.</p><ul><li><b>Varying the reference year</b> &mdash; how many countries, and what share of people, have seen inequality rise, fall or hold stable since each year on the x axis. Complete panel, and observed data only. (4 slides)</li><li><b>Average change since each reference year</b> &mdash; unweighted and population weighted. (2 slides)</li><li><b>The between/within split across time</b> &mdash; the between-country share of global inequality, 1990 to 2024. (1 slide)</li><li>All read the same refreshed data as the rest of the deck (<span style=\"white-space:nowrap;\">WID 2026-09-02</span>) &mdash; nothing to rebuild.</li></ul></div>"
+        }
+      ]
+    },
+    {
+      "id": "slide-yi5uig",
+      "layout": "default",
+      "notes": "The live version of the previous sketch. For every reference year on the x axis, how many countries — and what share of people — have seen inequality rise, fall or stay stable since then. PIP on the left, WID pre-tax on the right. Hover for the exact numbers.",
+      "blocks": [
+        {
+          "id": "b-ogad8x",
+          "type": "html",
+          "html": "<p class=\"kicker\"><span style=\"letter-spacing: 1.8px;\">Q1: is income inequality rising everywhere?</span></p>"
+        },
+        {
+          "id": "b-qdrjx6",
+          "type": "html",
+          "html": "<p>Varying the reference year: rising, falling or stable since when?</p>"
+        },
+        {
+          "id": "b-co6lt1",
+          "type": "component",
+          "component": "fig-reference-year-composition",
+          "props": {
+            "title": "",
+            "metrics": [
+              "gini"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "slide-declov",
+      "layout": "default",
+      "notes": "The same question on observed data only: each country's nearest actual survey within five years of the reference year, and of 2019. Coverage drops to 79-155 countries and varies by reference year — a shorter stack means fewer countries had observations that far back. Compare with the previous slide, which uses the complete panel and so shows 211 countries everywhere, most of them extrapolated. The direction survives; the share counted as stable does not, because extrapolated series move less.",
+      "blocks": [
+        {
+          "id": "b-igdscu",
+          "type": "html",
+          "html": "<p class=\"kicker\"><span style=\"letter-spacing: 1.8px;\">Q1: is income inequality rising everywhere?</span></p>"
+        },
+        {
+          "id": "b-6gu1st",
+          "type": "html",
+          "html": "<p>The same question, counting only what the sources actually measured</p>"
+        },
+        {
+          "id": "b-tc83hv",
+          "type": "component",
+          "component": "fig-reference-year-composition",
+          "props": {
+            "title": "",
+            "metrics": [
+              "gini"
+            ],
+            "dataUrl": "data/figures/fig_reference_year_observed.json"
+          }
+        }
+      ]
+    },
+    {
+      "id": "slide-4072ty",
+      "layout": "default",
+      "notes": "The same figure with the measure selector live — the top-vs-bottom sensitivity from the sketch. GE(0) is bottom-sensitive, GE(2) top-sensitive. Switching to GE(2) is what makes WID's 'rising almost everywhere' picture strongest; the Gini and GE(0) bring the two sources closer together.",
+      "blocks": [
+        {
+          "id": "b-13l4x3",
+          "type": "html",
+          "html": "<p class=\"kicker\"><span style=\"letter-spacing: 1.8px;\">Q1: is income inequality rising everywhere?</span></p>"
+        },
+        {
+          "id": "b-3318gy",
+          "type": "html",
+          "html": "<p>Top vs bottom sensitivity: the same question, four inequality measures</p>"
+        },
+        {
+          "id": "b-jtlbmd",
+          "type": "component",
+          "component": "fig-reference-year-composition",
+          "props": {
+            "title": ""
+          }
+        }
+      ]
+    },
+    {
+      "id": "slide-gg1giv",
+      "layout": "default",
+      "notes": "Observed data only, with the measure selector. Because these are each source's own published measures rather than ones computed from the harmonised bins, the selector offers the Gini, top-10% share, top-1% share and Palma ratio instead of the Generalized Entropy family. PIP publishes a top-1% share, so unlike the trend scatters both panels are populated for it.",
+      "blocks": [
+        {
+          "id": "b-hjrmp2",
+          "type": "html",
+          "html": "<p class=\"kicker\"><span style=\"letter-spacing: 1.8px;\">Q1: is income inequality rising everywhere?</span></p>"
+        },
+        {
+          "id": "b-qswv87",
+          "type": "html",
+          "html": "<p>Observed data only, across four published measures</p>"
+        },
+        {
+          "id": "b-ztph9e",
+          "type": "component",
+          "component": "fig-reference-year-composition",
+          "props": {
+            "title": "",
+            "dataUrl": "data/figures/fig_reference_year_observed.json"
+          }
+        }
+      ]
+    },
+    {
+      "id": "slide-ckx9dq",
+      "layout": "default",
+      "notes": "The average change since each reference year — unweighted across countries, and weighted by population. The gap between the two lines is the story: big countries have moved differently from the average country. Measure selector covers the GE family.",
+      "blocks": [
+        {
+          "id": "b-e97d9l",
+          "type": "html",
+          "html": "<p class=\"kicker\"><span style=\"letter-spacing: 1.8px;\">Q1: is income inequality rising everywhere?</span></p>"
+        },
+        {
+          "id": "b-mxyfvz",
+          "type": "html",
+          "html": "<p>Average change from now, unweighted and population weighted</p>"
+        },
+        {
+          "id": "b-slk0u5",
+          "type": "component",
+          "component": "fig-reference-year-change",
+          "props": {
+            "title": ""
+          }
+        }
+      ]
+    },
+    {
+      "id": "slide-jbsj37",
+      "layout": "default",
+      "notes": "Average change on observed data only, unweighted and population weighted. Fewer countries than the panel version, but every point is a real survey on both ends of the comparison.",
+      "blocks": [
+        {
+          "id": "b-x5y1om",
+          "type": "html",
+          "html": "<p class=\"kicker\"><span style=\"letter-spacing: 1.8px;\">Q1: is income inequality rising everywhere?</span></p>"
+        },
+        {
+          "id": "b-5ebdmo",
+          "type": "html",
+          "html": "<p>Average change, counting only what the sources actually measured</p>"
+        },
+        {
+          "id": "b-ai4u6d",
+          "type": "component",
+          "component": "fig-reference-year-change",
+          "props": {
+            "title": "",
+            "dataUrl": "data/figures/fig_reference_year_observed.json"
+          }
+        }
+      ]
+    },
+    {
+      "id": "slide-mhs667",
+      "layout": "default",
+      "notes": "The same decomposition, for every year the two sources share (1990-2024), on the same 211 countries, at constant prices, with the same $0.01/day floor - so levels and the long trend are comparable across years. All seven series drawn agree on the shape: the between-country share falls from 1990 to the mid-2010s and then flattens or ticks up (PIP 75.8% -> 66.5% -> 69.3%; WID pre-tax per adult 40.5% -> 22.9% -> 21.1%). Three caveats, printed under the chart: WID's country-years are WID's own extrapolations for 63-84% of the panel and 97% in 2023-24 (shaded); PIP's are survey years for only 13-51% of countries in any given year, the rest lined up by the World Bank, with 2023-24 nowcasts; and two to four countries switch welfare concept in a typical year, each a small step in the PIP income-basis series. Read the levels and the trend, not the wiggles. The selector switches to the MLD components themselves. Data: data/scripts/27_fig_between_share_trend.py from the ETL's inequality_decomposition table.",
+      "blocks": [
+        {
+          "id": "b-d0kjjx",
+          "type": "html",
+          "html": "<p class=\"kicker\"><span style=\"letter-spacing: 0.12em;\">Q2: Which is bigger: inequality between countries, or within countries?</span></p>"
+        },
+        {
+          "id": "b-dlok2v",
+          "type": "html",
+          "html": "<p>Has the answer changed over time? The same split, every year since 1990</p>"
+        },
+        {
+          "id": "b-jwrc32",
+          "type": "component",
+          "component": "fig-between-share-trend",
+          "props": {
+            "title": "",
+            "dataUrl": "data/figures/fig_between_share_trend.json",
+            "sources": [
+              "WID_pretax_per_adult",
+              "WID_pretax_per_capita",
+              "WID_posttax_per_capita",
+              "WID_posttax_rescaled",
+              "PIP_topadj",
+              "PIP_consinc",
+              "PIP"
+            ]
+          }
+        }
+      ]
+    },
+    {
       "id": "slide-ers737",
       "layout": "default",
       "blocks": [

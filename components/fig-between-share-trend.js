@@ -57,7 +57,7 @@
       .${p}-hover { stroke: rgb(120,135,155); stroke-width: 1; stroke-dasharray: 3 3; }
       .${p}-source { font: 11.5px var(--font-body); fill: ${CHROME.faint}; }
       .${p}-tip { position: absolute; pointer-events: none; z-index: 5; opacity: 0;
-        transform: translate(-50%, -100%); background: rgb(0,33,71); color: #fff;
+        background: rgb(0,33,71); color: #fff;
         font: 12.5px var(--font-body); padding: 6px 9px; border-radius: 6px;
         white-space: nowrap; box-shadow: 0 6px 18px rgba(0,12,28,0.35); transition: opacity 0.1s; line-height: 1.35; }
       .${p}-tip b { font-weight: 700; }
@@ -83,6 +83,29 @@
     const out = [];
     for (let v = Math.ceil(lo / step) * step; v <= hi + 1e-9; v += step) out.push(+v.toFixed(10));
     return out;
+  }
+
+
+  // Keep the readout INSIDE the plot: beside the hover line, flipped when it would
+  // overflow to the right, clamped vertically. Anchoring it above the plot's top edge
+  // put it behind the slide title, where the card's clip cut off half its rows.
+  function placeTip(svg, tip, plot, anchorX, pointerY) {
+    const box = svg.getBoundingClientRect();
+    const vb = svg.viewBox.baseVal;
+    // preserveAspectRatio="xMidYMid meet": the drawing is letterboxed in whichever
+    // dimension is not constraining, so both the scale and the offsets matter.
+    const k = Math.min(box.width / vb.width, box.height / vb.height);
+    const ox = (box.width - vb.width * k) / 2;
+    const oy = (box.height - vb.height * k) / 2;
+    const tw = tip.offsetWidth, th = tip.offsetHeight;
+    const px = ox + anchorX * k;
+    const plotL = ox + plot.x0 * k, plotR = ox + plot.x1 * k;
+    let x = px + 14;
+    if (x + tw > plotR - 4) x = px - 14 - tw;
+    const loY = oy + plot.y0 * k + 4;
+    const hiY = Math.max(loY, oy + plot.y1 * k - th - 4);
+    tip.style.left = `${Math.max(plotL + 4, Math.min(x, box.width - tw - 4))}px`;
+    tip.style.top = `${Math.max(loY, Math.min(oy + pointerY * k - th / 2, hiY))}px`;
   }
 
   Deck.registerComponent('fig-between-share-trend', (el, props) => {
@@ -230,10 +253,7 @@
             .sort((a, b) => data.data[b][metric][i] - data.data[a][metric][i])
             .map(s => `<span class="sw" style="background:${COLOR[s] || '#555'}"></span>${esc(shortOf(s))} <b>${fmt(data.data[s][metric][i])}</b>`);
           tip.innerHTML = `<b>${years[i]}</b><br>${rows.join('<br>')}`;
-          const box = svg.getBoundingClientRect();
-          const scale = box.width / svg.viewBox.baseVal.width;
-          tip.style.left = `${xOf(i) * scale}px`;
-          tip.style.top = `${(y0 + 4) * scale}px`;
+          placeTip(svg, tip, { x0, x1, y0, y1 }, xOf(i), loc.y);
           tip.style.opacity = 1;
         };
         svg.onmouseleave = () => {

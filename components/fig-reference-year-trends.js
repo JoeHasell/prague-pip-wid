@@ -95,7 +95,7 @@
       .${p}-hover { stroke: rgb(120,135,155); stroke-width: 1; stroke-dasharray: 3 3; }
       .${p}-source { font: 11.5px var(--font-body); fill: ${CHROME.faint}; }
       .${p}-tip { position: absolute; pointer-events: none; z-index: 5; opacity: 0;
-        transform: translate(-50%, -100%); background: rgb(0,33,71); color: #fff;
+        background: rgb(0,33,71); color: #fff;
         font: 12.5px var(--font-body); padding: 6px 9px; border-radius: 6px;
         white-space: nowrap; box-shadow: 0 6px 18px rgba(0,12,28,0.35); transition: opacity 0.1s; }
       .${p}-tip b { font-weight: 700; }
@@ -202,6 +202,29 @@
     return s ? s : { key, label: key, sub: '' };
   }
 
+
+  // Keep the readout INSIDE the plot: beside the hover line, flipped when it would
+  // overflow to the right, clamped vertically. Anchoring it above the plot's top edge
+  // put it behind the slide title, where the card's clip cut off half its rows.
+  function placeTip(svg, tip, plot, anchorX, pointerY) {
+    const box = svg.getBoundingClientRect();
+    const vb = svg.viewBox.baseVal;
+    // preserveAspectRatio="xMidYMid meet": the drawing is letterboxed in whichever
+    // dimension is not constraining, so both the scale and the offsets matter.
+    const k = Math.min(box.width / vb.width, box.height / vb.height);
+    const ox = (box.width - vb.width * k) / 2;
+    const oy = (box.height - vb.height * k) / 2;
+    const tw = tip.offsetWidth, th = tip.offsetHeight;
+    const px = ox + anchorX * k;
+    const plotL = ox + plot.x0 * k, plotR = ox + plot.x1 * k;
+    let x = px + 14;
+    if (x + tw > plotR - 4) x = px - 14 - tw;
+    const loY = oy + plot.y0 * k + 4;
+    const hiY = Math.max(loY, oy + plot.y1 * k - th - 4);
+    tip.style.left = `${Math.max(plotL + 4, Math.min(x, box.width - tw - 4))}px`;
+    tip.style.top = `${Math.max(loY, Math.min(oy + pointerY * k - th / 2, hiY))}px`;
+  }
+
   function attachHover(ui, panels) {
     // One shared hover: find the nearest reference year in whichever panel the
     // pointer is over, and show every number for that year.
@@ -220,10 +243,7 @@
       line.setAttribute('y1', panel.y0); line.setAttribute('y2', panel.y1);
       svg.appendChild(line);
       tip.innerHTML = panel.tipHtml(i);
-      const box = svg.getBoundingClientRect();
-      const scale = box.width / svg.viewBox.baseVal.width;
-      tip.style.left = `${panel.xOf(i) * scale}px`;
-      tip.style.top = `${(panel.y0 + 4) * scale}px`;
+      placeTip(svg, tip, panel, panel.xOf(i), loc.y);
       tip.style.opacity = 1;
     }
     svg.addEventListener('mousemove', onMove);
