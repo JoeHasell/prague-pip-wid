@@ -144,11 +144,6 @@ window.Deck = (() => {
     return `<polygon points="${x2},${y2} ${px1},${py1} ${px2},${py2}" fill="${color}"/>`;
   }
 
-  const ANNOT_BOX_DEFS =
-    '<defs><filter id="annot-box-shadow" x="-25%" y="-25%" width="150%" height="170%">'
-    + '<feDropShadow dx="0" dy="6" stdDeviation="7" flood-color="rgb(0,12,28)" flood-opacity="0.16"/>'
-    + '</filter></defs>';
-
   /* Rich text inside annotation boxes: a deliberately tiny subset — bold,
      italic and line breaks. Authored via the browser's own Cmd+B / Cmd+I in the
      box editor, so what gets stored is whatever contenteditable produced; this
@@ -179,8 +174,7 @@ window.Deck = (() => {
   }
 
   function annotMarkup(list) {
-    const defs = (list || []).some(a => a.type === 'box') ? ANNOT_BOX_DEFS : '';
-    return defs + (list || []).map(a => {
+    return (list || []).map(a => {
       const color = a.color || 'rgb(29, 61, 99)', width = a.width || 3.5;
       if (a.type === 'pen') {
         return `<path class="annot annot-pen" data-aid="${a.id}" d="${penPath(a.pts)}" fill="none" `
@@ -200,7 +194,7 @@ window.Deck = (() => {
         const pad = a.pad != null ? a.pad : 14;
         const iw = Math.max(1, w - pad * 2), ih = Math.max(1, h - pad * 2);
         return `<g class="annot annot-box" data-aid="${a.id}">`
-          + `<rect class="annot-box-bg" x="${a.x}" y="${a.y}" width="${w}" height="${h}" filter="url(#annot-box-shadow)"/>`
+          + `<rect class="annot-box-bg" x="${a.x}" y="${a.y}" width="${w}" height="${h}"/>`
           + `<foreignObject x="${a.x + pad}" y="${a.y + pad}" width="${iw}" height="${ih}">`
           + `<div xmlns="http://www.w3.org/1999/xhtml" class="annot-box-text" `
           + `style="font-size:${a.size || 20}px;color:${color}">${sanitizeRich(a.text)}</div>`

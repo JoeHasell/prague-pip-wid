@@ -47,8 +47,9 @@
  *   fits    which regressions to draw and list: subset of
  *           ["unweighted", "weighted"] (default both). Use ["unweighted"] on
  *           a build-up slide that introduces the unweighted fit before the
- *           population-weighted one. Scales are unaffected, so the slides
- *           stay registered.
+ *           population-weighted one, or [] to drop the fits and the panel's
+ *           fit block entirely. Scales are unaffected, so the slides stay
+ *           registered.
  *   yDomain [lo, hi] fixed y-axis range, snapped out to 1-2-5 bounds. Use it
  *           to keep two slides on one scale when only one of them hides an
  *           outlier. Any point falling outside is treated as hidden and named
@@ -60,6 +61,20 @@
  *           the rest. A note naming the omitted country and its value is
  *           generated automatically, so it cannot go stale.
  *   title, source, src
+ *   summary      array of concept keys from the data's `ratio_stats` whose
+ *                numbers are filled in, e.g. ["pre-tax"]. Draws a small
+ *                mean / population-weighted-mean table in the right-hand
+ *                panel, below the region legend, with a column per concept in
+ *                the data; concepts not listed show a dash. Omit for no table.
+ *   valueFormat  "money" (default) or "plain" — tick and tooltip formatting.
+ *   axes         levels mode only. Default shares one domain across both axes
+ *                (true 45deg ratio diagonals); "independent" scales each axis
+ *                to its own data and uses finer ticks. xDomain / yDomain
+ *                override either axis in both modes.
+ *   scale        "log" (default) or "linear". Linear axes are anchored at 0,
+ *                so the ratio references become rays out of the origin; the
+ *                log-log fit is then drawn as the power curve it is.
+ *                Use "plain" for a dimensionless measure on both axes.
  */
 Deck.registerComponent('fig-means-scatter', (el, props, ctx) => {
   const SRC = props.src || 'data/figures/fig_means_scatter.json';
@@ -67,7 +82,7 @@ Deck.registerComponent('fig-means-scatter', (el, props, ctx) => {
   const RATIOS = props.ratios || [1, 2, 3, 5, 10];
   const BUBBLES = props.bubbles !== false;
   const HIDE = new Set(Array.isArray(props.hide) ? props.hide : []);
-  const FITS = Array.isArray(props.fits) && props.fits.length
+  const FITS = Array.isArray(props.fits)
     ? props.fits.filter(f => f === 'unweighted' || f === 'weighted')
     : ['unweighted', 'weighted'];
   const R_MIN = 2.6, R_MAX = 26;
@@ -85,13 +100,26 @@ Deck.registerComponent('fig-means-scatter', (el, props, ctx) => {
       Could not load <code>${SRC}</code> — ${e.message}</div>`;
   });
 
-  // 1-2-5 tick sequence covering [lo, hi], plus the enclosing nice bounds
-  function niceTicks(lo, hi) {
+  // Tick sequence covering [lo, hi], plus the enclosing nice bounds. The 1-2-5
+  // mantissas suit an axis spanning several decades; a narrow axis needs finer
+  // steps or it gets two labels and no sense of scale, hence MANT below.
+  function niceTicks(lo, hi, mant) {
     const SEQ = [];
-    for (let e = -3; e <= 7; e++) for (const m of [1, 2, 5]) SEQ.push(m * Math.pow(10, e));
+    for (let e = -3; e <= 7; e++) for (const m of (mant || [1, 2, 5])) SEQ.push(m * Math.pow(10, e));
     const a = [...SEQ].reverse().find(v => v <= lo) ?? SEQ[0];
     const b = SEQ.find(v => v >= hi) ?? SEQ[SEQ.length - 1];
     return { lo: a, hi: b, ticks: SEQ.filter(v => v >= a && v <= b) };
+  }
+
+  // Linear axis from 0 to a round bound above `hi`, in 1-2-2.5-5 steps.
+  function linTicks(lo, hi) {
+    const span = hi > 0 ? hi : 1;
+    const pow = Math.pow(10, Math.floor(Math.log10(span / 5)));
+    const step = [1, 2, 2.5, 5, 10].map(m => m * pow).find(v => span / v <= 8) || pow * 10;
+    const b = Math.ceil(hi / step) * step;
+    const ticks = [];
+    for (let i = 0, v = 0; v <= b + step / 1e6; v = ++i * step) ticks.push(+v.toFixed(10));
+    return { lo: 0, hi: b, ticks };
   }
 
   function draw(D) {
@@ -105,6 +133,19 @@ Deck.registerComponent('fig-means-scatter', (el, props, ctx) => {
     const allYearPts = Y.points.map(([c, ri, x, y, pop]) => ({ c, ri, x, y, pop, k: y / x }));
     const colorOf = i => PALETTE[i % PALETTE.length];
     const isRatio = MODE === 'ratio', isShare = MODE === 'share';
+    // In levels mode both axes are the same quantity, so by default they share
+    // one domain and the ratio diagonals come out at a true 45 degrees. That
+    // costs a lot of frame when the two ranges barely overlap: `axes:
+    // "independent"` scales each axis to its own data instead, keeps the
+    // diagonals (still exactly the k-multiple locus, just no longer 45 degrees)
+    // and switches to the finer tick sequence.
+    const INDEP = props.axes === 'independent';
+    const MANT = INDEP ? [1, 1.5, 2, 3, 5, 7] : [1, 2, 5];
+    // `scale: "linear"` swaps the log axes for linear ones anchored at zero, so
+    // the ratio references become rays fanning out of the origin. The log-log
+    // FIT is still the fit that was estimated — on linear axes it is a power
+    // curve, so it is drawn sampled rather than as a straight segment.
+    const LINEAR = props.scale === 'linear';
     const isDerived = isRatio || isShare;          // y is a pure number, not $
     const vy = p => isRatio ? p.k : (isShare ? 100 / p.k : p.y);
 
@@ -117,15 +158,20 @@ Deck.registerComponent('fig-means-scatter', (el, props, ctx) => {
       yr => yr.points.filter(([c]) => !HIDE.has(c))
               .map(([c, ri, x, y, pop]) => ({ x, y, pop, k: y / x })));
     const xs = shown.map(p => p.x), ys = shown.map(p => vy(p));
-    const xAll = isDerived ? xs : xs.concat(ys);   // levels: one domain, 45deg diagonals
-    const X = niceTicks(Math.min(...xAll), Math.max(...xAll));
+    const shareDomain = !isDerived && !INDEP;     // one domain, 45deg diagonals
+    const xAll = shareDomain ? xs.concat(ys) : xs;
+    const axisFor = (lo, hi) => LINEAR ? linTicks(lo, hi) : niceTicks(lo, hi, MANT);
+    const X = Array.isArray(props.xDomain)
+      ? axisFor(props.xDomain[0], props.xDomain[1])
+      : axisFor(Math.min(...xAll), Math.max(...xAll));
     const Yax = Array.isArray(props.yDomain)
-      ? niceTicks(props.yDomain[0], props.yDomain[1])
-      : (isDerived ? niceTicks(Math.min(...ys), Math.max(...ys)) : X);
+      ? axisFor(props.yDomain[0], props.yDomain[1])
+      : (shareDomain ? X : axisFor(Math.min(...ys), Math.max(...ys)));
 
     // Anything outside a FIXED domain would otherwise vanish silently, so it
     // is treated as hidden and named in the note alongside any explicit hides.
-    const inRange = p => vy(p) >= Yax.lo && vy(p) <= Yax.hi;
+    const inRange = p => vy(p) >= Yax.lo && vy(p) <= Yax.hi
+                      && p.x >= X.lo && p.x <= X.hi;
     const pts = allYearPts.filter(p => !HIDE.has(p.c) && inRange(p));
     const hidden = allYearPts.filter(p => HIDE.has(p.c) || !inRange(p));
 
@@ -142,18 +188,24 @@ Deck.registerComponent('fig-means-scatter', (el, props, ctx) => {
     const W = 1000, H = 600;
     const M = { top: 48, right: 26, bottom: hasNote ? 92 : 68, left: 82 };
     const plotH = H - M.top - M.bottom;
-    const plotW = isDerived ? 560 : plotH;    // square only when both axes are $
+    const plotW = shareDomain ? plotH : 560;  // square only on a shared domain
     const panelX = M.left + plotW + 34;
 
-    const L = Math.log10;
+    const L = LINEAR ? (v => v) : Math.log10;
     const px = v => M.left + ((L(v) - L(X.lo)) / (L(X.hi) - L(X.lo))) * plotW;
     const py = v => M.top + plotH - ((L(v) - L(Yax.lo)) / (L(Yax.hi) - L(Yax.lo))) * plotH;
 
-    const money = v => '$' + Math.round(v).toLocaleString('en-US');
+    // Values are money by default. `valueFormat: "plain"` switches the ticks and
+    // the tooltip to a bare number, for a dimensionless quantity on both axes
+    // (the MLD scatter). Absent the prop, output is byte-identical to before.
+    const PLAIN = props.valueFormat === 'plain';
+    const money = v => PLAIN ? (+v).toFixed(2) : '$' + Math.round(v).toLocaleString('en-US');
+    const perUnit = PLAIN ? '' : '/month';
     const fmtPop = v => v >= 1e9 ? (v / 1e9).toFixed(2) + 'bn'
                       : v >= 1e6 ? (v / 1e6).toFixed(1) + 'm'
                       : v >= 1e3 ? (v / 1e3).toFixed(0) + 'k' : String(Math.round(v));
-    const tickMoney = v => v >= 1000 ? '$' + (v / 1000) + 'k' : '$' + v;
+    const tickMoney = v => PLAIN ? String(+(+v).toPrecision(2))
+                         : (v >= 1000 ? '$' + (v / 1000) + 'k' : '$' + v);
     const fmtK = k => (k % 1 ? k.toFixed(1) : k.toFixed(0)) + '×';
     const fmtPct = v => (v % 1 ? v.toFixed(1) : v.toFixed(0)) + '%';
     const yTick = t => isShare ? fmtPct(t) : (isRatio ? fmtK(t) : tickMoney(t));
@@ -178,10 +230,13 @@ Deck.registerComponent('fig-means-scatter', (el, props, ctx) => {
           `<text x="${M.left + plotW - 4}" y="${py(v) - 6}" text-anchor="end" class="ms-ratiolabel">` +
           `${isShare ? fmtPct(v) : fmtK(k)}</text>`;
       }
-      if (X.lo * k > X.hi) return '';
-      const x2 = Math.min(X.hi, X.hi / k);
-      return `<line x1="${px(X.lo)}" y1="${py(X.lo * k)}" x2="${px(x2)}" y2="${py(x2 * k)}" class="${cls}"/>` +
-        `<text x="${px(x2)}" y="${py(x2 * k) - 7}" text-anchor="middle" class="ms-ratiolabel">${fmtK(k)}</text>`;
+      // y = kx, clipped to the x AND y domains — with independent axes the line
+      // would otherwise run outside the plot.
+      const x1 = Math.max(X.lo, Yax.lo / k), x2 = Math.min(X.hi, Yax.hi / k);
+      if (!(x2 > x1)) return '';
+      const anchor = x2 >= X.hi * 0.999 ? 'end' : 'middle';
+      return `<line x1="${px(x1)}" y1="${py(x1 * k)}" x2="${px(x2)}" y2="${py(x2 * k)}" class="${cls}"/>` +
+        `<text x="${px(x2)}" y="${py(x2 * k) - 7}" text-anchor="${anchor}" class="ms-ratiolabel">${fmtK(k)}</text>`;
     }).join('');
 
     // ---- fits: same model, re-expressed for the ratio view -----------------
@@ -191,8 +246,16 @@ Deck.registerComponent('fig-means-scatter', (el, props, ctx) => {
     const F = Y.fits[MODE] || Y.fits.levels;
     const fitAt = (f, x) => Math.pow(10, f.intercept) * Math.pow(x, f.slope);
     const fitLine = (f, cls) => {
-      const a = fitAt(f, xlo), b = fitAt(f, xhi);
-      return `<line x1="${px(xlo)}" y1="${py(a)}" x2="${px(xhi)}" y2="${py(b)}" class="${cls}"/>`;
+      if (!LINEAR) {
+        const a = fitAt(f, xlo), b = fitAt(f, xhi);
+        return `<line x1="${px(xlo)}" y1="${py(a)}" x2="${px(xhi)}" y2="${py(b)}" class="${cls}"/>`;
+      }
+      const N = 48, pts = [];
+      for (let i = 0; i <= N; i++) {
+        const x = xlo + (xhi - xlo) * (i / N);
+        pts.push(`${px(x).toFixed(1)},${py(fitAt(f, x)).toFixed(1)}`);
+      }
+      return `<polyline points="${pts.join(' ')}" fill="none" class="${cls}"/>`;
     };
     const FIT_STYLE = { unweighted: 'ms-fit-unw', weighted: 'ms-fit-w' };
     const FIT_NAME = { unweighted: 'Unweighted', weighted: 'Population-weighted' };
@@ -217,12 +280,47 @@ Deck.registerComponent('fig-means-scatter', (el, props, ctx) => {
       `<line x1="0" x2="26" y1="${y}" y2="${y}" class="${cls}"/>` +
       `<text x="34" y="${y + 4}" class="ms-legend-t">${name}</text>` +
       `<text x="34" y="${y + 21}" class="ms-legend-s">slope ${f.slope.toFixed(2)} · R² ${f.r2.toFixed(2)}</text>`;
+    // Optional summary table, in the right-hand panel below the region legend
+    // (and below the fit block, when there is one). `summary` lists the concepts
+    // whose numbers are FILLED IN; every concept in the data still gets a
+    // column, so a build-up slide can leave one blank and its sibling fill it
+    // without the table changing shape or position.
+    const summarySection = (yOff) => {
+      const fill = Array.isArray(props.summary) ? props.summary : null;
+      const stats = Y.ratio_stats;
+      if (!fill || !stats) return '';
+      const cols = Object.keys(stats);
+      const ROWS = [['Mean', 'mean'], ['Pop-weighted mean', 'pop_weighted_mean']];
+      const labW = 112, colW = 84, rH = 19;
+      const cx = i => labW + i * colW + colW / 2;
+      const cell = v => v == null ? '—' : v.toFixed(2) + '×';
+      return `<g transform="translate(0,${yOff})">` +
+        `<text x="0" y="0" class="ms-panel-h">WID ÷ PIP, within-country MLD</text>` +
+        cols.map((c, i) =>
+          `<text x="${cx(i)}" y="20" text-anchor="middle" class="ms-sum-c">WID ${c}</text>`
+        ).join('') +
+        `<line x1="0" x2="${labW + cols.length * colW}" y1="27" y2="27" class="ms-sum-rule"/>` +
+        ROWS.map(([label, key], r) => {
+          const y = 27 + 18 + r * rH;
+          return `<text x="0" y="${y}" class="ms-sum-l">${label}</text>` +
+            cols.map((c, i) => `<text x="${cx(i)}" y="${y}" text-anchor="middle" ` +
+              `class="ms-sum-v${fill.includes(c) ? '' : ' ms-sum-off'}">` +
+              `${fill.includes(c) ? cell(stats[c][key]) : '—'}</text>`).join('');
+        }).join('') +
+        `</g>`;
+    };
+    // Sits after the legend, or after the fit block when fits are drawn.
+    const sumY = fy + (FITS.length ? 22 + FITS.length * 46 + 10 : 0);
+
     const panel =
       `<g transform="translate(${panelX},${M.top + 6})">` +
       `<text x="0" y="-14" class="ms-panel-h">Region</text>` + legend +
-      `<text x="0" y="${fy}" class="ms-panel-h">Log-log fit${
-          isShare ? ' · share on survey mean' : isRatio ? ' · ratio on survey mean' : ''}</text>` +
-      FITS.map((k, i) => fitRow(fy + 22 + i * 46, FIT_STYLE[k], FIT_NAME[k], F[k])).join('') +
+      (FITS.length
+        ? `<text x="0" y="${fy}" class="ms-panel-h">Log-log fit${
+              isShare ? ' · share on survey mean' : isRatio ? ' · ratio on survey mean' : ''}</text>` +
+          FITS.map((k, i) => fitRow(fy + 22 + i * 46, FIT_STYLE[k], FIT_NAME[k], F[k])).join('')
+        : '') +
+      summarySection(sumY) +
       `</g>`;
 
     const yLabel = isShare ? (D.meta.share_label || 'PIP survey mean as a share of WID national income')
@@ -257,6 +355,13 @@ Deck.registerComponent('fig-means-scatter', (el, props, ctx) => {
         .ms-legend-t { font: 12.5px var(--font-body); fill: var(--ink); }
         .ms-legend-s { font: 11.5px var(--font-body); fill: rgb(140,155,175); }
         .ms-source { font: 11.5px var(--font-body); fill: rgb(140,155,175); }
+        .ms-sum-h { font: 700 10.5px var(--font-body); fill: rgb(120,135,155);
+                    letter-spacing: .06em; text-transform: uppercase; }
+        .ms-sum-c { font: 700 11.5px var(--font-body); fill: rgb(63,96,138); }
+        .ms-sum-l { font: 12px var(--font-body); fill: var(--ink); }
+        .ms-sum-v { font: 700 13px var(--font-body); fill: var(--ink); }
+        .ms-sum-off { font-weight: 400; fill: rgb(185,194,208); }
+        .ms-sum-rule { stroke: rgb(226,231,238); stroke-width: 1; }
         .ms-note { font: italic 12px var(--font-body); fill: rgb(87,114,145); }
         .ms-tip { position: absolute; pointer-events: none; z-index: 5; opacity: 0;
           transform: translate(-50%,-100%); background: rgb(0,33,71); color: #fff;
@@ -299,8 +404,8 @@ Deck.registerComponent('fig-means-scatter', (el, props, ctx) => {
         `<div><span class="sw" style="background:${colorOf(p.ri)}"></span><b>${p.c}</b>` +
         `<span style="opacity:.7"> (${year})</span></div>` +
         `<div class="r">${D.regions[p.ri]}</div>` +
-        `<div class="r">PIP survey mean: ${money(p.x)}/month</div>` +
-        `<div class="r">WID national income: ${money(p.y)}/month</div>` +
+        `<div class="r">${D.meta.x_tip_label || 'PIP survey mean'}: ${money(p.x)}${perUnit}</div>` +
+        `<div class="r">${D.meta.y_tip_label || 'WID national income'}: ${money(p.y)}${perUnit}</div>` +
         `<div class="r">Population: ${fmtPop(p.pop)}</div>` +
         `<div class="f">${factor}</div>`;
       tip.style.opacity = '1';

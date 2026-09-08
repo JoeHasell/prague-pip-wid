@@ -664,6 +664,9 @@
     const copy = JSON.parse(JSON.stringify(Deck.data.slides[Deck.current]));
     copy.id = newId('slide');
     reassignIds(copy.blocks);
+    // Annotations need fresh ids too: selection and the drafts store key off
+    // them, so a copied slide sharing ids with its original is not addressable.
+    for (const a of copy.annotations || []) a.id = newId('a');
     Deck.data.slides.splice(Deck.current + 1, 0, copy);
     markDirty();
     Deck.renderAll();

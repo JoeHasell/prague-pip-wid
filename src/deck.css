@@ -442,6 +442,11 @@ html, body {
   fill: rgba(255, 255, 255, 0.97);
   stroke: var(--line);
   stroke-width: 1;
+  /* Was an SVG <filter> with a fixed id, emitted once per slide. Because every
+     slide is in the DOM at once, the id collided and each box after the first
+     resolved its filter into a display:none subtree — so its card vanished.
+     A CSS drop-shadow needs no id. stdDeviation 7 ~= blur radius 14. */
+  filter: drop-shadow(0 6px 14px rgba(0, 12, 28, 0.16));
 }
 
 .slide-annot .annot-box-text {
