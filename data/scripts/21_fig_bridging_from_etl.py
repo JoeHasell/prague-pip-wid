@@ -206,8 +206,7 @@ def main():
             "title": "Raw comparison: WID vs PIP, three countries",
             "countries": es.EXAMPLE_COUNTRIES,
             "units": (
-                "international-$ PER MONTH (PIP: 2021 PPPs; WID: latest PPP vintage); "
-                "converted from daily values at 365/12"
+                "international-$/month (daily x365/12); 2021 PPPs; PIP at 2021 prices, WID at 2025 prices"
             ),
             "notes": [
                 "P10/P90 are the bin averages of p10p11 / p90p91.",
@@ -243,8 +242,7 @@ def main():
             "scope_note": f"all {n_countries} countries covered by both PIP and WID",
             "n_countries": n_countries,
             "units": (
-                "MLD is unit-free; underlying incomes in international-$ "
-                "(PIP: 2021 PPPs; WID: latest PPP vintage)"
+                "MLD is unit-free; underlying incomes in international-$; 2021 PPPs; PIP at 2021 prices, WID at 2025 prices"
             ),
             "notes": [
                 "lollipop is deliberately EMPTY: that switches the component into "
@@ -279,8 +277,7 @@ def main():
             ),
             "n_countries": n_countries,
             "units": (
-                "international-$ PER MONTH (PIP: 2021 PPPs; WID: latest PPP vintage); "
-                "converted from daily values at 365/12"
+                "international-$/month (daily x365/12); 2021 PPPs; PIP at 2021 prices, WID at 2025 prices"
             ),
             "notes": [
                 "P10/P90 are the bin averages of p10p11 / p90p91.",

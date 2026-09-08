@@ -16,13 +16,57 @@ that:
     5% — Bosnia -30%, Turkey +20%, Germany -9%. The global bars barely move,
     but individual countries do.)
   - it needs no local Stata run. The WID fetch took 1-2 hours; the ETL holds
-    the WID percentile distributions for every year, already PPP-converted.
+    the WID percentile distributions for every year, already converted to
+    international dollars (see THE PRICE BASIS below).
   - the numbers are computed once, in a pipeline whose sanity checks gate the
     build, rather than twice in two places that can drift apart.
   - every figure covers 1990-2024 instead of 2023 alone, because the ETL runs
     the whole panel. The charts expose that as a year control.
 
 This module is the only place that knows where that data comes from.
+
+THE PRICE BASIS OF WHAT COMES BACK
+----------------------------------
+Everything this module returns is in PPP international dollars, but the two
+sources sit on different PRICE BASES. Stating it precisely, because earlier
+versions of these notes got it wrong:
+
+    PIP   2021 PPP round, 2021 prices
+    WID   2021 PPP round, 2025 prices     <- note the price base, not the round
+
+The PPP ROUND is the same for both. WID's `xlcusp` factors, re-expressed at a
+2021 price base, reproduce the World Bank's published 2021 PPP conversion
+factors (PA.NUS.PPP) for 184 of 197 countries to within 0.01%. Any claim that
+the two sources use "different PPP rounds" or "different PPP vintages" is
+wrong; the difference is the price base alone.
+
+WID arrives at 2025 prices because WID publishes incomes in constant local
+currency of the LATEST year in the database (currently 2025), and `xlcusp(Y)`
+converts local currency already at year-Y prices. The ETL extracts WID in
+2025-price LCU and converts with `xlcusp(2025)`. Checked against WID's own LCU
+series: US national income per capita 2023 is 71,410.28/yr in the ETL cache
+against 71,410.40/yr computed independently.
+
+So: every value in data/raw/etl/ and every data/figures/fig_*.json is in
+2021-PPP international dollars AT 2025 PRICES.
+
+WHY IT IS LEFT AT 2025 PRICES
+-----------------------------
+Putting WID on PIP's 2021-price basis was investigated on 2026-09-08 and NOT
+adopted: the deck stays on 2025-price WID. It would have taken a single scalar
+(x0.854244, the US national income price index for 2021) because international
+dollars are US-price-denominated, so re-basing one is only US deflation — the
+country's own inflation cancels against xlcusp. Nothing relative would have
+moved; the one substantive change was the means scatter. The proper home for
+such a fix is the ETL itself, not a scalar applied here — see WHY THIS EXISTS
+above, and the reasoning in data/README.md.
+
+WHAT THIS MEANS WHEN READING THE DATA: any comparison of WID LEVELS against PIP
+LEVELS inherits the four-year price gap — WID values are ~17% higher than a
+like-for-like comparison would put them. Relative measures (MLD, Gini, shares)
+are unaffected, since a price base is a uniform rescale.
+
+Full write-up: data/README.md, "Prices, PPPs and the two price bases".
 
 THE TWO ETL DATASETS
 --------------------
@@ -218,6 +262,14 @@ THOUSAND_BINS_URL = (
     "thousand_bins_distribution/thousand_bins_distribution.parquet"
 )
 PIP_PPP_VERSION = 2021
+
+# The price base of the WID side of everything this module returns. WID
+# publishes in constant LCU of the latest database year and the ETL converts
+# with xlcusp of that same year, so WID values are 2021-PPP international
+# dollars AT 2025 PRICES while PIP is at 2021 prices. Re-check against
+# wid.world's "Prices and currency conversions in WID.world" note after any WID
+# refresh: if WID's latest year moves, this moves with it.
+WID_PRICE_BASE_YEAR = 2025
 
 # Each source's own published inequality measures. Used by the observation-matched
 # reference-year figures, which only ever read a country-year the source actually

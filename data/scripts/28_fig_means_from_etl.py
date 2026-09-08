@@ -214,8 +214,7 @@ def main():
             "default_year": str(es.DISPLAY_YEAR),
             "etl_version": es.ETL_VERSION,
             "etl_dataset": f"garden/poverty_inequality/{es.ETL_VERSION}/harmonized_income_distributions",
-            "units": "international-$ PER MONTH (PIP: 2021 PPPs; WID: latest PPP vintage); "
-                     "converted from the ETL's daily values at 365/12",
+            "units": "international-$/month (daily x365/12); 2021 PPPs; PIP at 2021 prices, WID at 2025 prices",
             "notes": [
                 "WID pre-tax and post-tax national income have identical means by "
                 "construction (DINA), so the y axis is the same under either concept. "
@@ -231,6 +230,12 @@ def main():
                 "ETL population weight. R^2 differs sharply between views: the levels "
                 "fit is dominated by how rich a country is, the ratio and share fits "
                 "are the informative ones about the gap itself.",
+                "The two axes are on DIFFERENT PRICE BASES: PIP at 2021 prices, "
+                "WID at 2025 prices, both on the 2021 PPP round. WID levels are "
+                "therefore ~17% higher here than a like-for-like comparison would "
+                "put them, which inflates the ratio and depresses the survey share "
+                "by the same factor. See data/README.md, \"Prices, PPPs and the two "
+                "price bases\".",
                 "Sourced from the ETL (replaces 17_fig_means_scatter.py, which read "
                 "the local pipeline's 2023 harmonized file and a hand-made WID means "
                 "file). Refreshed by data/scripts/refresh_from_etl.py.",

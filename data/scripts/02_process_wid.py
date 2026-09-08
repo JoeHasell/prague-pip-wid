@@ -17,9 +17,11 @@ WID_percentiles.csv        one row per country x percentile bin (109 bins),
                            national income total (this identity is verified
                            in 99_verify.py). It is NOT disposable/cash income
                            (that is WID code cainc, not fetched).
-WID_ppp.csv                PPP conversion factors (WID code xlcusp): local
-                           currency units per international dollar. Contains BOTH 2023 and
-                           2025; the pipeline uses PPP_YEAR (2025) — WID's price base.
+WID_ppp.csv                PPP conversion factors (WID code xlcusp): local currency
+                           units per international dollar, where the LCU is AT THAT YEAR'S
+                           PRICES. Contains both 2023 and 2025; the pipeline uses PPP_YEAR
+                           (2025), which is WID's price base — the factor year must match
+                           the price base of the incomes it converts.
 WID_aggregate_population.csv   adult_pop (age 20+, WID age code 992) and
                            total_pop (all ages, code 999) per country, 2023.
 
@@ -53,10 +55,15 @@ WHAT THIS SCRIPT DOES *NOT* DO
 OUTPUT
 ------
 data/processed/wid_percentiles_2023.csv — one row per country x bin, with
-income in daily 2021-PPP-comparable international dollars* on both bases.
+income in daily international dollars* on both bases.
 
-* WID PPPs are for 2023; PIP uses 2021 PPPs. Both are "international dollars"
-  but from different PPP rounds — one of the known level differences between
+* Both sources use the 2021 PPP ROUND. What differs is the PRICE BASE: WID is
+  at 2025 prices (config.PPP_YEAR — WID publishes in constant LCU of its latest
+  database year), PIP at 2021 prices. Earlier versions of this note claimed
+  "different PPP rounds"; that is wrong — xlcusp re-expressed at a 2021 base
+  reproduces the World Bank's 2021 PPPs for 184 of 197 countries to within
+  0.01%. See data/README.md, "Prices, PPPs and the two price bases". This is
+  one of the known level differences between
   the sources (documented in data/README.md).
 
 Run:  python data/scripts/02_process_wid.py

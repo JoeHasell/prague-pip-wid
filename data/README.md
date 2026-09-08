@@ -123,10 +123,117 @@ structure so that any statistic can be computed the same way for both:
 | `WID_posttax_per_capita` | post-tax national income | per capita | 211 |
 
 Columns: `source, country, year, percentile, p_low, p_high, pop, average, share`.
-`average` is mean **daily** income in the bin, in PPP international dollars
-(PIP: 2021 PPPs; WID: 2023 PPPs — see caveats). `pop` is the number of people
+`average` is mean **daily** income in the bin, in PPP international dollars.
+Both sources use the **2021 PPP round**; they differ in *price base* — PIP at
+2021 prices, WID at 2025 prices. See [Prices, PPPs and the two price
+bases](#prices-ppps-and-the-two-price-bases). `pop` is the number of people
 (or adults, for per-adult series) in the bin. `share` is the bin's share of
 the country's total income.
+
+## Prices, PPPs and the two price bases
+
+Every monetary value in this project is in **PPP international dollars**, but
+the two sources are not on the same footing, and the difference is easy to
+state wrongly. Two things vary independently:
+
+| | what it is | PIP | WID |
+|---|---|---|---|
+| **PPP round** | the set of cross-country relative prices (an ICP round) | 2021 | **2021** |
+| **Price base** | the year whose prices the real values are expressed in | 2021 | **2025** |
+
+**The PPP round is the same.** This was checked, not assumed: WID's `xlcusp`
+conversion factors, re-expressed at a 2021 price base, reproduce the World
+Bank's published 2021 PPP conversion factors for GDP (`PA.NUS.PPP`) for **184
+of 197 countries to within 0.01%**, and 191 within 1%. The six countries
+outside 1% are currency-unit artefacts, not method: Bulgaria differs by exactly
+1.9559 (the BGN/EUR peg — WID has moved to the euro, the World Bank has not),
+Zimbabwe by a redenomination factor, and the rest are Pacific micro-states.
+
+So earlier versions of these notes were wrong to say the two sources come from
+"different PPP rounds". They do not. **Only the price base differs.**
+
+### Why WID arrives at 2025 prices
+
+WID publishes incomes in constant local currency of the **latest year in the
+database**, not of the data year — currently 2025. `xlcusp(Y)` converts local
+currency *already at year-Y prices* into international dollars at year-Y
+prices, so the conversion must use the factor for the price-base year. Using
+`xlcusp(2023)` against 2025-price incomes was a real bug, found in review on
+2026-08-27; see `config.PPP_YEAR`.
+
+Both routes into this repo land in the same place:
+
+- **the ETL path** (what the committed figures use): OWID's ETL extracts WID in
+  LCU at 2025 prices and converts with `xlcusp(2025)`, so everything in
+  `data/raw/etl/` and every `data/figures/fig_*.json` is in
+  **2021-PPP international dollars at 2025 prices**;
+- **the local pipeline** (the reference implementation): `02_process_wid.py`
+  does the same conversion with `config.PPP_YEAR = 2025`.
+
+Verified against each other: US national income per capita, 2023 — ETL cache
+71,410.28/yr vs 71,410.40/yr computed from WID's own LCU series. PIP is
+untouched by any of this and is already at 2021 prices.
+
+### Considered and not adopted: putting WID on 2021 prices
+
+Investigated 2026-09-08 and **decided against — the deck stays on 2025-price
+WID.** Recorded here so it is not re-derived from scratch, and so nobody
+mistakes it for a plan.
+
+Putting WID on PIP's basis needs only **one scalar: x0.854244**, the US
+national income price index for 2021 (WID's `inyixx999i`, normalised to 1.0 in
+2025). One number, every country, every year.
+
+That is not a shortcut past the obvious three-step route (undo `xlcusp(2025)`,
+deflate each country's LCU with its *own* inflation, re-convert with
+`xlcusp(2021)`). It is that route reduced. `xlcusp` is itself a rebasing of one
+underlying PPP by *relative* inflation:
+
+```
+xlcusp_c(2021) = xlcusp_c(2025) x inyixx_c(2021) / inyixx_US(2021)
+```
+
+so in
+
+```
+Y(2021 int-$) = LCU(2025 prices) x inyixx_c(2021) / xlcusp_c(2021)
+```
+
+the country's own index appears in the numerator and inside the denominator and
+**cancels — it is not skipped, it is already inside `xlcusp(2021)`** — leaving
+`Y(2025 int-$) x inyixx_US(2021)`. Which is the general fact that international
+dollars are US-price-denominated, so re-basing one is only US deflation.
+Verified end to end against directly-fetched WID data: the two routes agree to
+9x10^-6 % across 215 countries.
+
+Two things that were established along the way and are worth keeping:
+
+- **the domestic step would have to use WID's own `inyixx999i`**, never an
+  externally-sourced deflator. The cancellation is with WID's index;
+  substituting the World Bank's GDP deflator breaks it and injects country-level
+  errors up to ~20% exactly where the two disagree (Lebanon, Guinea, Comoros,
+  Egypt, India);
+- **`inyixx999i` is mostly the World Bank GDP deflator** — closer than CPI for
+  143 of 168 countries, median error 0.28% vs 2.95%, with CPI or spliced series
+  elsewhere. There is no WID-specific "national income deflator"; earlier notes
+  here implied one, and that was wrong.
+
+Had it been applied, nothing relative would have moved (a uniform rescale leaves
+every MLD, Gini and top share alone, and leaves `PIP_topadj` and
+`WID_posttax_rescaled` untouched); WID dollar labels would have fallen 14.6%;
+and the one substantive change would have been the means scatter, where the
+median WID/PIP ratio goes 2.53x -> 2.16x and the survey share of national income
+39.5% -> 46.3% (2023). The proper home for such a fix is OWID's ETL, not a
+scalar in this repo — see `etl_source.py`, "WHY THIS EXISTS".
+
+### A difference that a common price base would not fix anyway
+
+Worth knowing when reading any cross-source level comparison: the two
+sources deflate *within* a country with different indices: PIP brings a 2023 survey to 2021 prices with national
+**CPI**, while WID's constant-price series uses the **GDP deflator**. Both are
+honestly on their stated bases; the wedge is small in most countries and large
+in high-inflation ones. A common price base would not remove it, so the sources
+should not be described as fully comparable in levels.
 
 ## Pipeline
 
@@ -277,8 +384,11 @@ live in `raw/wid/temp_country_data/` and `raw/wid/fetch_progress.json`
    PIP's is per capita. The per-capita conversion
    (`avg × adult_pop / total_pop`) assumes the adult share is constant across
    the income distribution within each country.
-3. **PPP vintages differ.** PIP uses 2021 PPPs; the WID conversion factors
-   (`xlcusp`) are for 2023. Level comparisons between sources inherit this.
+3. **Price bases differ; PPP rounds do not.** Both sources use the 2021 PPP
+   round, but PIP is at 2021 prices and WID at 2025 prices, so WID levels are
+   ~17% higher than a like-for-like comparison would put them. Level
+   comparisons between sources inherit this; relative measures do not. See
+   [Prices, PPPs and the two price bases](#prices-ppps-and-the-two-price-bases).
 4. **Zero incomes.** WID has some bins with exactly zero income (as of the
    2026-08 pull: 921 pre-tax, 187 post-tax — bottom percentiles in most
    countries); PIP has none. They

@@ -374,6 +374,36 @@ Full detail in `CLAUDE.md`. Everything runs on Joe's Mac.
   predate a critical PPP bug fix and are stale). New chart components must
   fetch their data from per-figure files produced by pipeline scripts — no
   hard-coded data arrays in component JS.
+- **DONE 2026-09-08 — price-basis audit and documentation fix.** Established
+  what the two sources' monetary values actually are, and corrected five wrong
+  statements in the docs. The headline: **both sources use the 2021 PPP round;
+  only the PRICE BASE differs** (PIP 2021 prices, WID 2025 prices). The old
+  claim that they came from "different PPP rounds/vintages"
+  (`data/README.md`, `02_process_wid.py`) was wrong — WID's `xlcusp`
+  re-expressed at a 2021 base reproduces the World Bank's published 2021 PPPs
+  (`PA.NUS.PPP`) for 184 of 197 countries to within 0.01%; the six outside 1%
+  are currency-unit artefacts (Bulgaria = the BGN/EUR peg exactly, Zimbabwe a
+  redenomination). Also confirmed the ETL path arrives in **2021-PPP int-$ at
+  2025 prices** (ETL cache 71,410.28/yr vs 71,410.40/yr computed independently
+  for US 2023), so the local pipeline and the ETL agree.
+  **DECIDED 2026-09-08: the deck stays on 2025-price WID — not re-basing.**
+  Re-basing to 2021 prices was investigated and would have been a single scalar
+  (x0.854244 = WID's US national income price index for 2021, `inyixx999i`),
+  because the country's own inflation cancels against `xlcusp`; verified end to
+  end against directly-fetched WID data to 9e-06 % across 215 countries. It
+  moves no inequality result (uniform rescale), drops WID dollar labels 14.6%,
+  and changes exactly one message — the means scatter's survey share of national
+  income, 39.5% -> 46.3% (2023). Not adopted: the proper home for such a fix is
+  OWID's ETL rather than a scalar in this repo, which would put the deck's
+  numbers out of step with the ETL's. No code applies it and no constant is
+  left behind; the reasoning is kept in `data/README.md` §"Prices, PPPs and the
+  two price bases" so it is not re-derived from scratch.
+  **The live consequence to remember:** cross-source LEVEL comparisons (the
+  means scatter) inherit a four-year price gap — WID sits ~17% higher than a
+  like-for-like comparison would put it. Relative measures are unaffected.
+  Also established: `inyixx999i` is mostly the World Bank GDP deflator (closer
+  than CPI for 143 of 168 countries) — there is no WID-specific "national
+  income deflator", as earlier notes implied.
 - **DONE 2026-08-27, committed 2026-09-02 — the PPP price-base fix.** WID
   publishes incomes in constant LCU of the *latest database year*, so converting
   them with `xlcusp(2023)` overstated every country by its inflation relative to

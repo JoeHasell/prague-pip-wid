@@ -82,7 +82,7 @@ PIP_URL = (
 # These are COMMITTED to the repo so that everything downstream is
 # reproducible without Stata and without the slow API pull.
 WID_PERCENTILES_RAW = RAW_WID_DIR / "WID_percentiles.csv"        # combined, all countries
-WID_PPP_FILE = RAW_WID_DIR / "WID_ppp.csv"                        # market-exchange->PPP factors (xlcusp)
+WID_PPP_FILE = RAW_WID_DIR / "WID_ppp.csv"                        # xlcusp: LCU (at that year's prices) per international $
 WID_POPULATION_FILE = RAW_WID_DIR / "WID_aggregate_population.csv"  # adult & total population
 COUNTRY_MAPPING_FILE = RAW_WID_DIR / "country_mapping.csv"        # WID 2-letter code -> PIP country name
 
@@ -104,8 +104,10 @@ WID_MEANS_FILE = RAW_WID_DIR / "WID_national_income_means.csv"
 # Processed files (outputs of the pipeline)
 # ---------------------------------------------------------------------------
 
-# Step 02 output: WID percentiles converted to daily 2021-PPP international
-# dollars, with per-adult AND per-capita income for both income concepts.
+# Step 02 output: WID percentiles converted to daily international dollars —
+# the 2021 PPP round at PPP_YEAR prices (see data/README.md, "Prices, PPPs and
+# the two price bases") — with per-adult AND per-capita income for both income
+# concepts.
 WID_PROCESSED_FILE = PROCESSED_DIR / f"wid_percentiles_{TARGET_YEAR}.csv"
 
 # Step 03 output: the harmonized PIP + WID quantile dataset — one tidy file,
