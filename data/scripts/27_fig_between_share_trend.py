@@ -110,6 +110,14 @@ def main():
             "etl_dataset": f"garden/poverty_inequality/{es.ETL_VERSION}/harmonized_income_distributions",
             "generated_by": "27_fig_between_share_trend.py",
             "notes": [
+                "THE ONE FIGURE STILL ON THE ETL'S ZERO-INCOME CONVENTION (zeros replaced "
+                "by $0.01/day). Every other MLD figure in the deck bottom-codes the WID "
+                "series at 1% of each country's raw mean, which lowers WID's pre-tax within "
+                "component and raises its between share by about 5pp (see data/README.md, "
+                "caveat 4). This figure needs bin-level data for all 35 years and only the "
+                "display year is cached, because the deck's WID vintage came from "
+                "owid/etl#6806's staging server rather than the public catalog. Refresh it "
+                "here once those bins are pullable. The slide carries this caveat.",
                 f"Same {n_countries} countries in every year, constant prices, the same $0.01/day "
                 "floor on zero incomes — so levels and the long trend are comparable across years.",
                 "WID country-years are WID's own extrapolations for 63-84% of the panel and 97% in "

@@ -60,7 +60,11 @@
  *           slide, where Venezuela at 285% stretches the axis and squashes
  *           the rest. A note naming the omitted country and its value is
  *           generated automatically, so it cannot go stale.
- *   title, source, src
+ *   ratioLabels false to draw the y = kx reference lines without their labels
+ *   note    false to suppress the hidden-point note (use when the slide's own
+ *           `source` line already says which country is missing)
+ *   title   chart title; pass "" (empty) to omit it
+ *   source, src
  *   summary      array of concept keys from the data's `ratio_stats` whose
  *                numbers are filled in, e.g. ["pre-tax"]. Draws a small
  *                mean / population-weighted-mean table in the right-hand
@@ -221,14 +225,20 @@ Deck.registerComponent('fig-means-scatter', (el, props, ctx) => {
       ).join('');
 
     // ---- y = k*x reference lines (diagonals in levels, horizontals in ratio)
+    // `ratioLabels: false` keeps the lines and drops their labels — in share
+    // mode they sit at 100/50/20/10%, which the y axis already ticks, so the
+    // labels read as a second set of tick marks rather than as annotation.
+    const REF_LAB = props.ratioLabels !== false;
     const refLines = RATIOS.map(k => {
       const cls = k === 1 ? 'ms-diag' : 'ms-ratio';
       if (isDerived) {
         const v = isShare ? 100 / k : k;
         if (v < Yax.lo || v > Yax.hi) return '';
         return `<line x1="${M.left}" x2="${M.left + plotW}" y1="${py(v)}" y2="${py(v)}" class="${cls}"/>` +
-          `<text x="${M.left + plotW - 4}" y="${py(v) - 6}" text-anchor="end" class="ms-ratiolabel">` +
-          `${isShare ? fmtPct(v) : fmtK(k)}</text>`;
+          (REF_LAB
+            ? `<text x="${M.left + plotW - 4}" y="${py(v) - 6}" text-anchor="end" class="ms-ratiolabel">` +
+              `${isShare ? fmtPct(v) : fmtK(k)}</text>`
+            : '');
       }
       // y = kx, clipped to the x AND y domains — with independent axes the line
       // would otherwise run outside the plot.
@@ -236,7 +246,9 @@ Deck.registerComponent('fig-means-scatter', (el, props, ctx) => {
       if (!(x2 > x1)) return '';
       const anchor = x2 >= X.hi * 0.999 ? 'end' : 'middle';
       return `<line x1="${px(x1)}" y1="${py(x1 * k)}" x2="${px(x2)}" y2="${py(x2 * k)}" class="${cls}"/>` +
-        `<text x="${px(x2)}" y="${py(x2 * k) - 7}" text-anchor="${anchor}" class="ms-ratiolabel">${fmtK(k)}</text>`;
+        (REF_LAB
+          ? `<text x="${px(x2)}" y="${py(x2 * k) - 7}" text-anchor="${anchor}" class="ms-ratiolabel">${fmtK(k)}</text>`
+          : '');
     }).join('');
 
     // ---- fits: same model, re-expressed for the ratio view -----------------
@@ -312,12 +324,25 @@ Deck.registerComponent('fig-means-scatter', (el, props, ctx) => {
     // Sits after the legend, or after the fit block when fits are drawn.
     const sumY = fy + (FITS.length ? 22 + FITS.length * 46 + 10 : 0);
 
+    // TOP-ALIGN the panel so the CAP of "Region" meets the top of the plotting
+    // box. The header's baseline sits 14 above the panel origin, and its caps
+    // rise about 0.72 of the 11.5px face above that baseline, so the origin has
+    // to start that much lower. The +1 errs a hair BELOW the box edge rather
+    // than above it (Joe's call) — a header poking above the plot reads as
+    // misaligned, one sitting just inside does not.
+    // 11.4 is the measured ascent of the 11.5px header face above its baseline
+    // (getBBox in the browser, not a guess), and the baseline sits 14 above the
+    // panel origin. +1 keeps the cap a hair inside the box rather than over it.
+    const PANEL_HDR_ASCENT = 11.4;
+    const panelY = M.top + 14 + PANEL_HDR_ASCENT + 1;
+
     const panel =
-      `<g transform="translate(${panelX},${M.top + 6})">` +
+      `<g transform="translate(${panelX},${panelY})">` +
       `<text x="0" y="-14" class="ms-panel-h">Region</text>` + legend +
       (FITS.length
-        ? `<text x="0" y="${fy}" class="ms-panel-h">Log-log fit${
-              isShare ? ' · share on survey mean' : isRatio ? ' · ratio on survey mean' : ''}</text>` +
+        // Just "Log-log fit" — the suffix naming what was regressed on what
+        // duplicated the axis labels, which say it already.
+        ? `<text x="0" y="${fy}" class="ms-panel-h">Log-log fit</text>` +
           FITS.map((k, i) => fitRow(fy + 22 + i * 46, FIT_STYLE[k], FIT_NAME[k], F[k])).join('')
         : '') +
       summarySection(sumY) +
@@ -325,13 +350,24 @@ Deck.registerComponent('fig-means-scatter', (el, props, ctx) => {
 
     const yLabel = isShare ? (D.meta.share_label || 'PIP survey mean as a share of WID national income')
                  : isRatio ? D.meta.ratio_label : D.meta.y_label;
-    const hiddenNote = hidden.length
-      ? hidden.map(p => `${p.c}, an outlier with a very high ` +
-          (isShare ? `share of ${fmtPct(100 / p.k)}` : isRatio ? `ratio of ${fmtK(p.k)}`
-                   : `value of ${money(p.y)}/month`) + ', is not shown').join('; ') +
-        '. It is still included in the regression.'
+    // A hidden point may be off the TOP or the BOTTOM of a fixed domain, and the
+    // value is only money in levels mode, so both are read off the point rather
+    // than assumed. The regression clause applies only when a fit is drawn.
+    // props.note === false: the slide has folded the hidden point into its own
+    // source line, so the separate note would repeat it.
+    const hiddenNote = props.note !== false && hidden.length
+      ? hidden.map(p => {
+          const v = vy(p), high = v > Yax.hi;
+          const shown = isShare ? `share of ${fmtPct(v)}`
+                      : isRatio ? `ratio of ${fmtK(v)}`
+                      : `value of ${money(p.y)}${perUnit}`;
+          return `${p.c}, an outlier with a very ${high ? 'high' : 'low'} ${shown}, is not shown`;
+        }).join('; ') +
+        (FITS.length ? '. It is still included in the regression.' : '.')
       : '';
-    const title = props.title || `${D.meta.title} — ${year}`;
+    // undefined -> the default narrative title; empty string -> no title at all
+    // (the `||` idiom alone could not express "no title", since '' is falsy).
+    const title = props.title === undefined ? `${D.meta.title} — ${year}` : (props.title || '');
     const source = props.source ||
       `Data: World Bank PIP and WID.world, processed by Our World in Data. ${Y.n_countries} countries, ${year}. ${D.meta.units}`;
 
@@ -374,7 +410,7 @@ Deck.registerComponent('fig-means-scatter', (el, props, ctx) => {
       </style>
       <div class="ms-wrap">
         <svg class="ms-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">
-          <text x="${M.left}" y="28" class="ms-title">${title}</text>
+          ${title ? `<text x="${M.left}" y="28" class="ms-title">${title}</text>` : ''}
           ${grid}${refLines}${dots}
           <g class="ms-fits">${fits.replace(/class="ms-fit-(unw|w)"/g, 'class="ms-fit-halo"')}${fits}</g>
           ${panel}
@@ -393,9 +429,6 @@ Deck.registerComponent('fig-means-scatter', (el, props, ctx) => {
     let active = null;
 
     function showTip(p, circle) {
-      const cr = circle.getBoundingClientRect(), wr = wrap.getBoundingClientRect();
-      tip.style.left = (cr.left + cr.width / 2 - wr.left) + 'px';
-      tip.style.top = (cr.top - wr.top - 6) + 'px';
       const factor = isShare
         ? `Survey captures ${fmtPct(100 / p.k)} of national income`
         : (p.k >= 1 ? `WID is ${p.k.toFixed(2)}× PIP`
@@ -408,6 +441,7 @@ Deck.registerComponent('fig-means-scatter', (el, props, ctx) => {
         `<div class="r">${D.meta.y_tip_label || 'WID national income'}: ${money(p.y)}${perUnit}</div>` +
         `<div class="r">Population: ${fmtPop(p.pop)}</div>` +
         `<div class="f">${factor}</div>`;
+      Deck.placeTooltip(tip, circle, wrap);
       tip.style.opacity = '1';
     }
     function reset() { if (active) { active.setAttribute('r', active.dataset.baser); active = null; } }

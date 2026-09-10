@@ -21,6 +21,11 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+import consinc
+import etl_mld
+import topadj
+
+METHODS = ("match", "append")
 import etl_source as es
 
 FIGURES_DIR = Path(__file__).resolve().parents[1] / "figures"
@@ -33,8 +38,10 @@ MLD_SOURCES = {
 DECILE_BINS = [f"p{d}p{d + 1}" for d in range(10, 100, 10)]
 
 # --- the top-adjustment figure ---
-SPLICE_PERCENTILE = 95
-ANCHOR_BIN = "p94p95"
+TOPADJ_METHOD = es.TOPADJ_METHOD                 # the deck-wide baseline method
+BETAS = consinc.WID_PROFILE_B_SCENARIOS          # WID's three cons->inc slopes
+BASE_BETA = consinc.WID_PROFILE_B                # the deck-wide baseline
+TOP1_START = topadj.TOP1_START
 SHAPE_SOURCE = "WID_posttax_per_capita"
 BASE_SOURCE = "PIP_consinc"
 
@@ -47,15 +54,18 @@ def sig4(x):
 def main():
     year = es.DISPLAY_YEAR
     print(f"Reading the ETL cache (display year {year})")
-    bins = es.load("display_year_bins")
-    example = es.load("example_country_bins")
+    bins = es.load_bins("display_year_bins")
+    example = es.load_bins("example_country_bins")
     by_country = es.load("inequality_decomposition_by_country")
     model = es.load("consumption_income_model")
     dual = es.load("pip_dual_percentiles")
+    basis = es.load("pip_welfare_basis")
+    basis = basis[basis["year"] == year]
+    welfare = dict(zip(basis["country"], basis["welfare_type"]))
 
     write(mld_decomposition_figure(example, by_country, year), "fig_mld_decomp_explainer.json")
-    write(top_adjustment_figure(bins, year), "fig_topadj_explainer.json")
-    write(consumption_income_figure(dual, model), "fig_consinc_explainer.json")
+    write(top_adjustment_figure(bins, year, welfare), "fig_topadj_explainer.json")
+    write(consumption_income_figure(dual), "fig_consinc_explainer.json")
 
 
 # ---------------------------------------------------------------------------
@@ -65,28 +75,27 @@ def mld_decomposition_figure(example, by_country, year):
     """Per-country decile dots, country means and the between/within split, for the
     three example countries — the decomposition restricted to those three.
 
-    Restricting is exact rather than a re-estimate: the ETL publishes each
-    country's weight, mean and within-country MLD, and the decomposition is
-    additive in those, so the subset only needs the weights renormalising.
+    Computed from the three countries' bins under the deck's zero-income floor
+    (etl_mld), not read from the ETL's ready-made table, so this explainer shows
+    the same arithmetic as the bridging figure it explains. Restricting to three
+    countries is exact rather than a re-estimate: the decomposition is additive
+    in population-weighted country terms, so the subset only needs the weights
+    renormalising.
     """
     k = es.DAILY_TO_MONTHLY
     ex = example[example["year"] == year]
-    bc = by_country[(by_country["year"] == year) & by_country["country"].isin(es.EXAMPLE_COUNTRIES)]
 
     out_sources = []
     for source, label in MLD_SOURCES.items():
-        g = bc[bc["series"] == source]
-        assert len(g) == len(es.EXAMPLE_COUNTRIES), f"missing country rows for {source}"
-        # Keep the configured order; the ETL table is sorted alphabetically.
-        g = g.set_index("country").reindex(es.EXAMPLE_COUNTRIES).reset_index()
-        assert g["country"].tolist() == es.EXAMPLE_COUNTRIES
+        d = etl_mld.decompose(example, source, year)
+        g = d["by_country"].reindex(es.EXAMPLE_COUNTRIES)
+        assert not g.isna().any().any(), f"missing country rows for {source}"
+        g = g.reset_index().rename(columns={"index": "country"})
         w = g["population_weight"].to_numpy(float)
         mu_c = g["mean"].to_numpy(float)
         within_c = g["mld_within"].to_numpy(float)
         p = w / w.sum()
-        mu = float((p * mu_c).sum())
-        between = float((p * np.log(mu / mu_c)).sum())
-        within = float((p * within_c).sum())
+        mu, between, within = d["grand_mean"], d["between"], d["within"]
 
         countries = []
         for i, row in enumerate(g.itertuples()):
@@ -153,71 +162,124 @@ def mld_decomposition_figure(example, by_country, year):
 # ---------------------------------------------------------------------------
 # 2. How the top-adjusted series is built
 # ---------------------------------------------------------------------------
-def top_adjustment_figure(bins, year):
-    """Per country: the observed PIP curve, the income-basis curve where it differs,
-    and the top-adjusted values above the splice bin."""
+def top_adjustment_figure(bins, year, welfare):
+    """Per country: the observed PIP curve, the income-basis curve at each of
+    WID's three slopes, and the top-1% adjustment by each method.
+
+    CROSSED OVER BOTH MODELLING CHOICES: `consinc[beta]` and
+    `variants[beta][method]`, so the chart can hold one choice and vary the
+    other. Beta keys are the slope to 2dp.
+
+    HOW THE TWO METHODS ARE STORED. Both act on the top 1% only, so almost
+    nothing needs carrying:
+
+      match   the top 1% keeps its ranks and takes one new value — a single
+              number, applied to all ten of the base's 0.1% bins.
+      append  the whole survey is re-read as the bottom 99%, so every rank is
+              multiplied by 0.99 (which the chart can do itself, no data needed),
+              the survey's own top 1% collapses to one bin at [0.9801, 0.99],
+              and a new bin is appended at [0.99, 1]. Two numbers.
+
+      adjusted  false where the gate fired (WID's top share is not above the
+                base's, so the country is left alone) — both methods then equal
+                the income basis.
+    """
     k = es.DAILY_TO_MONTHLY
     d = bins[bins["year"] == year]
 
     ref = d[d["series"] == "PIP"].sort_values(["country", "p_low"])
-    labels = ref[ref["country"] == ref["country"].iloc[0]]["percentile"].tolist()
-    assert len(labels) == 109 and labels[94] == ANCHOR_BIN, "unexpected bin structure"
-    anchor_idx = labels.index(ANCHOR_BIN)
-    mids = (
-        ref[ref["country"] == ref["country"].iloc[0]]
-        .assign(mid=lambda t: (t["p_low"] + t["p_high"]) / 2 * 100)["mid"]
-        .round(3)
-        .tolist()
-    )
+    first = ref[ref["country"] == ref["country"].iloc[0]]
+    labels = first["percentile"].tolist()
+    assert len(labels) == es.DECK_BINS, "not on the deck's percentile grid"
+    mids = ((first["p_low"] + first["p_high"]) / 2 * 100).round(3).tolist()
+    top_idx = [i for i, lo in enumerate(first["p_low"]) if lo >= TOP1_START - 1e-9]
+    assert top_idx == [es.DECK_BINS - 1], top_idx
 
-    def curves(series):
-        s = d[d["series"] == series].sort_values(["country", "p_low"])
-        countries = s.loc[s["p_low"] == 0, "country"].tolist()
-        vals = s["avg"].to_numpy(float).reshape(len(countries), 109)
-        return dict(zip(countries, vals))
+    def curves_from(frame):
+        f = frame.sort_values(["country", "p_low"])
+        countries = f.loc[f["p_low"] == 0, "country"].tolist()
+        n = len(f) // len(countries)
+        assert len(f) == n * len(countries), "ragged bins"
+        return dict(zip(countries, f["avg"].to_numpy(float).reshape(len(countries), n)))
 
-    pip = curves("PIP")
-    consinc = curves("PIP_consinc")
-    adj = curves("PIP_topadj")
+    pip = curves_from(d[d["series"] == "PIP"])
+    upstream = d[~d["series"].isin(["PIP_consinc", "PIP_topadj", "WID_posttax_rescaled"])]
+
+    ci_by_beta, adj_by_beta, gates = {}, {}, {}
+    for b in BETAS:
+        bk = f"{b:.2f}"
+        ci = consinc.build_pip_consinc_profile(upstream, welfare, b=b,
+                                               out_series="PIP_consinc")
+        frame = pd.concat([upstream, ci], ignore_index=True)
+        ci_by_beta[bk] = curves_from(ci)
+        gates[bk] = topadj.top1_shares(frame, "PIP_consinc")
+        adj_by_beta[bk] = {
+            "match": curves_from(topadj.build_top1(frame, "match", out_series="V",
+                                                   grid=True)),
+            "append": {c: g.sort_values("p_low")["avg"].to_numpy(float)
+                       for c, g in topadj.build_top1(frame, "append", out_series="V")
+                       .groupby("country", observed=True)},
+        }
+    base_bk = f"{BASE_BETA:.2f}"
+    deck_ci = curves_from(d[d["series"] == "PIP_consinc"])
+    for c in deck_ci:
+        assert np.allclose(ci_by_beta[base_bk][c], deck_ci[c], rtol=1e-9), \
+            f"rebuilt income basis at b={base_bk} differs from the deck's for {c}"
 
     data = {}
     n_adjusted = 0
     for c in sorted(pip):
-        if c not in consinc or c not in adj:
-            continue
         entry = {"pip": [sig4(v * k) for v in pip[c]]}
-        # The income-basis line is drawn only where it actually differs from the
-        # observed PIP curve, i.e. for the consumption-based countries.
-        if not np.allclose(consinc[c], pip[c], rtol=1e-9):
-            entry["consinc"] = [sig4(v * k) for v in consinc[c]]
+        if not np.allclose(ci_by_beta[base_bk][c], pip[c], rtol=1e-9):
+            entry["consinc"] = {f"{b:.2f}": [sig4(v * k) for v in ci_by_beta[f"{b:.2f}"][c]]
+                                for b in BETAS}
             n_adjusted += 1
-        # The adjusted series equals its base up to the anchor by construction;
-        # only the grafted tail is carried.
-        assert np.allclose(adj[c][: anchor_idx + 1], consinc[c][: anchor_idx + 1], rtol=1e-6), (
-            f"adjusted series differs below the anchor for {c}"
-        )
-        entry["adj"] = [sig4(v * k) for v in adj[c][anchor_idx + 1 :]]
+        entry["variants"] = {}
+        for b in BETAS:
+            bk = f"{b:.2f}"
+            on = bool(gates[bk].loc[c, "adjust"])
+            m = adj_by_beta[bk]["match"][c]
+            a = adj_by_beta[bk]["append"][c]
+            entry["variants"][bk] = {
+                "adjusted": on,
+                "match": sig4(float(m[99]) * k),
+                # the appended frame is one bin longer than the grid when
+                # adjusted (the retained survey plus WID's appended percentile)
+                # and exactly the grid when the gate fired
+                "append": {"top_pip": sig4(float(a[-2]) * k) if on else None,
+                           "top_wid": sig4(float(a[-1]) * k) if on else None},
+            }
         data[c] = entry
 
-    print(f"  top adjustment: {len(data)} countries ({n_adjusted} consumption-based)")
+    print(f"  top adjustment: {len(data)} countries ({n_adjusted} consumption-based), "
+          f"{len(BETAS)} slopes x {len(METHODS)} methods")
     default = "Indonesia" if "Indonesia" in data else sorted(data)[0]
     return {
         "meta": {
-            "title": "The top adjustment, applied on top of the income-basis adjustment",
-            "splice_percentile": SPLICE_PERCENTILE,
-            "anchor_bin": ANCHOR_BIN,
-            "anchor_index": anchor_idx,
+            "title": "The top-1% adjustment, applied on top of the income-basis adjustment",
+            "method": TOPADJ_METHOD,
+            "top1_start": TOP1_START,
+            "methods": [{"key": "match", "label": "Match WID's top-1% share"},
+                        {"key": "append", "label": "Append WID's top 1%"}],
+            "betas": [f"{b:.2f}" for b in BETAS],
+            "base_beta": base_bk,
+            "profile_a": consinc.WID_PROFILE_A,
             "shape_source": SHAPE_SOURCE,
             "base_source": BASE_SOURCE,
             "default_country": default,
             "year": year,
             "units": "international-$ per month (converted from daily at 365/12)",
             "notes": [
-                "Chain: consumption (observed) -> income basis -> top-adjusted above P95.",
-                "adj holds values only for bins above the anchor; below that the "
-                "adjusted series equals the income-basis series.",
+                "Chain: consumption (observed) -> income basis -> top-1% adjusted.",
+                "Crossed over both modelling choices: consinc[beta] and "
+                "variants[beta][method]; base_beta and method name the deck's baseline.",
+                "match keeps the top 1% where it is and changes its level; append "
+                "re-reads the whole survey as the bottom 99% (so every rank scales "
+                "by 0.99) and adds a new top percentile.",
+                "adjusted=false means the gate fired: WID's top-1% share is not above "
+                "the base's, so the country is left alone.",
                 "consinc is present only for consumption-based countries; for income "
-                "countries the income basis IS the observed PIP series.",
+                "countries the income basis IS the observed PIP series at every slope.",
                 "Computed by OWID's ETL: garden/poverty_inequality/"
                 f"{es.ETL_VERSION}/harmonized_income_distributions.",
             ],
@@ -233,16 +295,21 @@ def top_adjustment_figure(bins, year):
 # ---------------------------------------------------------------------------
 # 3. The consumption -> income mapping, country by country
 # ---------------------------------------------------------------------------
-def consumption_income_figure(dual, model):
+def consumption_income_figure(dual, model=None):
     """Per consumption-based country: the observed consumption curve, the income
-    curve the regression predicts from it, and — where PIP publishes one for the
-    same year — the actual income curve, as an in-sample check."""
+    curve the correction profile predicts from it, and — where PIP publishes one
+    for the same year — the actual income curve, as an out-of-sample check.
+
+    Since 2026-09-09 the mapping is WID's scaled-logit profile with WID's own
+    parameters (consinc.py), not a regression fitted on these countries. So the
+    actual-income comparison is now genuinely OUT of sample: nothing here was
+    used to estimate the profile, which makes it a real test rather than a
+    goodness-of-fit display.
+    """
     k = es.DAILY_TO_MONTHLY
-    alpha = model.set_index("percentile")["alpha"]
-    beta = model.set_index("percentile")["beta"]
-    pct = list(range(1, 101))
-    a = np.exp(alpha.loc[pct].to_numpy(float))
-    b = beta.loc[pct].to_numpy(float)
+    pct = np.arange(1, 101)
+    mid = (pct - 0.5) / 100.0                      # each percentile's midpoint rank
+    profile = consinc.correction_profile(mid)
 
     countries = {}
     n_dual = 0
@@ -251,9 +318,9 @@ def consumption_income_figure(dual, model):
         cons = g[g["welfare_type"] == "consumption"].sort_values("percentile")["avg"].to_numpy(float)
         if len(cons) != 100 or (cons <= 0).any():
             continue
-        # The model is fitted on DAILY values, so it is applied before the
-        # per-month conversion.
-        pred = a * cons**b
+        # A pure per-rank rescaling, so the order of this and the per-month
+        # conversion does not matter.
+        pred = profile * cons
         entry = {"year": year, "cons": [sig4(v * k) for v in cons], "pred": [sig4(v * k) for v in pred]}
         inc = g[g["welfare_type"] == "income"].sort_values("percentile")["avg"].to_numpy(float)
         if len(inc) == 100:
@@ -265,16 +332,15 @@ def consumption_income_figure(dual, model):
     default = "Albania" if "Albania" in countries else sorted(countries)[0]
     return {
         "meta": {
-            "title": "Consumption → income: the fitted mapping, country by country",
+            "title": "Consumption → income: the correction profile, country by country",
             "default_country": default,
-            "units": (
-                "international-$ per month, 2021 PPPs (converted from daily at 365/12; "
-                "the model itself is fitted on daily values)"
-            ),
+            "units": "international-$ per month, 2021 PPPs (converted from daily at 365/12)",
             "model": (
-                "ln y_p = alpha_p + beta_p ln c_p, fitted per percentile on PIP's dual "
-                "country-years — see garden/poverty_inequality/"
-                f"{es.ETL_VERSION}/harmonized_income_distributions#consumption_income_model"
+                f"Q_I(p) / Q_C(p) = {consinc.WID_PROFILE_A} + {consinc.WID_PROFILE_B} "
+                "log(p/(1-p)) — WID's scaled-logit correction profile with WID's "
+                "parameters (Chancel, Cogneau, Gethin & Myczkowski 2019, WID.world "
+                "Working Paper 2019/13, Table A.1). Not fitted on PIP; see consinc.py "
+                "for why PIP's dual country-years are not a usable estimation sample."
             ),
             "notes": [
                 "Each country shown at its most recent national year with a consumption "

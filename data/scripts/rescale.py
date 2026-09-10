@@ -54,7 +54,31 @@ series' between component equals the mean source's exactly, by construction.
 import pandas as pd
 
 WID_BASE_SOURCE = "WID_posttax_per_capita"
+import numpy as np
+import pandas as pd
+
 DEFAULT_MEAN_SOURCE = "PIP"
+
+
+def build_from_bins(bins, mean_source, wid_series="WID_posttax_per_capita",
+                    out_series="WID_posttax_rescaled"):
+    """The same mean-rescaling, on an ETL bins frame.
+
+    Rebuilt for the deck because its target, PIP_topadj, is itself rebuilt — the
+    whole point of this series is that its country means EQUAL that target's, so
+    it cannot be left on the ETL's version.
+    """
+    tgt = (bins[bins["series"] == mean_source].groupby("country", observed=True)
+           .apply(lambda g: np.average(g["avg"], weights=g["pop"])))
+    out = []
+    for c, g in bins[bins["series"] == wid_series].groupby("country", observed=True):
+        g = g.copy()
+        mu = np.average(g["avg"], weights=g["pop"])
+        assert mu > 0, f"{wid_series} mean is zero for {c}"
+        g["avg"] = g["avg"] * (tgt[c] / mu)
+        g["series"] = out_series
+        out.append(g)
+    return pd.concat(out, ignore_index=True)
 
 
 def build_wid_rescaled(h, countries=None, mean_source=DEFAULT_MEAN_SOURCE):

@@ -171,9 +171,6 @@ Deck.registerComponent('gini-pip-wid-scatter', (el, props, ctx) => {
   const tip = el.querySelector('.gp-tip');
 
   function showTip(d, circle) {
-    const cr = circle.getBoundingClientRect(), wr = wrap.getBoundingClientRect();
-    tip.style.left = (cr.left + cr.width / 2 - wr.left) + 'px';
-    tip.style.top = (cr.top - wr.top - 6) + 'px';
     const diff = ((d[yKey] - d.p) * 100).toFixed(0);
     const rel = diff >= 0 ? `WID higher by ${diff}` : `WID lower by ${-diff}`;
     tip.innerHTML =
@@ -182,6 +179,7 @@ Deck.registerComponent('gini-pip-wid-scatter', (el, props, ctx) => {
       `<div class="gp-tip-row">PIP Gini: ${d.p.toFixed(3)}</div>` +
       `<div class="gp-tip-row">WID Gini (${taxWord}): ${d[yKey].toFixed(3)}</div>` +
       `<div class="gp-tip-row">${rel} points</div>`;
+    Deck.placeTooltip(tip, circle, wrap);
     tip.style.opacity = '1';
   }
   function hideTip() { tip.style.opacity = '0'; }

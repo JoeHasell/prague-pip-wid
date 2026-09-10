@@ -110,9 +110,7 @@
     const reset = () => { if (active) { active.setAttribute('r', active.dataset.baser || '5'); active = null; } };
     const over = e => { const c = e.target.closest && e.target.closest('.iq-dot'); if (!c || c === active) return;
       reset(); active = c; c.setAttribute('r', '8'); c.parentNode.appendChild(c);
-      const cr = c.getBoundingClientRect(), wr = wrap.getBoundingClientRect();
-      tip.style.left = (cr.left + cr.width / 2 - wr.left) + 'px'; tip.style.top = (cr.top - wr.top - 6) + 'px';
-      tip.innerHTML = tipHTML(c); tip.style.opacity = '1'; };
+      tip.innerHTML = tipHTML(c); Deck.placeTooltip(tip, c, wrap); tip.style.opacity = '1'; };
     const out = e => { const c = e.target.closest && e.target.closest('.iq-dot'); if (!c) return;
       const to = e.relatedTarget; if (to && to.closest && to.closest('.iq-dot')) return; reset(); tip.style.opacity = '0'; };
     const leave = () => { reset(); tip.style.opacity = '0'; };

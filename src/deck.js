@@ -425,10 +425,53 @@ window.Deck = (() => {
     window.addEventListener('resize', fitStage);
   }
 
+  /**
+   * Place a component's hover tooltip so it always stays INSIDE its wrapper.
+   *
+   * Every chart used to do `left = centre of target, top = above it` with a
+   * `translate(-50%, -100%)`, and nothing kept the result in bounds — so a
+   * tooltip near the right edge, the top, or the bottom ran out of the box and
+   * was then clipped by `.block-component { overflow: hidden }`.
+   *
+   * Call it AFTER setting the tooltip's content: the width is measured, and a
+   * `white-space: nowrap` tip has no width until it has text. The inline
+   * `transform: none` deliberately overrides each component's own
+   * `translate(-50%, -100%)`, so the tip can be positioned by its top-left
+   * corner and clamped directly.
+   *
+   *   tip     the tooltip element (already populated)
+   *   target  the element being hovered
+   *   wrap    the positioned ancestor the tooltip is absolute within
+   */
+  function placeTooltip(tip, target, wrap, pad) {
+    const p = pad == null ? 6 : pad;
+    const wr = wrap.getBoundingClientRect();
+    const tr = target.getBoundingClientRect();
+    // THE STAGE IS CSS-SCALED (fitStage), so getBoundingClientRect returns
+    // SCALED pixels while style.left / offsetWidth are in the element's own
+    // UNSCALED pixels. Mixing the two is the bug this helper exists to kill: it
+    // is invisible at scale 1 and grows with the zoom, which is why a tooltip
+    // could sit correctly on one screen and hang out of the box on a bigger one.
+    // Everything below is converted into the wrapper's own coordinates first.
+    const s = wr.width ? wrap.offsetWidth / wr.width : 1;
+    const W = wrap.offsetWidth, H = wrap.offsetHeight;
+    tip.style.transform = 'none';
+    const tw = tip.offsetWidth, th = tip.offsetHeight;
+    const cx = (tr.left + tr.width / 2 - wr.left) * s;
+    const tTop = (tr.top - wr.top) * s, tBot = (tr.bottom - wr.top) * s;
+    let x = cx - tw / 2;
+    // above the target by default; flipped below when there is no room
+    let y = tTop - th - p;
+    if (y < p) y = tBot + p;
+    tip.style.left = Math.max(p, Math.min(x, W - tw - p)) + 'px';
+    tip.style.top = Math.max(p, Math.min(y, H - th - p)) + 'px';
+  }
+
   /* Public API (used by editor.js and component files) */
   return {
     boot,
     registerComponent,
+    placeTooltip,
     goTo, next, prev,
     fitStage,
     renderAll,

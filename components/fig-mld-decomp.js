@@ -210,10 +210,8 @@ Deck.registerComponent('fig-mld-decomp', (el, props, ctx) => {
     function onOver(e) {
       const pt = e.target.closest && e.target.closest('.fmd-pt');
       if (!pt) return;
-      const cr = pt.getBoundingClientRect(), wr = wrap.getBoundingClientRect();
-      tip.style.left = (cr.left + cr.width / 2 - wr.left) + 'px';
-      tip.style.top = (cr.top - wr.top - 6) + 'px';
       tip.innerHTML = hover[+pt.dataset.h].t;
+      Deck.placeTooltip(tip, pt, wrap);
       tip.style.opacity = '1';
     }
     function onOut(e) {

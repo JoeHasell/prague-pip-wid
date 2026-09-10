@@ -54,12 +54,15 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+import etl_mld
 import etl_source as es
 
 FIGURES_DIR = Path(__file__).resolve().parents[1] / "figures"
 
-# Matches 28_fig_means_from_etl.py, so the two scatters cover the same years.
-DECK_YEARS = [1990, es.DISPLAY_YEAR]
+# The display year only. The 1990 panel existed for symmetry with the means
+# scatter and no slide ever used it; since 2026-09-08 the within-MLDs are
+# computed from bins, and only display_year_bins covers every country.
+DECK_YEARS = [es.DISPLAY_YEAR]
 
 PIP_SERIES = "PIP"
 # (output filename suffix, ETL series, tax word, chart title)
@@ -86,12 +89,17 @@ def ols_loglog(x, y, w=None):
             "r2": float(1 - ss_res / ss_tot), "n": int(len(lx))}
 
 
-def series_slice(dec, series, year):
-    """One series in one year, indexed by country: within-MLD + population."""
-    d = dec[(dec.series == series) & (dec.year == year)]
-    assert len(d), f"no {series} rows for {year} in the ETL cache"
-    assert not d.country.duplicated().any(), f"duplicate countries in {series} {year}"
-    return d.set_index("country")[["mld_within", "population_weight"]].copy()
+def series_slice(bins, series, year):
+    """One series in one year, indexed by country: within-MLD + population.
+
+    Computed from the bins under the deck's zero-income floor (etl_mld), not read
+    from the ETL's ready-made table — the floor is the whole point of this figure
+    now, since at the ETL's $0.01/day the WID within-MLD is a median 43.5%
+    zero-replacement artefact.
+    """
+    # expect_bins=None: PIP_topadj is ragged (see etl_source.TOPADJ_METHOD)
+    g = etl_mld.decompose(bins, series, year, expect_bins=None)
+    return g["by_country"][["mld_within", "population_weight"]].copy()
 
 
 def pop_weighted_median(df, col):
@@ -233,7 +241,7 @@ def build_file(frames, stats_by_concept, tax_word, title):
 
 def main():
     print(f"Reading ETL version {es.ETL_VERSION} from the committed cache")
-    dec = es.load("inequality_decomposition_by_country")   # deck series names already
+    dec = es.load_bins("display_year_bins")                     # deck series names already
     regions = es.load("treemap_regions").set_index("country")["region"]
 
     # Both concepts are built first: each file carries every concept's ratio

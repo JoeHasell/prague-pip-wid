@@ -6,7 +6,7 @@
  *          axis). WID pre-tax national income per adult on the left; PIP
  *          disposable income/consumption per capita on the right.
  *   Row 2  Stacked bars of the MLD *level*, decomposed into between- and
- *          within-country components, computed on the full 109-bin
+ *          within-country components, computed on the full 100-percentile
  *          distributions of just these three countries — one bar per source,
  *          aligned under the corresponding row-1 group.
  *
@@ -27,6 +27,7 @@
  * bridging step to a slide = adding its series name to that slide's props.
  *
  * Props (all optional):
+ *   source   replace the whole footnote block with this one line
  *   dataUrl  override the JSON path
  *   title    chart title; pass "" (empty) to omit it — the lollipop row
  *            stretches up into the freed space
@@ -44,6 +45,19 @@
  *   extremes true to also show the extreme bins (p0-p1 and the top 0.1%) as
  *            hollow circles. Zero-income p0-p1 bins (WID) are pinned at the
  *            axis floor — the tooltip states the true value is $0.
+ *   variants which columns to split into one THIN stacked bar per variant,
+ *            keyed a, b, c..., inside the same column footprint. `true` splits
+ *            every column the JSON carries a `variants` block for; an ARRAY of
+ *            series names splits only those. The JSON holds one variant set per
+ *            modelling choice — the six top-adjustment variants (on PIP_topadj
+ *            and WID_posttax_rescaled) and WID's three consumption->income
+ *            slopes (on PIP_consinc) — so an array is how a slide shows one
+ *            choice at a time. Every other column keeps its single bar, which
+ *            is the point. Values are labelled as ranges — see the SYNTHETIC
+ *            ENVELOPES comment in the bars section.
+ *   variantKey true to print the key line naming each variant above the column
+ *            headers (its caption and labels come from the JSON). Off by
+ *            default — the slides that use variants introduce them in prose.
  */
 Deck.registerComponent('fig-raw-comparison', (el, props, ctx) => {
   const DATA_URL = props.dataUrl || 'data/figures/fig_raw_comparison.json';
@@ -187,7 +201,14 @@ Deck.registerComponent('fig-raw-comparison', (el, props, ctx) => {
 
     // Row-2 linear scale, domain padded above the tallest bar (only the
     // sources actually shown)
-    const maxTotal = Math.max(...data.mld.filter(m => SOURCES.includes(m.source)).map(m => m.total));
+    // `variants: true` -> every series with a block; `variants: [...]` -> only
+    // the named ones, so a build-up slide can show one modelling choice at a
+    // time out of a JSON that carries several.
+    const VAR_PICK = Array.isArray(props.variants) ? new Set(props.variants) : null;
+    const VAR = (props.variants && data.variants) ? data.variants : null;
+    const varied = s => !!(VAR && VAR[s] && (!VAR_PICK || VAR_PICK.has(s)));
+    const maxTotal = Math.max(...data.mld.filter(m => SOURCES.includes(m.source)).map(m =>
+      varied(m.source) ? Math.max(m.total, VAR[m.source].range.total[1]) : m.total));
     const m2hi = Math.ceil(maxTotal * 11) / 10;   // modest headroom for the total label
     const y2 = v => r2Bot - (v / m2hi) * r2H;
     const t2 = [];
@@ -204,12 +225,19 @@ Deck.registerComponent('fig-raw-comparison', (el, props, ctx) => {
       const x = slotX(d.source, i);
       const c = COUNTRY_COLOR[d.country] || '#555';
       const isRef = d.source === SOURCES[0] && i === 0;   // annotate first lollipop only
+      // The P90 / Mean / P10 keys sit to the RIGHT of the reference lollipop,
+      // left-aligned. On the left they had to share a narrow gutter with the
+      // y-axis money ticks, which put "Mean" and "$10,000" on top of each other;
+      // to the right there is open space between this lollipop and the next.
+      const annX = x + 13;
+      const annT = (v, label) =>
+        `<text x="${annX}" y="${y1(v) + 4}" text-anchor="start" class="frc-ann">${label}</text>`;
       const ann = isRef ? (
-        `<text x="${x - 14}" y="${y1(d.p90) + 4}" text-anchor="end" class="frc-ann">P90</text>` +
-        `<text x="${x - 14}" y="${y1(d.mean) + 4}" text-anchor="end" class="frc-ann">Mean</text>` +
-        `<text x="${x - 14}" y="${y1(d.p10) + 4}" text-anchor="end" class="frc-ann">P10</text>` +
-        (showExtremes ? `<text x="${x - 14}" y="${y1(d.p999) + 4}" text-anchor="end" class="frc-ann">Top 0.1%</text>` +
-          `<text x="${x - 14}" y="${(d.p0 > 0 ? y1(d.p0) : r1Bot) + 4}" text-anchor="end" class="frc-ann">P0\u2013P1</text>` : '')) : '';
+        annT(d.p90, 'P90') + annT(d.mean, 'Mean') + annT(d.p10, 'P10') +
+        (showExtremes
+          ? annT(d.p999, 'Top 0.1%') +
+            `<text x="${annX}" y="${(d.p0 > 0 ? y1(d.p0) : r1Bot) + 4}" text-anchor="start" class="frc-ann">P0\u2013P1</text>`
+          : '')) : '';
       // Extreme bins as HOLLOW circles; zero-income bins pinned at the floor
       const ext = !showExtremes ? '' : [
         ['P0\u2013P1', d.p0], ['Top 0.1%', d.p999],
@@ -280,7 +308,103 @@ Deck.registerComponent('fig-raw-comparison', (el, props, ctx) => {
     ).join('');
 
     const barW = Math.min(130, Math.round(halfW * 0.62));
+
+    // ---------- variant columns: six thin bars where the choice has a range ----------
+    // `variants: true` splits any column the JSON carries a variants block for
+    // into one thin stacked bar per variant, keyed a-f, inside the SAME column
+    // footprint. The other columns keep their single bar — that contrast is the
+    // slide: only the top adjustment is a choice wide enough to draw.
+    //
+    // The labels are SYNTHETIC ENVELOPES. Each component's and each share's
+    // minimum and maximum are taken separately, so an endpoint pair need not
+    // come from one variant: `within` bottoms out at the P99 graft while
+    // `between` tops out at the P95 graft. The range answers "how far can this
+    // component move", not "which single bar is the extreme" — the source note
+    // says so, and the individual bars are there to be read off.
+    const dash = '\u2013';
+    const fmt2 = v => v.toFixed(2);
+    // A component that doesn't move prints one number, not "0.61-0.61":
+    // WID post-tax rescaled has the SAME within component under all six
+    // variants, because rescaling moves country means and leaves every
+    // country's internal shape alone. That flatness is worth seeing.
+    const rng2 = r => (r[0].toFixed(2) === r[1].toFixed(2)
+      ? r[0].toFixed(2) : `${r[0].toFixed(2)}${dash}${r[1].toFixed(2)}`);
+    const rngPct = r => (Math.round(r[0] * 100) === Math.round(r[1] * 100)
+      ? `${Math.round(r[0] * 100)}%` : `${Math.round(r[0] * 100)}${dash}${Math.round(r[1] * 100)}%`);
+    const variantBars = (m) => {
+      const recs = VAR[m.source].variants, R = VAR[m.source].range;
+      // An `aside` variant answers a different question from the rest — on the
+      // top-1% column, "NA" is the adjustment applied with no consumption to
+      // income step at all. It is drawn SET APART, with its own value labels,
+      // and left out of the labelled range, which describes only the run of
+      // comparable variants beside it.
+      const aside = recs.filter(v => v.aside), main = recs.filter(v => !v.aside);
+      const cw = Math.min(112, halfW - 6);            // stays inside the column
+      const gap = 2, apart = aside.length ? 11 : 0;   // gap between the groups
+      const bw = (cw - (recs.length - 1) * gap - apart) / recs.length;
+      const x0 = groupX[m.source] + halfW / 2 - cw / 2;
+      const xOf = i => x0 + i * (bw + gap) + (i >= aside.length ? apart : 0);
+      // The range block is centred on the MAIN run, not on the whole cluster,
+      // so it reads as belonging to those bars.
+      const cx = xOf(aside.length) + (main.length * bw + (main.length - 1) * gap) / 2;
+      const seg = (x, y, h, comp, v, share, label, fill) =>
+        `<rect class="frc-seg" data-comp="${comp}" data-v="${v}" data-share="${share}"` +
+        ` data-s="${m.source}" data-var="${label}" x="${x}" y="${y}" width="${bw.toFixed(2)}"` +
+        ` height="${Math.max(0, h).toFixed(2)}" fill="${fill}"/>`;
+      const thin = recs.map((v, i) => {
+        const x = xOf(i), yB = y2(v.between), yT = y2(v.total);
+        const hB = r2Bot - yB, hW = yB - yT - 1;
+        let out = seg(x, yB, hB, 'Between countries', v.between,
+                      Math.round(v.between / v.total * 100), v.label, BETWEEN_C) +
+                  seg(x, yT, hW, 'Within countries', v.within,
+                      Math.round(v.within / v.total * 100), v.label, WITHIN_C) +
+          `<text x="${(x + bw / 2).toFixed(2)}" y="${r2Bot - 7}" text-anchor="middle" class="frc-vkey">${v.key}</text>`;
+        // The set-apart bar carries no range label, so give it its own values —
+        // inside its segments where they fit, and its total above.
+        if (v.aside && bw >= 20) {
+          const bx = (x + bw / 2).toFixed(2);
+          // Value on top, share in brackets under it. The share is set smaller
+          // so it very nearly fits a ~24px bar; a pixel of spill is accepted
+          // (Joe's call) because the pair is what makes the bar readable
+          // without a range block of its own.
+          const pair = (y, h, val, share, cls) => {
+            const mid = y + h / 2;
+            return h > 26
+              ? `<text x="${bx}" y="${mid - 1}" text-anchor="middle" class="${cls}">${fmt2(val)}</text>` +
+                `<text x="${bx}" y="${mid + 11}" text-anchor="middle" class="${cls} frc-asideshare">(${Math.round(share * 100)}%)</text>`
+              : h > 14
+                ? `<text x="${bx}" y="${mid + 3.5}" text-anchor="middle" class="${cls}">${fmt2(val)}</text>`
+                : '';
+          };
+          out += pair(yB, hB, v.between, v.between / v.total, 'frc-asideval frc-asidedark');
+          out += pair(yT, hW, v.within, v.within / v.total, 'frc-asideval');
+          out += `<text x="${bx}" y="${yT - 6}" text-anchor="middle" class="frc-asidetot">${fmt2(v.total)}</text>`;
+        }
+        return out;
+      }).join('');
+      // One range block per component, on a white backing so it reads over the
+      // thin bars. Three short lines beat one wide line here: the column is
+      // only ~105px across.
+      const block = (yMid, name, vr, sr) => {
+        const bh = 44, bwid = 76;
+        const top = yMid - bh / 2;
+        return `<rect x="${cx - bwid / 2}" y="${top}" width="${bwid}" height="${bh}" rx="3" class="frc-rangebg"/>` +
+          `<text x="${cx}" y="${top + 14}" text-anchor="middle" class="frc-rangelab">${name}</text>` +
+          `<text x="${cx}" y="${top + 27}" text-anchor="middle" class="frc-rangeval">${rng2(vr)}</text>` +
+          `<text x="${cx}" y="${top + 39}" text-anchor="middle" class="frc-rangesub">${rngPct(sr)}</text>`;
+      };
+      const withinShare = [1 - R.between_share[1], 1 - R.between_share[0]];
+      const yBmid = (r2Bot + y2(R.between[1])) / 2;
+      const yWmid = (y2(R.between[0]) + y2(R.total[1])) / 2;
+      return `<g>` + thin +
+        block(yBmid, 'Between', R.between, R.between_share) +
+        block(yWmid, 'Within', R.within, withinShare) +
+        `<text x="${cx}" y="${y2(R.total[1]) - 9}" text-anchor="middle" class="frc-total">Total MLD ${rng2(R.total)}</text>` +
+      `</g>`;
+    };
+
     const bars = data.mld.filter(m => SOURCES.includes(m.source)).map(m => {
+      if (varied(m.source)) return variantBars(m);
       const cx = groupX[m.source] + halfW / 2;
       const x = cx - barW / 2;
       const yB = y2(m.between), yT = y2(m.total);
@@ -346,14 +470,55 @@ Deck.registerComponent('fig-raw-comparison', (el, props, ctx) => {
       );
     }).join('');
 
+    // The a-f key, read straight off the JSON so the letters can never drift
+    // from the variants actually drawn.
+    // The a/i/ii key line above the headers is OFF by default (Joe, 2026-09-10):
+    // on a slide that has already set the variants up in words it reads as
+    // clutter. Pass `variantKey: true` to bring it back.
+    const varKeyLine = !props.variantKey || !VAR || !SOURCES.some(varied) ? '' : (() => {
+      // The varied columns share one key alphabet (i/ii/iii name the same slope
+      // in each), so the key is merged and deduped rather than repeated per
+      // column. A key that appears in only one column — "NA" — still shows.
+      const seen = new Map();
+      let caption = '';
+      SOURCES.filter(varied).forEach(s2 => {
+        const blk = VAR[s2];
+        caption = caption || blk.caption || 'Variants';
+        blk.variants.forEach(v => { if (!seen.has(v.key)) seen.set(v.key, v); });
+      });
+      const recs = [...seen.values()];
+      const txt = recs.map(v => `<tspan class="frc-vkeyb">${v.key}</tspan> ${v.label}`).join('  &middot;  ');
+      // Above the column headers (which sit at headBase-24 / -9) and above the
+      // dividers (headBase-34). Don't combine `variants` with `showRowTitle`:
+      // in bars-only mode they want the same strip. Wraps to a second line when
+      // the entries do not fit.
+      const avail = W - MR - ML;
+      const w1 = (caption.length + 2) * 6.4;
+      const each = recs.map(v => (v.key.length + v.label.length + 5) * 6.4);
+      if (w1 + each.reduce((a, b) => a + b, 0) <= avail)
+        return `<text x="${ML}" y="${headBase - 44}" class="frc-vlegend">${caption}: ${txt}</text>`;
+      return `<text x="${ML}" y="${headBase - 58}" class="frc-vlegend">${caption}</text>` +
+             `<text x="${ML}" y="${headBase - 43}" class="frc-vlegend">${txt}</text>`;
+    })();
+
     const stepNote = nG > 2
       ? 'All columns derive from the same underlying data; only the income concept / population basis changes.'
       : 'Raw published concepts — no bridging adjustments.';
     const scope = data.meta.scope_note || 'the three countries';
-    const sourceLines = props.source ? [props.source] : [
-      `Data: WID.world and World Bank PIP (via OWID), 2023, international-$ per month. MLD (mean log deviation) computed on the full 109-bin distributions of ${scope}.`,
-      `WID zero-income bins set to $${data.meta.zero_replacement_usd_per_day}/day in the underlying daily data for the MLD. ${stepNote} Pipeline: ${data.meta.generated_by || 'data/scripts/10_fig_raw_comparison.py'}`,
+    const nVariants = (!VAR || !SOURCES.some(varied)) ? 0
+      : VAR[SOURCES.find(varied)].variants.filter(v => !v.aside).length;
+    const envelopeNote = !nVariants ? [] : [
+      `Ranges are the minimum and maximum of each component and each share across the ${nVariants} variants, ` +
+      'taken separately \u2014 the two endpoints of a range need not come from the same variant. ' +
+      'The individual bars can be read off directly.',
     ];
+    // A `source` prop replaces the footnote block ENTIRELY — including the
+    // envelope note. If a slide writes its own one-liner it owns the whole
+    // footnote; half-overriding it produced the worst of both.
+    const sourceLines = props.source ? [props.source] : envelopeNote.concat(
+      `Data: WID.world and World Bank PIP (via OWID), 2023, international-$ per month. MLD (mean log deviation) computed on the 100-percentile distributions of ${scope}.`,
+      `WID bins bottom-coded at ${data.meta.wid_floor_rule || "1% of each country's raw mean"} before the MLD; PIP ${data.meta.pip_floor_rule || 'unchanged'}. ${stepNote} Pipeline: ${data.meta.generated_by || 'data/scripts/10_fig_raw_comparison.py'}`
+    );
 
     el.innerHTML = `
       <style>
@@ -380,6 +545,17 @@ Deck.registerComponent('fig-raw-comparison', (el, props, ctx) => {
         .frc-seglab-dark { fill: #fff; }
         .frc-seglab-out { font: 600 12.5px var(--font-body); fill: rgb(60,72,88); }
         .frc-total { font: 700 13px var(--font-body); fill: var(--ink); }
+        .frc-vkey { font: 700 10px var(--font-body); fill: #fff; }
+        .frc-asideval { font: 700 10px var(--font-body); fill: rgb(40,55,75); }
+        .frc-asidedark { fill: #fff; }
+        .frc-asidetot { font: 700 10.5px var(--font-body); fill: rgb(87,114,145); }
+        .frc-asideshare { font-size: 8.5px; font-style: italic; font-weight: 400; }
+        .frc-rangebg { fill: #fff; fill-opacity: 0.9; stroke: rgb(214,222,232); stroke-width: 1; }
+        .frc-rangelab { font: 700 11px var(--font-body); fill: rgb(60,72,88); }
+        .frc-rangeval { font: 700 12.5px var(--font-body); fill: var(--ink); }
+        .frc-rangesub { font: italic 11px var(--font-body); fill: rgb(87,114,145); }
+        .frc-vlegend { font: 12px var(--font-body); fill: rgb(87,114,145); }
+        .frc-vkeyb { font: 700 12px var(--font-body); fill: rgb(40,55,75); }
         .frc-share { font: italic 12.5px var(--font-body); fill: rgb(87,114,145); }
         .frc-source { font: 11.5px var(--font-body); fill: rgb(140,155,175); }
         .frc-pt { cursor: pointer; }
@@ -404,6 +580,7 @@ Deck.registerComponent('fig-raw-comparison', (el, props, ctx) => {
             : `<text x="${ML}" y="${r2Top - 16}" class="frc-rowtitle">${data.meta.row2_title || 'Inequality across these three countries&rsquo; populations combined &mdash; MLD level, decomposed'}</text>`)}
           ${grid2}
           <text transform="translate(16,${r2Top + r2H / 2}) rotate(-90)" text-anchor="middle" class="frc-axis">Global mean log deviation</text>
+          ${varKeyLine}
           ${bars}
           ${ghostBoxes}
           ${sourceLines.map((t, i) =>
@@ -422,9 +599,7 @@ Deck.registerComponent('fig-raw-comparison', (el, props, ctx) => {
     };
 
     function place(target) {
-      const tr = target.getBoundingClientRect(), wr = wrap.getBoundingClientRect();
-      tip.style.left = (tr.left + tr.width / 2 - wr.left) + 'px';
-      tip.style.top = (tr.top - wr.top - 6) + 'px';
+      Deck.placeTooltip(tip, target, wrap);
       tip.style.opacity = '1';
     }
     function onOver(e) {
@@ -438,7 +613,8 @@ Deck.registerComponent('fig-raw-comparison', (el, props, ctx) => {
       }
       const seg = e.target.closest && e.target.closest('.frc-seg');
       if (seg) {
-        tip.innerHTML = `<b>${seg.dataset.comp}</b><br>MLD ${(+seg.dataset.v).toFixed(3)} (${seg.dataset.share}% of total) &middot; ${shortSrc(seg.dataset.s)}`;
+        const vlab = seg.dataset.var ? ` &middot; ${seg.dataset.var}` : '';
+        tip.innerHTML = `<b>${seg.dataset.comp}</b><br>MLD ${(+seg.dataset.v).toFixed(3)} (${seg.dataset.share}% of total) &middot; ${shortSrc(seg.dataset.s)}${vlab}`;
         place(seg); return;
       }
     }

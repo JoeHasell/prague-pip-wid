@@ -16,7 +16,7 @@
         {
           "id": "b-ts3",
           "type": "html",
-          "html": "<p class=\"muted\">Communicating conflicting results from the World Bank's <i>Poverty and Inequality Platform</i> and the <i>World Inequality Database</i></p>"
+          "html": "<p class=\"muted\">Reconciling<i> World Inequality Database </i>and<i> World Bank </i>data on global incomes</p>"
         },
         {
           "id": "b-ts4",
@@ -78,7 +78,7 @@
     {
       "id": "slide-g6r3ya",
       "layout": "default",
-      "notes": "Expectation-setting slide, placed before the problem setup.\n\nSays up front what the talk is not, so the contribution claim is honest: the value is in re-presenting existing work clearly, not in new data or new method.\n\n(Notes to fill in — Joe's framing.)",
+      "notes": "Build-up of the 'How to communicate conflicting takeaways?' slide, one MAIN bullet per step (1 of 4). Progressive disclosure: each step is the previous slide plus one top-level bullet and its sub-bullets, so nothing already on screen moves. Split from one slide on 2026-09-10; edit the text on all four, or re-split from the last one.",
       "blocks": [
         {
           "id": "b-ah4var",
@@ -88,9 +88,63 @@
         {
           "id": "b-q0nel7",
           "type": "html",
-          "html": "<div style=\"max-width:1040px;\"><ul><li><span style=\"font-size: 0.9em;\">Can't&nbsp;say much about the&nbsp;</span><i style=\"font-size: 0.9em;\">relative</i><span style=\"font-size: 0.9em;\"> importance of different factors</span></li><ul><li><span style=\"font-size: 0.9em;\"><i>Accuracy? </i>(Missing top incomes; </span><span style=\"font-size: 25.92px;\">Data gaps → modelling uncertainty</span><span style=\"font-size: 0.9em;\">)</span></li><li><span style=\"font-size: 0.9em;\"><i>Concepts? </i>(Welfare vs&nbsp;</span><span style=\"font-size: 25.92px;\">Accrued returns from economic output)</span></li></ul><li><span style=\"font-size: 0.9em;\">Option 1: Treat them as incommensurable</span></li><li><span style=\"font-size: 0.9em;\">Option 2: \"Triangulation\":&nbsp;Doing&nbsp;w</span><span style=\"font-size: 0.9em;\">hat we can to learn from PIP and WID</span><span style=\"font-size: 0.9em;\"> </span><i style=\"font-size: 0.9em;\">jointly</i></li><ul><li><span style=\"font-size: 28.8px;\">Borrowed from Atkinson (2019) <i>Measuring Poverty Around the World</i></span></li><li><span style=\"font-size: 28.8px;\">Existing work: sdasdfsad</span></li></ul><li><b style=\"font-size: 28.8px;\">This presentation: A</b><span style=\"font-size: 28.8px;\"><b>&nbsp;'triangulated' approach to between- &amp; within-country decomposition.</b></span></li></ul></div>"
+          "html": "<div style=\"max-width:1040px;\"><ul><li style=\"font-size:28px;\">Can&rsquo;t say much about the <i>relative</i> importance of different factors</li><ul><li style=\"font-size:24px;\"><i>Accuracy?</i> (Missing top incomes; Data gaps &rarr; modeling uncertainty)</li><li style=\"font-size:24px;\"><i>Concepts?</i> (Welfare vs. Accrued returns from economic output)</li></ul></ul></div>"
         }
       ]
+    },
+    {
+      "id": "slide-g6r3ya-b2",
+      "layout": "default",
+      "notes": "Build-up of the 'How to communicate conflicting takeaways?' slide, one MAIN bullet per step (2 of 4). Progressive disclosure: each step is the previous slide plus one top-level bullet and its sub-bullets, so nothing already on screen moves. Split from one slide on 2026-09-10; edit the text on all four, or re-split from the last one.",
+      "blocks": [
+        {
+          "id": "b-ah4var-b2",
+          "type": "html",
+          "html": "<p class=\"kicker\">How to communicate conflicting takeaways?</p>"
+        },
+        {
+          "id": "b-q0nel7-b2",
+          "type": "html",
+          "html": "<div style=\"max-width:1040px;\"><ul><li style=\"font-size:28px;\">Can&rsquo;t say much about the <i>relative</i> importance of different factors</li><ul><li style=\"font-size:24px;\"><i>Accuracy?</i> (Missing top incomes; Data gaps &rarr; modeling uncertainty)</li><li style=\"font-size:24px;\"><i>Concepts?</i> (Welfare vs. Accrued returns from economic output)</li></ul><li style=\"font-size:28px;\">Option 1: Treat them as incommensurable</li></ul></div>"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "slide-g6r3ya-b3",
+      "layout": "default",
+      "notes": "Build-up of the 'How to communicate conflicting takeaways?' slide, one MAIN bullet per step (3 of 4). Progressive disclosure: each step is the previous slide plus one top-level bullet and its sub-bullets, so nothing already on screen moves. Split from one slide on 2026-09-10; edit the text on all four, or re-split from the last one.",
+      "blocks": [
+        {
+          "id": "b-ah4var-b3",
+          "type": "html",
+          "html": "<p class=\"kicker\">How to communicate conflicting takeaways?</p>"
+        },
+        {
+          "id": "b-q0nel7-b3",
+          "type": "html",
+          "html": "<div style=\"max-width:1040px;\"><ul><li style=\"font-size:28px;\">Can&rsquo;t say much about the <i>relative</i> importance of different factors</li><ul><li style=\"font-size:24px;\"><i>Accuracy?</i> (Missing top incomes; Data gaps &rarr; modeling uncertainty)</li><li style=\"font-size:24px;\"><i>Concepts?</i> (Welfare vs. Accrued returns from economic output)</li></ul><li style=\"font-size:28px;\">Option 1: Treat them as incommensurable</li><li style=\"font-size:28px;\">Option 2: &ldquo;Triangulation&rdquo;: Doing what we can to learn from PIP and WID <i>jointly</i></li><ul><li style=\"font-size:24px;\">Borrowed from Atkinson (2019) <i>Measuring Poverty Around the World</i></li><li style=\"font-size:24px;\">Examples: Anand &amp; Segal (2008, 2015); Lakner &amp; Milanovic (2013, 2016); Yonzan et al. (2022); Gradin (2024)</li><li style=\"font-size:24px;\">Counter-examples: Chancel &amp; Piketty (2021); Garcia Rojas, Yonzan &amp; Lakner (2025)</li></ul></ul></div>"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "slide-g6r3ya-b4",
+      "layout": "default",
+      "notes": "Build-up of the 'How to communicate conflicting takeaways?' slide, one MAIN bullet per step (4 of 4). Progressive disclosure: each step is the previous slide plus one top-level bullet and its sub-bullets, so nothing already on screen moves. Split from one slide on 2026-09-10; edit the text on all four, or re-split from the last one.",
+      "blocks": [
+        {
+          "id": "b-ah4var-b4",
+          "type": "html",
+          "html": "<p class=\"kicker\">How to communicate conflicting takeaways?</p>"
+        },
+        {
+          "id": "b-q0nel7-b4",
+          "type": "html",
+          "html": "<div style=\"max-width:1040px;\"><ul><li style=\"font-size:28px;\">Can&rsquo;t say much about the <i>relative</i> importance of different factors</li><ul><li style=\"font-size:24px;\"><i>Accuracy?</i> (Missing top incomes; Data gaps &rarr; modeling uncertainty)</li><li style=\"font-size:24px;\"><i>Concepts?</i> (Welfare vs. Accrued returns from economic output)</li></ul><li style=\"font-size:28px;\">Option 1: Treat them as incommensurable</li><li style=\"font-size:28px;\">Option 2: &ldquo;Triangulation&rdquo;: Doing what we can to learn from PIP and WID <i>jointly</i></li><ul><li style=\"font-size:24px;\">Borrowed from Atkinson (2019) <i>Measuring Poverty Around the World</i></li><li style=\"font-size:24px;\">Examples: Anand &amp; Segal (2008, 2015); Lakner &amp; Milanovic (2013, 2016); Yonzan et al. (2022); Gradin (2024)</li><li style=\"font-size:24px;\">Counter-examples: Chancel &amp; Piketty (2021); Garcia Rojas, Yonzan &amp; Lakner (2025)</li></ul><li style=\"font-size:28px;\"><b>This presentation: A &lsquo;triangulated&rsquo; approach to a between- &amp; within-country decomposition.</b></li></ul></div>"
+        }
+      ],
+      "annotations": []
     },
     {
       "id": "slide-byd8u8",
@@ -102,17 +156,30 @@
           "html": "<p class=\"kicker\">Data &amp; Methods</p>"
         },
         {
-          "id": "b-1snpuq",
-          "type": "html",
-          "html": "<h2></h2>"
-        },
-        {
           "id": "b-t6074b",
           "type": "html",
-          "html": "<p></p><ul style=\"\"><li style=\"font-size: 24px;\"><span>Various mean log deviation decompositions for 2023</span></li><li style=\"font-size: 24px;\"><span>Latest data</span></li><ul style=\"\"><li style=\"font-size: 24px;\"><span>WID (Stata package)</span></li><ul style=\"font-size: 24px;\"><li><span>Pre- &amp; post-tax national income; p</span>er adult ('equal split')</li><li>99 percentiles + P99.1, P99.2... P99.9</li></ul><li style=\"font-size: 24px;\">PIP ('1000 bins' dataset)</li><li style=\"font-size: 24px;\">Fully extrapolated/interpolated annual series</li><ul style=\"font-size: 24px;\"><li><span>~ 100% of world population is covered!</span></li><li><span>PIP: ~90% survey within 3 years; 96% within 10 years</span></li></ul></ul><li><span style=\"font-size: 21.6px;\">Line-up what we can — prices (2021 int.$), pop weights, year, coverage, resolution of fractiles</span></li><li><span style=\"font-size: 21.6px;\">(Heroic) Modelling of PIP data – generous adjustment for top incomes.</span></li><li><span style=\"font-size: 21.6px;\">&nbsp;Compare series to unpick the different drivers</span></li></ul><p></p>"
+          "html": "<ul><li style=\"font-size:25px;\">Various mean log deviation decompositions for 2023</li><li style=\"font-size:25px;\">Latest data</li><ul><li style=\"font-size:21px;\">WID (Stata package)</li><ul><li style=\"font-size:18px;\">Pre- &amp; post-tax national income; per adult (&lsquo;equal split&rsquo;)</li><li style=\"font-size:18px;\">99 percentiles + P99.1, P99.2&hellip; P99.9</li></ul><li style=\"font-size:21px;\">PIP (&lsquo;1000 bins&rsquo; dataset)</li><li style=\"font-size:21px;\">Both PPPs (2021)</li><li style=\"font-size:21px;\">Fully extrapolated/interpolated annual series</li><ul><li style=\"font-size:18px;\">~100% of world population is covered!</li><li style=\"font-size:18px;\">PIP: ~90% survey within 3 years; 96% within 10 years</li></ul></ul></ul>"
         }
       ],
-      "notes": ""
+      "notes": "Build-up of the 'Data & Methods' slide, in TWO steps (1 of 2). Step 1 is the two 'what data' bullets with their sub-tree; step 2 adds the four 'what we do with it' bullets. Progressive disclosure, so nothing already on screen moves. Split from one slide on 2026-09-10; edit the text on both, or re-split from the second."
+    },
+    {
+      "id": "slide-byd8u8-b2",
+      "layout": "default",
+      "notes": "Build-up of the 'Data & Methods' slide, in TWO steps (2 of 2). Step 1 is the two 'what data' bullets with their sub-tree; step 2 adds the four 'what we do with it' bullets. Progressive disclosure, so nothing already on screen moves. Split from one slide on 2026-09-10; edit the text on both, or re-split from the second.",
+      "blocks": [
+        {
+          "id": "b-5a1jh0-b2",
+          "type": "html",
+          "html": "<p class=\"kicker\">Data &amp; Methods</p>"
+        },
+        {
+          "id": "b-t6074b-b2",
+          "type": "html",
+          "html": "<ul><li style=\"font-size:25px;\">Various mean log deviation decompositions for 2023</li><li style=\"font-size:25px;\">Latest data</li><ul><li style=\"font-size:21px;\">WID (Stata package)</li><ul><li style=\"font-size:18px;\">Pre- &amp; post-tax national income; per adult (&lsquo;equal split&rsquo;)</li><li style=\"font-size:18px;\">99 percentiles + P99.1, P99.2&hellip; P99.9</li></ul><li style=\"font-size:21px;\">PIP (&lsquo;1000 bins&rsquo; dataset)</li><li style=\"font-size:21px;\">Both PPPs (2021)</li><li style=\"font-size:21px;\">Fully extrapolated/interpolated annual series</li><ul><li style=\"font-size:18px;\">~100% of world population is covered!</li><li style=\"font-size:18px;\">PIP: ~90% survey within 3 years; 96% within 10 years</li></ul></ul><li style=\"font-size:25px;\">Line up some details &mdash; pop weights, coverage, resolution of fractiles</li><li style=\"font-size:25px;\">Modeling of PIP data: consumption &rarr; income imputation; coarse top incomes adjustments</li><li style=\"font-size:25px;\">Compare MLD decomposition across series to unpick the different drivers</li><li style=\"font-size:25px;\">6 non-trivial takeaways from &ldquo;triangulation&rdquo;</li></ul>"
+        }
+      ],
+      "annotations": []
     },
     {
       "id": "slide-gbridge-step5",
@@ -140,153 +207,9 @@
               "PIP_topadj",
               "PIP_consinc",
               "PIP"
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "id": "slide-gbridge-step1",
-      "notes": "Global bridging sequence, step 1: WID pre-tax/adult vs PIP",
-      "blocks": [
-        {
-          "id": "b-gb1-fig",
-          "type": "component",
-          "component": "fig-raw-comparison",
-          "props": {
-            "title": "",
-            "dataUrl": "data/figures/fig_examples_global_mld.json",
-            "sources": [
-              "WID_pretax_per_adult",
-              "WID_pretax_per_capita",
-              "WID_posttax_per_capita",
-              "PIP_topadj",
-              "PIP_consinc",
-              "PIP"
             ],
-            "reveal": [
-              "WID_pretax_per_adult",
-              "PIP"
-            ]
+            "source": "Data: WID.world and World Bank PIP (via OWID) for 2023. Measured in international-$."
           }
-        }
-      ]
-    },
-    {
-      "id": "slide-bs9dsj",
-      "notes": "Global bridging sequence, step 1: WID pre-tax/adult vs PIP",
-      "blocks": [
-        {
-          "id": "b-9n4dgx",
-          "type": "component",
-          "component": "fig-raw-comparison",
-          "props": {
-            "title": "",
-            "dataUrl": "data/figures/fig_examples_global_mld.json",
-            "sources": [
-              "WID_pretax_per_adult",
-              "WID_pretax_per_capita",
-              "WID_posttax_per_capita",
-              "PIP_topadj",
-              "PIP_consinc",
-              "PIP"
-            ],
-            "reveal": [
-              "WID_pretax_per_adult",
-              "PIP"
-            ]
-          }
-        }
-      ],
-      "annotations": [
-        {
-          "id": "a-rfvc40",
-          "type": "line",
-          "x1": 381.1,
-          "y1": 83.1,
-          "x2": 637.5,
-          "y2": 84.4,
-          "arrow": true,
-          "color": "rgb(206, 38, 30)",
-          "width": 3.5
-        },
-        {
-          "id": "a-pzx0ow",
-          "type": "text",
-          "x": 400.4,
-          "y": 54,
-          "text": "Comparing WID series",
-          "color": "rgb(206, 38, 30)",
-          "size": 20
-        }
-      ]
-    },
-    {
-      "id": "slide-8th2lf",
-      "notes": "Global bridging sequence, step 1: WID pre-tax/adult vs PIP",
-      "blocks": [
-        {
-          "id": "b-0f9p2f",
-          "type": "component",
-          "component": "fig-raw-comparison",
-          "props": {
-            "title": "",
-            "dataUrl": "data/figures/fig_examples_global_mld.json",
-            "sources": [
-              "WID_pretax_per_adult",
-              "WID_pretax_per_capita",
-              "WID_posttax_per_capita",
-              "PIP_topadj",
-              "PIP_consinc",
-              "PIP"
-            ],
-            "reveal": [
-              "WID_pretax_per_adult",
-              "PIP"
-            ]
-          }
-        }
-      ],
-      "annotations": [
-        {
-          "id": "a-bq7719",
-          "type": "line",
-          "x1": 381.1,
-          "y1": 83.1,
-          "x2": 637.5,
-          "y2": 84.4,
-          "arrow": true,
-          "color": "rgb(206, 38, 30)",
-          "width": 3.5
-        },
-        {
-          "id": "a-4dwnoz",
-          "type": "text",
-          "x": 400.4,
-          "y": 54,
-          "text": "Comparing WID series",
-          "color": "rgb(206, 38, 30)",
-          "size": 20
-        },
-        {
-          "id": "a-ilqst9",
-          "type": "line",
-          "x1": 948,
-          "y1": 83.4,
-          "x2": 688.1,
-          "y2": 84.4,
-          "arrow": true,
-          "color": "rgb(206, 38, 30)",
-          "width": 3.5
-        },
-        {
-          "id": "a-l8ba59",
-          "type": "text",
-          "x": 687.2,
-          "y": 56.4,
-          "text": "(Heroic) modelled adjustment",
-          "color": "rgb(206, 38, 30)",
-          "size": 20
         }
       ]
     },
@@ -312,7 +235,8 @@
             "reveal": [
               "WID_pretax_per_adult",
               "PIP"
-            ]
+            ],
+            "source": "Data: WID.world and World Bank PIP (via OWID) for 2023. Measured in international-$."
           }
         }
       ]
@@ -340,17 +264,18 @@
               "WID_pretax_per_adult",
               "WID_pretax_per_capita",
               "PIP"
-            ]
+            ],
+            "source": "Data: WID.world and World Bank PIP (via OWID) for 2023. Measured in international-$."
           }
         }
       ]
     },
     {
-      "id": "slide-jv46fc-emph",
+      "id": "slide-wr3i82",
       "notes": "Same frame as the previous slide, with everything faint except the between-country segment of WID post-tax per capita and of PIP — the two ends of the \"is it between or within?\" disagreement.",
       "blocks": [
         {
-          "id": "b-emph-2",
+          "id": "b-ykez18",
           "type": "component",
           "component": "fig-raw-comparison",
           "props": {
@@ -367,21 +292,22 @@
             "emphasis": [
               "WID_pretax_per_capita.between",
               "PIP.between"
-            ]
+            ],
+            "source": "Data: WID.world and World Bank PIP (via OWID) for 2023. Measured in international-$."
           }
         }
       ],
       "annotations": [
         {
-          "id": "a-rncvdo",
+          "id": "a-kt6u5k",
           "type": "box",
-          "x": 321.4,
-          "y": 295.7,
-          "w": 727.7,
-          "h": 113.2,
-          "text": "#1: Survey vs NA means matter — in the <i>reverse</i> direction of what is usually assumed",
+          "x": 362.3,
+          "y": 320.3,
+          "w": 675.4,
+          "h": 101.6,
+          "text": "#1: Survey vs NA means yield higher (between-country) inequality",
           "color": "rgb(29, 61, 99)",
-          "size": 28
+          "size": 24
         }
       ]
     },
@@ -392,12 +318,12 @@
         {
           "id": "b-k9cut5",
           "type": "html",
-          "html": "<p class=\"kicker\">Survey means are <i>more</i> unequal than NA means here</p>"
+          "html": "<p class=\"kicker\">Inequality in survey vs National Accounts means</p>"
         },
         {
-          "id": "b-zmrw4t",
+          "id": "b-t7u291",
           "type": "html",
-          "html": "<p></p><ul><li>Opposite of a fairly established result: (Milanovic, 2002; Deaton, 2005)</li><li>\"...the means from household surveys are <b>less dispersed</b> than the means obtained from National Accounts... It is due both to higher saving and investment rates in richer countries and to the underestimation of income from self-employment and own consumption by National Accounts.\" Milanovic (2024)</li></ul><p></p>"
+          "html": "<p><ul><li>Survey mean as % of NA mean declines with income</li><ul><li>Milanovic (2002); Deaton (2005)</li><li>All else equal, anchoring to NA means should <i>increase</i>&nbsp;(between-country) global inequality</li></ul><li>Weighting by population flips the relationship</li><ul><li>&nbsp;So anchoring to NA means <i>decreases</i>&nbsp;(between-country) global inequality</li><li>Milanovic (2005); Lakner &amp; Milanovic (2013)</li></ul></ul></p>"
         }
       ],
       "notes": ""
@@ -407,11 +333,6 @@
       "layout": "default",
       "notes": "First pass at the share chart: one dot per country, equally weighted, and only the unweighted fit.\n\nThe typical survey captures 39% of national income per capita. The k-multiples become 100%, 50%, 33%, 20%, 10%, so the horizontal lines are round shares.\n\nThe NEXT slide adds population as bubble size and the population-weighted fit — that is the point of the pair: weighting by people pulls the line down to 31%, because the big poor countries sit below the unweighted line.\n\nAxes, hidden outlier and everything else are identical across the two slides, so only the encoding changes.",
       "blocks": [
-        {
-          "id": "slide-means-share-plain-k",
-          "type": "html",
-          "html": "<p class=\"kicker\">Surveys vs national accounts</p>"
-        },
         {
           "id": "slide-means-share-plain-c",
           "type": "component",
@@ -429,6 +350,20 @@
             "bubbles": false,
             "fits": [
               "unweighted"
+            ],
+            "source": "Data: WID.world and World Bank PIP (via OWID) for 2023. Measured in international-$. Venezuela (286%) is not shown in the chart.",
+            "note": false,
+            "title": "",
+            "xDomain": [
+              50,
+              5000
+            ],
+            "ratioLabels": false,
+            "ratios": [
+              1,
+              2,
+              5,
+              10
             ]
           }
         }
@@ -439,11 +374,6 @@
       "layout": "default",
       "notes": "The exact inverse of the previous slide, which is often the easier one to say out loud: the typical survey captures 39% of national income per capita, and only 31% weighted by population.\n\nThe k-multiples become 100%, 50%, 33%, 20%, 10%, so the horizontal lines are round shares. Population-weighted fit slopes UP here: richer countries' surveys capture more.\n\nRange 5% (Liechtenstein) to 285% (Venezuela). Venezuela is omitted from THIS plot only — it stretched the axis to 500% and squashed everything else. It remains in the regression, and a note on the chart says so. It is not omitted from the 1990 share slide, where its 64% is unremarkable.",
       "blocks": [
-        {
-          "id": "slide-means-share-k",
-          "type": "html",
-          "html": "<p class=\"kicker\">Surveys vs national accounts</p>"
-        },
         {
           "id": "slide-means-share-c",
           "type": "component",
@@ -457,6 +387,20 @@
             "yDomain": [
               5,
               200
+            ],
+            "source": "Data: WID.world and World Bank PIP (via OWID) for 2023. Measured in international-$. Venezuela (286%) is not shown in the chart.",
+            "note": false,
+            "title": "",
+            "xDomain": [
+              50,
+              5000
+            ],
+            "ratioLabels": false,
+            "ratios": [
+              1,
+              2,
+              5,
+              10
             ]
           }
         }
@@ -484,7 +428,8 @@
             "emphasis": [
               "WID_pretax_per_capita.between",
               "PIP.between"
-            ]
+            ],
+            "source": "Data: WID.world and World Bank PIP (via OWID) for 2023. Measured in international-$."
           }
         }
       ],
@@ -492,13 +437,13 @@
         {
           "id": "a-sgbz78",
           "type": "box",
-          "x": 321.4,
-          "y": 295.7,
-          "w": 727.7,
-          "h": 113.2,
-          "text": "#1: Survey vs NA means matter — in the <i>reverse</i> direction of what is usually assumed",
+          "x": 323.1,
+          "y": 345.7,
+          "w": 729.9,
+          "h": 77.5,
+          "text": "#1: Survey vs NA means yield higher (between-country) inequality",
           "color": "rgb(29, 61, 99)",
-          "size": 28
+          "size": 24
         }
       ]
     },
@@ -524,7 +469,8 @@
             "emphasis": [
               "WID_pretax_per_capita.within",
               "PIP.within"
-            ]
+            ],
+            "source": "Data: WID.world and World Bank PIP (via OWID) for 2023. Measured in international-$."
           }
         }
       ],
@@ -532,13 +478,13 @@
         {
           "id": "a-emph-w26",
           "type": "box",
-          "x": 321.4,
-          "y": 295.7,
+          "x": 326,
+          "y": 316.9,
           "w": 727.7,
-          "h": 113.2,
-          "text": "# The difference is driven by huge differences in within-country inequality",
+          "h": 101.6,
+          "text": "#2: The WID/PIP gap is <i>mostly</i> driven by big differences in within-country inequality",
           "color": "rgb(29, 61, 99)",
-          "size": 28
+          "size": 24
         }
       ]
     },
@@ -547,11 +493,6 @@
       "layout": "default",
       "notes": "Country-level view of the within component: PIP within-MLD on x, WID pre-tax within-MLD on y, one bubble per country scaled by population, dotted diagonals for the multiples WID is of PIP. 2023, 211 countries. Median ratio 4.35x (population-weighted 4.66x); the range is 2.19x to 10.06x, so NO country is anywhere near the 1x agreement line. Data: data/figures/fig_mld_scatter.json from data/scripts/29_fig_mld_scatter.py. A post-tax twin on identical axes exists at fig_mld_scatter_posttax.json.",
       "blocks": [
-        {
-          "id": "b-mld-scatter-k",
-          "type": "html",
-          "html": "<p class=\"kicker\">Every country, not just the global bar</p>"
-        },
         {
           "id": "b-mld-scatter",
           "type": "component",
@@ -574,12 +515,14 @@
               0.65
             ],
             "yDomain": [
-              0.65,
-              2.2
+              0.4,
+              1.4
             ],
             "summary": [
               "pre-tax"
-            ]
+            ],
+            "title": "MLD: WID pre-tax vs PIP, 2023",
+            "source": "Data: WID.world and World Bank PIP (via OWID) for 2023. Measured in international-$."
           }
         }
       ],
@@ -590,11 +533,6 @@
       "layout": "default",
       "notes": "Same chart, WID post-tax per capita on y. 2023, 211 countries. Median ratio 2.50x (population-weighted 2.76x); range 0.70x to 7.34x — unlike pre-tax, some countries fall BELOW 1x. x axis matches slide 21; the y axis does not (post-tax runs 0.10-1.19 against pre-tax 0.66-2.15), so read the axis rather than the cloud position when flicking. Data: data/figures/fig_mld_scatter_posttax.json from data/scripts/29_fig_mld_scatter.py.",
       "blocks": [
-        {
-          "id": "b-mld-scatter-pt-k",
-          "type": "html",
-          "html": "<p class=\"kicker\">Every country, not just the global bar</p>"
-        },
         {
           "id": "b-mld-scatter-pt",
           "type": "component",
@@ -617,13 +555,46 @@
               0.65
             ],
             "yDomain": [
-              0.095,
-              1.25
+              0.09,
+              1.4
             ],
             "summary": [
               "pre-tax",
               "post-tax"
-            ]
+            ],
+            "title": "MLD: WID <tspan text-decoration=\"underline\">post</tspan>-tax vs PIP, 2023",
+            "source": "Data: WID.world and World Bank PIP (via OWID) for 2023. Measured in international-$."
+          }
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "slide-gbridge-nomid",
+      "notes": "The bridging frame with the two PIP-side adjustment columns (PIP top-adjusted, PIP cons->income) hidden, so only the four 'off the shelf' columns show: WID pre-tax per adult, WID pre-tax per capita, WID post-tax per capita, PIP. Sets up the next slide, which highlights the within components of columns 2, 3 and 6.",
+      "blocks": [
+        {
+          "id": "b-gbridge-nomid",
+          "type": "component",
+          "component": "fig-raw-comparison",
+          "props": {
+            "title": "",
+            "dataUrl": "data/figures/fig_examples_global_mld.json",
+            "sources": [
+              "WID_pretax_per_adult",
+              "WID_pretax_per_capita",
+              "WID_posttax_per_capita",
+              "PIP_topadj",
+              "PIP_consinc",
+              "PIP"
+            ],
+            "reveal": [
+              "WID_pretax_per_adult",
+              "WID_pretax_per_capita",
+              "WID_posttax_per_capita",
+              "PIP"
+            ],
+            "source": "Data: WID.world and World Bank PIP (via OWID) for 2023. Measured in international-$."
           }
         }
       ],
@@ -633,11 +604,6 @@
       "id": "slide-emph-tax",
       "notes": "Highlight #2: the WITHIN component of WID pre-tax vs post-tax, both per capita — how much of the within-country component the tax system accounts for.",
       "blocks": [
-        {
-          "id": "b-emph2-1",
-          "type": "html",
-          "html": "<p class=\"kicker\">#2: Before/after tax <i>does</i> matter</p>"
-        },
         {
           "id": "b-emph2-2",
           "type": "component",
@@ -655,12 +621,26 @@
             ],
             "emphasis": [
               "WID_pretax_per_capita.within",
-              "WID_posttax_per_capita.within"
-            ]
+              "WID_posttax_per_capita.within",
+              "PIP.within"
+            ],
+            "source": "Data: WID.world and World Bank PIP (via OWID) for 2023. Measured in international-$."
           }
         }
       ],
-      "annotations": []
+      "annotations": [
+        {
+          "id": "a-lmf09w",
+          "type": "box",
+          "x": 387.8,
+          "y": 319.6,
+          "w": 684.7,
+          "h": 101.6,
+          "text": "#3: Shifting to WID <i>post</i>-tax data reduces the gap — though it remains large",
+          "color": "rgb(29, 61, 99)",
+          "size": 24
+        }
+      ]
     },
     {
       "id": "slide-gbridge-step3",
@@ -686,103 +666,8 @@
               "WID_pretax_per_capita",
               "WID_posttax_per_capita",
               "PIP"
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "id": "slide-a57uft",
-      "notes": "Highlight #2: the WITHIN component of WID pre-tax vs post-tax, both per capita — how much of the within-country component the tax system accounts for.",
-      "blocks": [
-        {
-          "id": "b-nwkq3u",
-          "type": "html",
-          "html": "<p class=\"kicker\">#2: Before/after tax <i>does</i> matter</p><div style=\"position:absolute; left:150px; top:84px; width:700px; background:rgba(255,255,255,0.97); border:1px solid var(--line); box-shadow:0 12px 34px rgba(0,12,28,0.14); padding:26px 30px; z-index:3;\"><p style=\"margin:0; font-size:19px; line-height:1.55; color:var(--ink); max-width:none;\">“We have also produced estimates using the concept of <b>post-tax</b> national income...&nbsp;<span style=\"color: var(--ink);\">The results on between-countries and within-countries inequality</span><b style=\"color: var(--ink);\"> trends </b><span style=\"color: var(--ink);\">and on regional decomposition are <b>virtually unchanged.</b></span><span style=\"color: var(--ink);\">”</span></p><p style=\"margin:18px 0 0 0; font-size:14px; line-height:1.4; color:var(--muted);\">Chancel &amp; Piketty (2021)</p></div>"
-        },
-        {
-          "id": "b-cpbmvm",
-          "type": "component",
-          "component": "fig-raw-comparison",
-          "props": {
-            "title": "",
-            "dataUrl": "data/figures/fig_examples_global_mld.json",
-            "sources": [
-              "WID_pretax_per_adult",
-              "WID_pretax_per_capita",
-              "WID_posttax_per_capita",
-              "PIP_topadj",
-              "PIP_consinc",
-              "PIP"
             ],
-            "emphasis": [
-              "WID_pretax_per_capita.within",
-              "WID_posttax_per_capita.within"
-            ]
-          }
-        }
-      ],
-      "annotations": []
-    },
-    {
-      "id": "slide-baz6de",
-      "layout": "default",
-      "notes": "Expectation-setting slide, placed before the problem setup.\n\nSays up front what the talk is not, so the contribution claim is honest: the value is in re-presenting existing work clearly, not in new data or new method.\n\n(Notes to fill in — Joe's framing.)",
-      "blocks": [
-        {
-          "id": "b-1xnkdp",
-          "type": "html",
-          "html": "<p class=\"kicker\">Global inequality datasets yield conflicting 'takeaways' — <i>how should we communicate this?</i></p>"
-        },
-        {
-          "id": "b-gp6z5a",
-          "type": "html",
-          "html": "<div style=\"max-width:1040px;\"><ul style=\"\"><li>Two prominent&nbsp;global datasets:</li><ul><li>World Bank's Poverty and Inequality Platform</li><ul><li>Survey data</li><li>Mix of consumption / after-tax income data</li><li>Drawback: missing top incomes</li></ul><li><span style=\"font-size: 25.92px;\">World Inequality Database</span></li><ul><li><span style=\"font-size: 25.92px;\">DINA (tax, NA and survey data)</span></li><li><span style=\"font-size: 25.92px;\">Pre- and post-tax <i>national</i> income</span></li><li><span style=\"font-size: 25.92px;\">Drawback: Extensively modeled; NA concepts less relevant to welfare</span></li></ul></ul><li>Conflicting takeaways about global inequality</li></ul></div>"
-        }
-      ]
-    },
-    {
-      "id": "slide-puered",
-      "layout": "default",
-      "notes": "Setup slide. ~60-75 seconds.\n\nThe two main sources answer the same question in opposite ways, and both are respectable. Left: WID/DINA, between-country has fallen to about a third of the total. Right: the World Bank's own flagship report, on PovcalNet (the ancestor of PIP), where between-country is about two-thirds.\n\nNote for questions: this is not a clean apples-to-apples gap. It mixes (i) the data source, (ii) the inequality index (Theil/GE(1) on the left, mean log deviation/GE(0) on the right), (iii) the year, and (iv) the income concept. That is the point of the talk: the headline disagreement bundles measurement problems together with methodological choices. In both figures the warm colour is between-country, which helps when pointing at them.",
-      "blocks": [
-        {
-          "id": "b-20lgkk",
-          "type": "html",
-          "html": "<p class=\"kicker\">Example: Two opposing decompositions of global inequality</p>"
-        },
-        {
-          "id": "b-ijw1us",
-          "type": "html",
-          "html": "<div style=\"display:flex; gap:36px; width:100%; margin-top:4px; align-items:flex-start;\"><div style=\"flex:165 1 0; min-width:0; display:flex; flex-direction:column;\"><p style=\"font-size:16px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin:0 0 10px 0;\">World Inequality Database</p><div style=\"background:var(--wash); border:1px solid var(--line); padding:8px;\"><img src=\"content/images/WID%20focus%201990-2020.png\" alt=\"Chancel and Piketty (2021) Figure 5: the between- versus within-country split of global income inequality, 1820 to 2020, with the 1990 to 2020 period highlighted and the rest faded; the 2020 callout reads 32% between-country\" style=\"width:100%; height:auto; display:block;\"></div><p style=\"font-size:13px; line-height:1.4; margin:10px 0 0 0;\"><span style=\"color: rgb(87, 114, 145); font-size: 13px;\"><b>Chancel &amp; Piketty (2021),</b> </span><font color=\"#577291\" style=\"font-size: 13px; font-weight: 400;\"><span style=\"font-size: 13px;\"><i>Global Income Inequality, 1820-2020: </i></span></font><i style=\"font-weight: 400; font-size: 13px; color: rgb(87, 114, 145);\">The Persistence and Mutation of Extreme Inequality</i></p></div><div style=\"flex:154 1 0; min-width:0; display:flex; flex-direction:column;\"><p style=\"font-size:16px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin:0 0 10px 0;\">World Bank Poverty &amp; Inequality Platform</p><div style=\"background:var(--wash); border:1px solid var(--line); padding:8px;\"><img src=\"content/images/PIP%20full.png\" alt=\"Decomposition of global income inequality into within- and between-country contributions, 1990 to 2019, stacked mean log deviation\" style=\"width:100%; height:auto; display:block;\"></div><p style=\"font-size:13px; line-height:1.4; margin:10px 0 0 0;\"><font color=\"#577291\"><span style=\"font-size: 13px;\"><b>Garcia Rojas, Yonzan &amp; Lakner (2025), </b><i>World Bank Policy Research Working Paper</i></span></font></p><p style=\"font-size:13px; line-height:1.4; margin:3px 0 0 0;\"><font color=\"#577291\"><span style=\"font-size: 13px;\"><i>Earlier: World Bank Poverty and Shared Prosperity (2016)</i>, </span></font><span style=\"color: rgb(87, 114, 145); font-size: 13px;\"><i>Lakner and Milanovic </i><i>(2016); Milanovic (2024)</i></span></p></div></div>"
-        }
-      ]
-    },
-    {
-      "id": "slide-fb9m1i",
-      "notes": "Global bridging sequence, step 3: + post-tax",
-      "blocks": [
-        {
-          "id": "b-pqezmc",
-          "type": "component",
-          "component": "fig-raw-comparison",
-          "props": {
-            "title": "",
-            "dataUrl": "data/figures/fig_examples_global_mld.json",
-            "sources": [
-              "WID_pretax_per_adult",
-              "WID_pretax_per_capita",
-              "WID_posttax_per_capita",
-              "PIP_topadj",
-              "PIP_consinc",
-              "PIP"
-            ],
-            "reveal": [
-              "WID_pretax_per_adult",
-              "WID_pretax_per_capita",
-              "WID_posttax_per_capita",
-              "PIP"
-            ]
+            "source": "Data: WID.world and World Bank PIP (via OWID) for 2023. Measured in international-$."
           }
         }
       ]
@@ -812,7 +697,8 @@
               "WID_posttax_per_capita",
               "PIP_consinc",
               "PIP"
-            ]
+            ],
+            "source": "Data: WID.world and World Bank PIP (via OWID) for 2023. Measured in international-$."
           }
         }
       ]
@@ -835,95 +721,399 @@
               "PIP_topadj",
               "PIP_consinc",
               "PIP"
-            ]
+            ],
+            "source": "Data: WID.world and World Bank PIP (via OWID) for 2023. Measured in international-$."
           }
         }
       ]
     },
     {
-      "id": "slide-qx60l4",
-      "layout": "default",
-      "notes": "Expectation-setting slide, placed before the problem setup.\n\nSays up front what the talk is not, so the contribution claim is honest: the value is in re-presenting existing work clearly, not in new data or new method.\n\n(Notes to fill in — Joe's framing.)",
-      "blocks": [
-        {
-          "id": "b-x46eun",
-          "type": "html",
-          "html": "<p class=\"kicker\">Two prominent databases on global incomes</p>"
-        },
-        {
-          "id": "b-xuwfyu",
-          "type": "html",
-          "html": "<div class=\"s2-sources\"><style>.s2-sources ul{font-size:26px;line-height:1.38}.s2-sources li{margin-bottom:0.25em}.s2-sources>ul>li+li{margin-top:0.5em}</style><ul><li>World Bank’s <i>Poverty and Inequality Platform</i> (PIP)<ul><li>Household survey data; mix of consumption (low- &amp; middle-income) and post-tax income (high-income)</li></ul></li><li><i>World Inequality Database</i> (WID)<ul><li>‘Top incomes’ literature → DINA</li></ul></li><li>Many methodological differences — bundles questions about…<ul><li><i>Accuracy</i><ul><li>PIP: Missing top incomes</li><li>WID: Data gaps → modelling uncertainty</li></ul></li><li><i>Concepts:</i> What are we trying to measure?<ul><li>PIP: Distribution of <i>welfare</i></li><li>WID: Accrued returns from economic output</li></ul></li></ul></li><li>Q: How to communicate conflicting takeaways?<ul><li>Case study: Decomposition of global inequality into between-country and within-country components</li></ul></li></ul></div>"
-        }
-      ]
-    },
-    {
-      "id": "slide-incommensurable",
-      "blocks": [
-        {
-          "id": "b-inc-q",
-          "type": "html",
-          "html": "<div style=\"display:flex; gap:36px; width:100%; margin-top:4px; align-items:flex-start;\"><div style=\"flex:118 1 0; min-width:0; display:flex; flex-direction:column;\"><p style=\"font-size:16px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin:0 0 10px 0;\">World Inequality Database (WID)</p><p style=\"margin:0; border-left:3px solid var(--line); padding:0 0 0 18px; font-size:18px; line-height:1.55; color:var(--ink); max-width:none;\">“The main difference with earlier series is the use of historical<b> tax data, more <u>precise</u> than household surveys</b> used in earlier long run studies on global inequality.”</p><p style=\"font-size:13px; line-height:1.4; margin:10px 0 0 21px; color:var(--muted);\">Chancel &amp; Piketty (2021), Footnote 21</p></div><div style=\"flex:201 1 0; min-width:0; display:flex; flex-direction:column;\"><p style=\"font-size:16px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin:0 0 10px 0;\"><span style=\"letter-spacing: 1.6px;\">World Bank Poverty &amp; Inequality Platform (PIP)</span></p><p style=\"margin:0; border-left:3px solid var(--line); padding:0 0 0 18px; font-size:16px; line-height:1.5; color:var(--ink); max-width:none;\">“We do not use [WID] estimates for several reasons. First, many <b>strong assumptions</b> are needed to go from a household survey distribution to an annual income estimate that is consistent with national accounts.... Second, in many of the low- and middle-income countries, information for top incomes, such as from administrative tax records, is <b>rarely available </b>or might be of limited relevance since the tax base is small and evasion common. Third, and most importantly, in the WID database, it is not possible to disentangle the adjustment for the missing top from the adjustment to national accounts. <b>Surveys provide the most appropriate measure of household welfare</b>, since national accounts aggregates include many other components that are only vaguely related to household welfare...”</p><p style=\"margin:0; border-left:3px solid var(--line); padding:0 0 0 18px; font-size:16px; line-height:1.5; color:var(--ink); max-width:none; margin-top:14px;\">[On top-adjusting the survey data:]<br>“...&nbsp;However, with the data currently available, <b>it is not possible to do these kinds of adjustments comprehensively</b> for all countries in the world (Anand &amp; Segal, 2008; Deaton, 2005; World Bank, 2017). Therefore, our analysis is based on survey data unadjusted for missing top incomes.”</p><p style=\"font-size: 13px; line-height: 1.4; margin: 10px 0px 0px 21px; color: rgb(87, 114, 145);\">Garcia Rojas, Yonzan &amp; Lakner (2025)</p></div></div>"
-        },
-        {
-          "id": "b-9x2gcj",
-          "type": "html",
-          "html": "<p></p><div><span style=\"font-size: 32px;\"><br></span></div><p></p>"
-        }
-      ]
-    },
-    {
-      "id": "slide-39kq60",
+      "id": "slide-7ce2vb",
       "layout": "default",
       "blocks": [
         {
-          "id": "b-4vv64m",
+          "id": "b-ospj5f",
           "type": "html",
-          "html": "<p class=\"kicker\">Communicating incommensurable \"worlds\" of measurement</p>"
+          "html": "<p class=\"kicker\">Modeled adjustments to PIP</p>"
         },
         {
-          "id": "b-22o8pn",
+          "id": "b-0gqehk",
           "type": "html",
-          "html": "<p></p><ul><li>Bundles many methodological differences:</li><ul><li>Questions about <i>accuracy</i>:</li><ul><li><span style=\"font-size: 25.92px;\">Strengths &amp; weaknesses of underlying data sources (surveys, National Accounts, tax data)</span></li><ul><li><span style=\"font-size: 25.92px;\">Missing top incomes</span></li><li><span style=\"font-size: 25.92px;\">Also informality, evasion, own consumption, durable goods...</span></li></ul><li><span style=\"font-size: 0.9em;\">Data gaps -&gt; Comparability issues (PIP) / modelling uncertainty (WID)</span></li></ul><li>Normative differences in<i> concepts</i></li><ul><li>PIP: Survey income / consumption ~ welfare</li><li>WID: National accounts ~ Command of economic resources?</li></ul><li>Smaller implementation details (coverage, prices, population weights...)&nbsp;</li></ul><li><span style=\"font-size: 28.8px;\">Their relative importance isn't clear</span></li><li><span style=\"font-size: 0.9em;\">Studies don't engage much with this question</span></li></ul><p></p>"
+          "html": "<ul style=\"padding-left:0;\"><li style=\"font-size:28px; list-style:none; margin-bottom:14px;\">1) <b>Consumption → Income</b></li></ul><p></p>"
+        }
+      ],
+      "notes": "Build-up of the consumption->income methods slide, step 1 of 4. Step 1 is the heading alone, then the quote, then the 'Some try' line, then everything else at once. Progressive disclosure, so nothing already on screen moves. Split from one slide on 2026-09-10; the last step is the full slide — edit there and re-split, or edit all four."
+    },
+    {
+      "id": "slide-7ce2vb-b2",
+      "layout": "default",
+      "notes": "Build-up of the consumption->income methods slide, step 2 of 4. Step 1 is the heading alone, then the quote, then the 'Some try' line, then everything else at once. Progressive disclosure, so nothing already on screen moves. Split from one slide on 2026-09-10; the last step is the full slide — edit there and re-split, or edit all four.",
+      "blocks": [
+        {
+          "id": "b-ospj5f-b2",
+          "type": "html",
+          "html": "<p class=\"kicker\">Modeled adjustments to PIP</p>"
+        },
+        {
+          "id": "b-0gqehk-b2",
+          "type": "html",
+          "html": "<ul style=\"padding-left:0;\"><li style=\"font-size:28px; list-style:none; margin-bottom:14px;\">1) <b>Consumption → Income</b></li><ul><li style=\"font-size:24px; margin-bottom:11px;\"><i>“There is no reliable way to infer an income distribution from an expenditure distribution, or vice versa, so one simply has to live with the noncomparability.”</i> Anand &amp; Segal (2015)</li></ul></ul><p></p>"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "slide-7ce2vb-b3",
+      "layout": "default",
+      "notes": "Build-up of the consumption->income methods slide, step 3 of 4. Step 1 is the heading alone, then the quote, then the 'Some try' line, then everything else at once. Progressive disclosure, so nothing already on screen moves. Split from one slide on 2026-09-10; the last step is the full slide — edit there and re-split, or edit all four.",
+      "blocks": [
+        {
+          "id": "b-ospj5f-b3",
+          "type": "html",
+          "html": "<p class=\"kicker\">Modeled adjustments to PIP</p>"
+        },
+        {
+          "id": "b-0gqehk-b3",
+          "type": "html",
+          "html": "<ul style=\"padding-left:0;\"><li style=\"font-size:28px; list-style:none; margin-bottom:14px;\">1) <b>Consumption → Income</b></li><ul><li style=\"font-size:24px; margin-bottom:11px;\"><i>“There is no reliable way to infer an income distribution from an expenditure distribution, or vice versa, so one simply has to live with the noncomparability.”</i> Anand &amp; Segal (2015)</li><li style=\"font-size:24px; margin-bottom:11px;\">Some try: Lahoti, Jayadev &amp; Reddy (2014); Wollburg, Hallegatte, &amp; Mahler (2023); Chancel et al. (2019)</li></ul></ul><p></p>"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "slide-7ce2vb-b4",
+      "layout": "default",
+      "notes": "Build-up of the consumption->income methods slide, step 4 of 4. Step 1 is the heading alone, then the quote, then the 'Some try' line, then everything else at once. Progressive disclosure, so nothing already on screen moves. Split from one slide on 2026-09-10; the last step is the full slide — edit there and re-split, or edit all four.",
+      "blocks": [
+        {
+          "id": "b-ospj5f-b4",
+          "type": "html",
+          "html": "<p class=\"kicker\">Modeled adjustments to PIP</p>"
+        },
+        {
+          "id": "b-0gqehk-b4",
+          "type": "html",
+          "html": "<ul style=\"padding-left:0;\"><li style=\"font-size:28px; list-style:none; margin-bottom:14px;\">1) <b>Consumption → Income</b></li><ul><li style=\"font-size:24px; margin-bottom:11px;\"><i>“There is no reliable way to infer an income distribution from an expenditure distribution, or vice versa, so one simply has to live with the noncomparability.”</i> Anand &amp; Segal (2015)</li><li style=\"font-size:24px; margin-bottom:11px;\">Some try: Lahoti, Jayadev &amp; Reddy (2014); Wollburg, Hallegatte, &amp; Mahler (2023); Chancel et al. (2019)</li><li style=\"font-size:24px; margin-bottom:11px;\">We apply the relationship estimated in Chancel et al. (2019)&nbsp;<i>How Large Are African Inequalities?</i></li><li style=\"font-size:26px; list-style:none; text-align:center; margin:16px 0 18px -0.4em;\"><span style=\"display:inline-block; line-height:1.15;\"><span style=\"display:inline-block; vertical-align:middle; text-align:center;\"><span style=\"display:block; border-bottom:1.5px solid currentColor; padding:0 7px 1px;\"><i>Q</i><sup>I</sup>(<i>p</i>)</span><span style=\"display:block; padding:1px 7px 0;\"><i>Q</i><sup>C</sup>(<i>p</i>)</span></span><span style=\"vertical-align:middle;\">&nbsp;&nbsp;=&nbsp;&nbsp;α + β log</span><span style=\"font-size:1.9em; vertical-align:-0.28em; font-weight:300;\">(</span><span style=\"display:inline-block; vertical-align:middle; text-align:center;\"><span style=\"display:block; border-bottom:1.5px solid currentColor; padding:0 7px 1px;\"><i>p</i></span><span style=\"display:block; padding:1px 7px 0;\">1 − <i>p</i></span></span><span style=\"font-size:1.9em; vertical-align:-0.28em; font-weight:300;\">)</span></span></li><li style=\"font-size:24px; margin-bottom:11px;\">Estimated on paired consumption/income distributions from Côte d’Ivoire, Ghana, Guinea, Madagascar, Uganda, India, and Thailand</li><li style=\"font-size:24px; margin-bottom:11px;\">&alpha; = 0.85, and three reference gradients &beta;<sub>i</sub> = 0.10, &beta;<sub>ii</sub> = 0.12, &beta;<sub>iii</sub> = 0.14</li><li style=\"font-size:24px; margin-bottom:11px;\">Limited effect on the mean (by construction)</li></ul></ul><p></p>"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "slide-consinc-variants",
+      "layout": "default",
+      "notes": "FIRST of the two build-up frames on modelling uncertainty: the consumption->income step alone, with the top-adjusted column blanked out (dimOpacity 0) so the columns and the axis are already in place for the next slide. WID publish their scaled-logit slope as three values, b = 0.10 / 0.12 / 0.14, and b carries the whole shape of the correction (a factors out as a level).\n\ni = 0.10, ii = 0.12 (the deck's baseline), iii = 0.14 — roman numerals so the keys never clash with the a-f top-adjustment variants on the next slide. PIP_consinc: within 0.323-0.379, between 0.485-0.494, total 0.817-0.855, between share 55.7-60.4%. So the slope is worth about 2pp per step on the between share, and roughly 4.7pp end to end.\n\nOnly PIP_consinc splits. Everything upstream (PIP as published, and all the WID columns) is untouched by this choice; everything downstream is blanked here and comes back on the next slide, where the top-adjustment variants are the ones drawn. The full 3x6 cross, where the two choices compound, is on slide 30.\n\nData: data/scripts/21_fig_bridging_from_etl.py.",
+      "blocks": [
+        {
+          "id": "b-cvar-c",
+          "type": "component",
+          "component": "fig-raw-comparison",
+          "props": {
+            "title": "",
+            "dataUrl": "data/figures/fig_bridging_all.json",
+            "variants": [
+              "PIP_consinc"
+            ],
+            "reveal": [
+              "WID_pretax_per_adult",
+              "WID_pretax_per_capita",
+              "WID_posttax_per_capita",
+              "PIP_consinc",
+              "PIP"
+            ],
+            "dimOpacity": 0,
+            "sources": [
+              "WID_pretax_per_adult",
+              "WID_pretax_per_capita",
+              "WID_posttax_per_capita",
+              "PIP_topadj",
+              "PIP_consinc",
+              "PIP"
+            ],
+            "source": "Data: WID.world and World Bank PIP (via OWID) for 2023. Measured in international-$."
+          }
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "slide-rd2ffi",
+      "layout": "default",
+      "blocks": [
+        {
+          "id": "b-zght7o",
+          "type": "html",
+          "html": "<p class=\"kicker\">Modeled adjustments to PIP</p>"
+        },
+        {
+          "id": "b-lv5xe7",
+          "type": "html",
+          "html": "<ul style=\"padding-left:0;\"><li style=\"font-size:28px; list-style:none;\">2) <b>Top income adjustment</b></li><ul><li style=\"font-size:24px;\">Roughly following Anand &amp; Segal (2015), assumes survey data misses the top 1% altogether</li><li style=\"font-size:24px;\">Rescale PIP population to 99%</li><li style=\"font-size:24px;\">Append top 1% share from WID (post-tax), rescaling mean</li></ul></ul><p></p>"
         }
       ],
       "notes": ""
     },
     {
-      "id": "slide-q2topadjex",
+      "id": "slide-topadj-variants",
       "layout": "default",
-      "notes": "Top adjustment explainer, CHAINED method (2026-08-11): base = PIP_consinc (income basis), splice P95 (anchor p94-p95, first adjusted bin p95-p96). Chart shows consumption (observed), income basis (imputed), and top-adjusted; income countries show two lines. Scripts: topadj.py, consinc.py, 11_fig_topadj_explainer.py. Default country: Indonesia.",
+      "notes": "Both modelling choices shown as split bars at once, sharing ONE key alphabet: i/ii/iii name the same consumption->income slope (b = 0.10 / 0.12 / 0.14) in both columns.\n\nColumn 5, PIP cons->income: the three slopes. Between share 60.7 / 58.4 / 56.0%.\n\nColumn 4, PIP top-adjusted: the same three slopes with the top-1% APPEND method on top (under-representation — the survey re-read as the bottom 99%, WID's top percentile added; Anand & Segal 2015). Between share 50.7 / 48.9 / 47.0%. ii IS THE DECK'S BRIDGING COLUMN, so the single bars everywhere else are bar ii.\n\nNA is set apart to the left with its own value labels: the top-1% adjustment applied to RAW PIP, with no consumption->income step at all (within 0.36, between 0.46, total 0.81, 56.4% between). It answers a different question from the other three, so it is deliberately OUTSIDE the labelled range — the ranges and the range box cover i/ii/iii only, and the box is aligned over those three bars.\n\nThe match method is built but not reported (Joe, 2026-09-09) — one tuple entry in 21_fig_bridging_from_etl.TOPADJ_METHODS brings it back. Append is not applied to a country whose own top-1% share already exceeds WID's; 5 countries are skipped.\n\nThe labelled ranges are SYNTHETIC ENVELOPES: each component's min and max taken separately.\n\nData: data/scripts/21_fig_bridging_from_etl.py.",
       "blocks": [
         {
-          "id": "b-q2tae-k",
-          "type": "html",
-          "html": "<p class=\"kicker\"><span style=\"letter-spacing: 0.12em;\">Guesstimated upper bound for missing top</span></p>"
-        },
-        {
-          "id": "b-q2tae-t",
-          "type": "html",
-          "html": "<p><b>- Consumption -&gt; Income:&nbsp;</b></p><p>- <b>'Upper bound' top adjustment:</b>&nbsp;Above P95, incomes assumed to follow the <em>shape</em> of WID’s post-tax distribution, anchored at the P94–95 value</p><p>&nbsp;- adj(P<sub>y</sub>) = inc(P94–95) × WID(P<sub>y</sub>) / WID(P94–95).&nbsp;</p>"
-        },
-        {
-          "id": "b-q2tae-c",
+          "id": "b-tvar-c",
           "type": "component",
-          "component": "fig-topadj-explainer",
-          "props": {}
+          "component": "fig-raw-comparison",
+          "props": {
+            "title": "",
+            "dataUrl": "data/figures/fig_bridging_all.json",
+            "variants": [
+              "PIP_topadj",
+              "PIP_consinc",
+              "WID_posttax_rescaled"
+            ],
+            "sources": [
+              "WID_pretax_per_adult",
+              "WID_pretax_per_capita",
+              "WID_posttax_per_capita",
+              "PIP_topadj",
+              "PIP_consinc",
+              "PIP"
+            ],
+            "source": "Data: WID.world and World Bank PIP (via OWID) for 2023. Measured in international-$."
+          }
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "slide-hrkdsx",
+      "notes": "The completed bridging chain: all six columns at full strength, no reveal. WID pre-tax/adult 22% between -> PIP 69% between, total MLD 1.30 -> 0.69.",
+      "blocks": [
+        {
+          "id": "b-ynoktc",
+          "type": "component",
+          "component": "fig-raw-comparison",
+          "props": {
+            "title": "",
+            "dataUrl": "data/figures/fig_examples_global_mld.json",
+            "sources": [
+              "WID_pretax_per_adult",
+              "WID_pretax_per_capita",
+              "WID_posttax_per_capita",
+              "PIP_topadj",
+              "PIP_consinc",
+              "PIP"
+            ],
+            "source": "Data: WID.world and World Bank PIP (via OWID) for 2023. Measured in international-$."
+          }
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "slide-d9khq2",
+      "notes": "Takeaway box #4, on the completed bridging frame: the WITHIN component highlighted in the three PIP-side columns (PIP top-adjusted 0.49, PIP cons->income 0.35, PIP as published 0.21), so the two modelling steps can be read against each other. Going right to left: the consumption->income step adds 0.13 of within-country MLD, the top-1% adjustment a further 0.14. Layout and axis shared with the frames either side, so only the emphasis changes.",
+      "blocks": [
+        {
+          "id": "b-8ogoqi",
+          "type": "component",
+          "component": "fig-raw-comparison",
+          "props": {
+            "title": "",
+            "dataUrl": "data/figures/fig_examples_global_mld.json",
+            "sources": [
+              "WID_pretax_per_adult",
+              "WID_pretax_per_capita",
+              "WID_posttax_per_capita",
+              "PIP_topadj",
+              "PIP_consinc",
+              "PIP"
+            ],
+            "emphasis": [
+              "PIP_topadj.within",
+              "PIP_consinc.within",
+              "PIP.within"
+            ],
+            "source": "Data: WID.world and World Bank PIP (via OWID) for 2023. Measured in international-$."
+          }
+        }
+      ],
+      "annotations": [
+        {
+          "id": "a-vklwwi",
+          "type": "box",
+          "x": 382.7,
+          "y": 313.6,
+          "w": 706.4,
+          "h": 136.4,
+          "text": "#4: Imputing PIP consumption → income increases (within-country) inequality substantially — at least as much as top income adjustments",
+          "color": "rgb(29, 61, 99)",
+          "size": 24
         }
       ]
     },
     {
-      "id": "slide-oy22n7",
-      "layout": "default",
-      "notes": "Top adjustment explainer, CHAINED method (2026-08-11): base = PIP_consinc (income basis), splice P95 (anchor p94-p95, first adjusted bin p95-p96). Chart shows consumption (observed), income basis (imputed), and top-adjusted; income countries show two lines. Scripts: topadj.py, consinc.py, 11_fig_topadj_explainer.py. Default country: Indonesia.",
+      "id": "slide-6kvb0r",
+      "notes": "Takeaway box #5, on the completed bridging frame: columns 4 and 6 lit in full, both components — PIP top-adjusted (within 0.49, between 0.47, total 0.95, 49% between) against PIP as published (within 0.21, between 0.48, total 0.69, 69% between). That pairing IS the box: the 'mostly between' result at 69/31 becomes 49/51 once PIP is put on an income basis and given an allowance for the missing top. Layout and axis shared with the frames either side, so only the emphasis changes.",
       "blocks": [
         {
-          "id": "b-t145qf",
+          "id": "b-pl7ts4",
           "type": "component",
-          "component": "fig-topadj-explainer",
-          "props": {}
+          "component": "fig-raw-comparison",
+          "props": {
+            "title": "",
+            "dataUrl": "data/figures/fig_examples_global_mld.json",
+            "sources": [
+              "WID_pretax_per_adult",
+              "WID_pretax_per_capita",
+              "WID_posttax_per_capita",
+              "PIP_topadj",
+              "PIP_consinc",
+              "PIP"
+            ],
+            "emphasis": [
+              "PIP_topadj.within",
+              "PIP_topadj.between",
+              "PIP.within",
+              "PIP.between"
+            ],
+            "source": "Data: WID.world and World Bank PIP (via OWID) for 2023. Measured in international-$."
+          }
+        }
+      ],
+      "annotations": [
+        {
+          "id": "a-m9z3er",
+          "type": "box",
+          "x": 383.9,
+          "y": 316,
+          "w": 677.8,
+          "h": 135.5,
+          "text": "#5: PIP’s “mostly between” result doesn’t survive:\n    1) consumption → income imputation \n+ 2) some allowance for missing top incomes",
+          "color": "rgb(29, 61, 99)",
+          "size": 24
         }
       ]
+    },
+    {
+      "id": "slide-oxaaa6",
+      "notes": "Takeaway box #6, on the completed bridging frame: columns 3 and 4 lit in full, both components — WID post-tax per capita (within 0.61, between 0.39, total 1.00, 39% between) against PIP top-adjusted (within 0.49, between 0.47, total 0.95, 49% between). Those are the two ends of the bridge, so the pair is the 'meet in the middle' comparison the box is making: WID's 39/61 against PIP's 49/51, versus PIP as published at 69/31. Layout and axis shared with the frames either side, so only the emphasis changes.",
+      "blocks": [
+        {
+          "id": "b-fl55nl",
+          "type": "component",
+          "component": "fig-raw-comparison",
+          "props": {
+            "title": "",
+            "dataUrl": "data/figures/fig_examples_global_mld.json",
+            "sources": [
+              "WID_pretax_per_adult",
+              "WID_pretax_per_capita",
+              "WID_posttax_per_capita",
+              "PIP_topadj",
+              "PIP_consinc",
+              "PIP"
+            ],
+            "emphasis": [
+              "WID_posttax_per_capita.within",
+              "WID_posttax_per_capita.between",
+              "PIP_topadj.within",
+              "PIP_topadj.between"
+            ],
+            "source": "Data: WID.world and World Bank PIP (via OWID) for 2023. Measured in international-$."
+          }
+        }
+      ],
+      "annotations": [
+        {
+          "id": "a-52jp7b",
+          "type": "box",
+          "x": 278.4,
+          "y": 308.2,
+          "w": 732.1,
+          "h": 136.4,
+          "text": "#6: Stepping towards a ‘survey income’ concept would move the WID split closer to 50/50 (e.g., rescaling WID to (adjusted) survey means yields a 45% between-country share)",
+          "color": "rgb(29, 61, 99)",
+          "size": 24
+        }
+      ]
+    },
+    {
+      "id": "slide-takeaways",
+      "layout": "default",
+      "notes": "Build-up of the takeaways slide, step 1 of 2: #1-#6 first, then #7 revealed on its own. Progressive disclosure, so the six already on screen do not move. Split on 2026-09-10; the second step is the full list — edit there and re-split, or edit both.",
+      "blocks": [
+        {
+          "id": "b-take-k",
+          "type": "html",
+          "html": "<p class=\"kicker\"><span style=\"letter-spacing: 0.12em;\">Takeaways from \"triangulation\"</span></p>"
+        },
+        {
+          "id": "b-take-l",
+          "type": "html",
+          "html": "<ul style=\"margin-top:2px;\"><li style=\"font-size:24px; list-style:none; margin:0 0 12px -18px;\"><b>#1:</b>&nbsp;Survey vs NA means yield higher (between-country) inequality</li><li style=\"font-size:24px; list-style:none; margin:0 0 12px -18px;\"><b>#2:</b> The WID/PIP gap is <i>mostly</i> driven by big differences in within-country inequality</li><li style=\"font-size:24px; list-style:none; margin:0 0 12px -18px;\"><b>#3:</b> Shifting to WID <i>post</i>-tax data reduces the gap — though it remains large</li><li style=\"font-size:24px; list-style:none; margin:0 0 12px -18px;\"><b>#4:</b>&nbsp;Imputing PIP consumption → income increases (within-country) inequality substantially, at least as much as top income adjustments</li><li style=\"font-size:24px; list-style:none; margin:0 0 12px -18px;\"><b>#5:</b> PIP’s “mostly between” result doesn’t survive 1) consumption → income imputation + 2) some allowance for missing top incomes</li><li style=\"font-size:24px; list-style:none; margin:0 0 12px -18px;\"><b>#6:</b> Stepping towards a ‘survey income’ concept would move the WID split closer to 50/50 (e.g., rescaling WID to (adjusted) survey means yields a 45% between-country share)</li></ul><p></p>"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "slide-takeaways-b2",
+      "layout": "default",
+      "notes": "Build-up of the takeaways slide, step 2 of 2: #1-#6 first, then #7 revealed on its own. Progressive disclosure, so the six already on screen do not move. Split on 2026-09-10; the second step is the full list — edit there and re-split, or edit both.",
+      "blocks": [
+        {
+          "id": "b-take-k-b2",
+          "type": "html",
+          "html": "<p class=\"kicker\"><span style=\"letter-spacing: 0.12em;\">Takeaways from \"triangulation\"</span></p>"
+        },
+        {
+          "id": "b-take-l-b2",
+          "type": "html",
+          "html": "<ul style=\"margin-top:2px;\"><li style=\"font-size:24px; list-style:none; margin:0 0 12px -18px;\"><b>#1:</b>&nbsp;Survey vs NA means yield higher (between-country) inequality</li><li style=\"font-size:24px; list-style:none; margin:0 0 12px -18px;\"><b>#2:</b> The WID/PIP gap is <i>mostly</i> driven by big differences in within-country inequality</li><li style=\"font-size:24px; list-style:none; margin:0 0 12px -18px;\"><b>#3:</b> Shifting to WID <i>post</i>-tax data reduces the gap — though it remains large</li><li style=\"font-size:24px; list-style:none; margin:0 0 12px -18px;\"><b>#4:</b>&nbsp;Imputing PIP consumption → income increases (within-country) inequality substantially, at least as much as top income adjustments</li><li style=\"font-size:24px; list-style:none; margin:0 0 12px -18px;\"><b>#5:</b> PIP’s “mostly between” result doesn’t survive 1) consumption → income imputation + 2) some allowance for missing top incomes</li><li style=\"font-size:24px; list-style:none; margin:0 0 12px -18px;\"><b>#6:</b> Stepping towards a ‘survey income’ concept would move the WID split closer to 50/50 (e.g., rescaling WID to (adjusted) survey means yields a 45% between-country share)</li><li style=\"font-size:24px; list-style:none; margin:0 0 12px -18px;\"><br></li><li style=\"font-size:24px; list-style:none; margin:0 0 12px -18px;\"><b>#7: A dataset that was anchored to survey income, but accurately captured top incomes, would give a roughly equal between/within-country split in the global MLD</b></li></ul><p></p>"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "slide-uwughp",
+      "layout": "default",
+      "blocks": [
+        {
+          "id": "b-4yoa11",
+          "type": "html",
+          "html": "<p class=\"kicker\">Appendix</p>"
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "slide-consinc-slopes-ex",
+      "layout": "default",
+      "notes": "The consumption->income step ON ITS OWN, before any top adjustment: the observed consumption curve plus the income basis at each of WID's three published slopes (b = 0.10 / 0.12 / 0.14, drawn light to dark; the middle one is the deck's baseline). Full distribution only, one panel, country selector only.\n\nWhat to point at: the three lines fan out at BOTH ends and pin together in the middle. The profile is a + b*log(p/(1-p)) with a = 0.85 held fixed, so all three cross the observed curve at the same rank (~P79) and b only sets how far they swing either side of it. At P10 the ratio is 0.63 / 0.59 / 0.54; at the top 0.05% it is 1.61 / 1.76 / 1.91.\n\nPick a consumption country (default Indonesia). For an income country PIP already reports income, so the slope changes nothing and the chart says so and draws one line.\n\nComponent: fig-topadj-explainer with mode='consinc'. Data: 23_fig_explainers_from_etl.py.",
+      "blocks": [
+        {
+          "id": "b-cslope-c",
+          "type": "component",
+          "component": "fig-topadj-explainer",
+          "props": {
+            "mode": "consinc",
+            "source": "Data: WID.world and World Bank PIP (via OWID) for 2023. Measured in international-$."
+          }
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "slide-top1-share-scatter",
+      "layout": "default",
+      "notes": "Country-level view of what the PIP-side adjustments do to the top 1% share, against WID post-tax. The 45-degree line is agreement. Medians across 211 countries: PIP as published 6.1% vs WID 14.6% (gap -7.8pp); on an income basis 7.7% (-5.5pp); + the BASELINE graft at P98 11.0% (-2.9pp, 10 countries now above WID); + the graft at P95 12.5% (-1.3pp, and 34 countries above WID). So even the baseline graft closes most of the top-1% gap on the median country, and the P95 graft very nearly closes it — but neither is uniform: it overshoots in some countries and still falls well short in others (India: WID 22.7% vs 12.2% under the baseline graft). The dropdown switches the PIP series. Data: data/scripts/31_fig_top1_share_scatter.py.",
+      "blocks": [
+        {
+          "id": "b-t1s",
+          "type": "component",
+          "component": "fig-top1-share-scatter",
+          "props": {}
+        }
+      ],
+      "annotations": []
     },
     {
       "id": "slide-03o7kd",
@@ -1104,6 +1294,21 @@
         }
       ],
       "notes": ""
+    },
+    {
+      "id": "slide-incommensurable",
+      "blocks": [
+        {
+          "id": "b-inc-q",
+          "type": "html",
+          "html": "<div style=\"display:flex; gap:36px; width:100%; margin-top:4px; align-items:flex-start;\"><div style=\"flex:118 1 0; min-width:0; display:flex; flex-direction:column;\"><p style=\"font-size:16px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin:0 0 10px 0;\">World Inequality Database (WID)</p><p style=\"margin:0; border-left:3px solid var(--line); padding:0 0 0 18px; font-size:18px; line-height:1.55; color:var(--ink); max-width:none;\">“The main difference with earlier series is the use of historical<b> tax data, more <u>precise</u> than household surveys</b> used in earlier long run studies on global inequality.”</p><p style=\"font-size:13px; line-height:1.4; margin:10px 0 0 21px; color:var(--muted);\">Chancel &amp; Piketty (2021), Footnote 21</p></div><div style=\"flex:201 1 0; min-width:0; display:flex; flex-direction:column;\"><p style=\"font-size:16px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin:0 0 10px 0;\"><span style=\"letter-spacing: 1.6px;\">World Bank Poverty &amp; Inequality Platform (PIP)</span></p><p style=\"margin:0; border-left:3px solid var(--line); padding:0 0 0 18px; font-size:16px; line-height:1.5; color:var(--ink); max-width:none;\">“We do not use [WID] estimates for several reasons. First, many <b>strong assumptions</b> are needed to go from a household survey distribution to an annual income estimate that is consistent with national accounts.... Second, in many of the low- and middle-income countries, information for top incomes, such as from administrative tax records, is <b>rarely available </b>or might be of limited relevance since the tax base is small and evasion common. Third, and most importantly, in the WID database, it is not possible to disentangle the adjustment for the missing top from the adjustment to national accounts. <b>Surveys provide the most appropriate measure of household welfare</b>, since national accounts aggregates include many other components that are only vaguely related to household welfare...”</p><p style=\"margin:0; border-left:3px solid var(--line); padding:0 0 0 18px; font-size:16px; line-height:1.5; color:var(--ink); max-width:none; margin-top:14px;\">[On top-adjusting the survey data:]<br>“...&nbsp;However, with the data currently available, <b>it is not possible to do these kinds of adjustments comprehensively</b> for all countries in the world (Anand &amp; Segal, 2008; Deaton, 2005; World Bank, 2017). Therefore, our analysis is based on survey data unadjusted for missing top incomes.”</p><p style=\"font-size: 13px; line-height: 1.4; margin: 10px 0px 0px 21px; color: rgb(87, 114, 145);\">Garcia Rojas, Yonzan &amp; Lakner (2025)</p></div></div>"
+        },
+        {
+          "id": "b-9x2gcj",
+          "type": "html",
+          "html": "<p></p><div><span style=\"font-size: 32px;\"><br></span></div><p></p>"
+        }
+      ]
     },
     {
       "id": "slide-j1lz21",
@@ -1872,36 +2077,6 @@
               "PIP_topadj",
               "PIP_consinc",
               "PIP"
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "id": "slide-means-share-1990",
-      "layout": "default",
-      "notes": "1990: median 42%, population-weighted 38%.\n\nAgainst 2023's 39% and 31%. So the share captured has fallen — most clearly on the population-weighted measure, from 38% to 31%. That is the sentence this pair of slides exists to support.\n\nCAVEAT for 1990: it is the first year in PIP's thousand-bins data, and survey coverage that far back is thin — many country-years are interpolated or extrapolated by the source, on both sides. Indicative, not a measurement.\n\nBoth share slides are pinned to a fixed 5-200% axis so they stay comparable with slide 9, which hides Venezuela. Venezuela's 1990 value (64%) is inside that range and is plotted here as normal.",
-      "blocks": [
-        {
-          "id": "slide-means-share-1990-k",
-          "type": "html",
-          "html": "<p class=\"kicker\">Surveys vs national accounts · 1990</p>"
-        },
-        {
-          "id": "slide-means-share-1990-h",
-          "type": "html",
-          "html": "<p>The same share at the start of the PIP record</p>"
-        },
-        {
-          "id": "slide-means-share-1990-c",
-          "type": "component",
-          "component": "fig-means-scatter",
-          "props": {
-            "mode": "share",
-            "year": "1990",
-            "yDomain": [
-              5,
-              200
             ]
           }
         }
@@ -30641,7 +30816,7 @@
     {
       "id": "slide-q2consinc",
       "layout": "default",
-      "notes": "Explainer for the consumption->income adjustment behind the PIP_consinc bridging column. Model: per-percentile OLS ln(y_p) = alpha_p + beta_p ln(c_p), fitted on PIP's 88 dual country-years (19 countries; no SSA/South Asia - out-of-sample transfer caveat). Dropdown covers all 123 consumption countries; * marks the 18 dual ones where the actual income series overlays as a fit check. Scripts: 04_fit_consinc.py (fit), consinc.py (series), 13_fig_consinc_explainer.py (this figure).",
+      "notes": "Explainer for the consumption->income adjustment behind the PIP_consinc bridging column. Model: per-percentile OLS ln(y_p) = alpha_p + beta_p ln(c_p), fitted on PIP's 88 dual country-years (19 countries; no SSA/South Asia - out-of-sample transfer caveat). Dropdown covers all 123 consumption countries; * marks the 18 dual ones where the actual income series overlays as a fit check. Scripts: 04_fit_consinc.py (fit), consinc.py (series), 13_fig_consinc_explainer.py (this figure).\n\nMETHOD CHANGED 2026-09-09: was a per-percentile log-log regression fitted on PIP's 88 dual country-years; now WID's scaled-logit correction profile with WID's own parameters. Why: PIP's dual pairs are not a usable estimation sample (73 of 88 compare two DIFFERENT surveys, typically a budget survey against EU-SILC, and none are from Sub-Saharan Africa or South Asia). Fitting the profile to them gives income above consumption at every rank, crossing at ~P12 instead of ~P79 — contradicting the mechanism the form encodes. Effect on the top-adjusted between-country share: 55.2% -> 54.2%. See consinc.py.",
       "blocks": [
         {
           "id": "b-q2ci-k",
@@ -30651,7 +30826,7 @@
         {
           "id": "b-q2ci-t",
           "type": "html",
-          "html": "<p><strong>Putting PIP&rsquo;s consumption countries on an income basis:</strong> for the 88 country-years where PIP publishes <em>both</em> income and consumption distributions, we fit one regression per percentile, ln&nbsp;y<sub>p</sub>&nbsp;=&nbsp;α<sub>p</sub>&nbsp;+&nbsp;β<sub>p</sub>&nbsp;ln&nbsp;c<sub>p</sub>, and apply the fitted mapping to every consumption-based country. Income countries are unchanged.</p>"
+          "html": "<p><strong>Putting PIP&rsquo;s consumption countries on an income basis:</strong> at each rank <em>p</em> we scale consumption by a correction profile, Q<sub>I</sub>(p)&nbsp;/&nbsp;Q<sub>C</sub>(p)&nbsp;=&nbsp;0.85&nbsp;+&nbsp;0.12&nbsp;log(p/(1&minus;p)) &mdash; income is below consumption for the poor, above it for the rich, crossing over around P79. Parameters from WID (Chancel et al. 2019), not fitted on PIP. Income countries are unchanged.</p>"
         },
         {
           "id": "b-q2ci-c",
@@ -31028,7 +31203,7 @@
     {
       "id": "slide-mhs667",
       "layout": "default",
-      "notes": "The same decomposition, for every year the two sources share (1990-2024), on the same 211 countries, at constant prices, with the same $0.01/day floor - so levels and the long trend are comparable across years. All seven series drawn agree on the shape: the between-country share falls from 1990 to the mid-2010s and then flattens or ticks up (PIP 75.8% -> 66.5% -> 69.3%; WID pre-tax per adult 40.5% -> 22.9% -> 21.1%). Three caveats, printed under the chart: WID's country-years are WID's own extrapolations for 63-84% of the panel and 97% in 2023-24 (shaded); PIP's are survey years for only 13-51% of countries in any given year, the rest lined up by the World Bank, with 2023-24 nowcasts; and two to four countries switch welfare concept in a typical year, each a small step in the PIP income-basis series. Read the levels and the trend, not the wiggles. The selector switches to the MLD components themselves. Data: data/scripts/27_fig_between_share_trend.py from the ETL's inequality_decomposition table.",
+      "notes": "The same decomposition, for every year the two sources share (1990-2024), on the same 211 countries, at constant prices, with the same $0.01/day floor - so levels and the long trend are comparable across years. All seven series drawn agree on the shape: the between-country share falls from 1990 to the mid-2010s and then flattens or ticks up (PIP 75.8% -> 66.5% -> 69.3%; WID pre-tax per adult 40.5% -> 22.9% -> 21.1%). Three caveats, printed under the chart: WID's country-years are WID's own extrapolations for 63-84% of the panel and 97% in 2023-24 (shaded); PIP's are survey years for only 13-51% of countries in any given year, the rest lined up by the World Bank, with 2023-24 nowcasts; and two to four countries switch welfare concept in a typical year, each a small step in the PIP income-basis series. Read the levels and the trend, not the wiggles. The selector switches to the MLD components themselves. Data: data/scripts/27_fig_between_share_trend.py from the ETL's inequality_decomposition table.\n\nZERO-INCOME CONVENTION (2026-09-08): this figure alone still uses the ETL's $0.01/day zero replacement, because it needs all 35 years of bin-level data and only the display year is cached (the deck's WID vintage came from owid/etl#6806's staging server and is not in the public catalog). Every other MLD figure bottom-codes WID at 1% of country mean. Refresh this one once #6806 merges and the all-year bins are pullable.",
       "blocks": [
         {
           "id": "b-d0kjjx",
@@ -31039,6 +31214,11 @@
           "id": "b-dlok2v",
           "type": "html",
           "html": "<p>Has the answer changed over time? The same split, every year since 1990</p>"
+        },
+        {
+          "id": "b-mhs667-zeronote",
+          "type": "html",
+          "html": "<p style=\"font-size:17px; line-height:1.35; color:rgb(87,114,145); margin:6px 0 0 0;\">Note: this is the one chart still using the ETL&rsquo;s zero-income convention (zeros set to $0.01/day). Elsewhere the WID series are bottom-coded at 1% of each country&rsquo;s mean, which lowers WID&rsquo;s within component and raises its between share by roughly 5 percentage points.</p>"
         },
         {
           "id": "b-jwrc32",

@@ -312,11 +312,13 @@ exists for sensitivity reporting only (the yardstick choice moves the
 3-country PIP between-share by ~0.1pp).
 
 Derived-series methods shared by several figures live in their own modules
-(`topadj.py` — the top-adjusted PIP series; `rescale.py` — WID post-tax
+(`topadj.py` — the top-adjusted PIP series, in two methods (graft / share
+match), with the deck's baseline ANCHOR held in one place,
+`etl_source.TOPADJ_SPLICE_PERCENTILE` — see caveat 6; `rescale.py` — WID post-tax
 rescaled to the ADJUSTED PIP country means (`mean_source="PIP_topadj"`, so
 the WID-side and PIP-side ladders meet at identical country means — and
 therefore identical between components); `consinc.py` — PIP adjusted to an income
-basis via the dual-country regression fitted by `04_fit_consinc.py`) so
+basis via WID's scaled-logit correction profile, see caveat 5) so
 each definition exists once.
 Method choices that affect a figure's numbers (e.g. zero-income handling for
 MLD) are made and documented in the figure script, and echoed in the JSON's
@@ -389,23 +391,175 @@ live in `raw/wid/temp_country_data/` and `raw/wid/fetch_progress.json`
    ~17% higher than a like-for-like comparison would put them. Level
    comparisons between sources inherit this; relative measures do not. See
    [Prices, PPPs and the two price bases](#prices-ppps-and-the-two-price-bases).
-4. **Zero incomes.** WID has some bins with exactly zero income (as of the
-   2026-08 pull: 921 pre-tax, 187 post-tax — bottom percentiles in most
-   countries); PIP has none. They
-   are **retained** in the harmonized file. Any log-based measure (e.g. MLD)
-   must decide how to treat them — that's an analysis-stage decision. The old
-   project's convention was to replace zeros with $0.01/day and its
-   sensitivity analysis found the choice shifts the between-country share by
-   ~3 pp; whatever convention an analysis uses must be stated in its script.
-   Note the floor is a single nominal constant ($0.01), so it interacts
-   slightly with derived series that rescale incomes (see rescale.py's
-   "known, accepted artifact" note).
-5. **Top-end resolution.** Both sources are on the same 109-bin structure:
+4. **Zero incomes — and the bottom-coding rule.** WID reports bins of exactly
+   zero income (2026-08 pull: 921 pre-tax, 187 post-tax). These are not missing
+   data: DINA deliberately allocates zero rather than dropping people, so
+   WID's pre-tax series shows exactly zero for the bottom ~5 percentiles in
+   **184 of 211 countries**. Zeros are retained in the harmonized file; how to
+   treat them is an analysis-stage decision.
+
+   **Since 2026-09-08 this project bottom-codes the WID series at 1% of each
+   country's own raw mean** (LIS practice), and leaves PIP exactly as the World
+   Bank publishes it — PIP has no zero bins because it is already bottom-coded
+   at $0.28/day upstream. The rule lives in one place, `mld.py`'s
+   `country_floor()`; `etl_mld.py` applies it on the ETL path and carries a
+   regression test showing the recompute reproduces the ETL's published numbers
+   to 6e-08 when the ETL's own convention is used.
+
+   **Why the change.** Earlier versions of this note said the choice shifts the
+   between-country share by "~3pp". That badly understated it. Under the old
+   convention (replace zeros with $0.01/day) those bins supplied a **median
+   43.5%** of each country's WID within-MLD — over half for 61 countries. Two
+   visible symptoms: an artificial floor of about 0.7 under every country's WID
+   within-MLD, and the United States, one of only 26 countries with no zero bins
+   and therefore the only ones measured on their own merits, ranking **37th of
+   44** on within-MLD against **12th** on WID's own published Gini.
+
+   The 2023 sensitivity, WID pre-tax per capita:
+
+   | convention | within | between share | US rank of 44 |
+   |---|---|---|---|
+   | $0.01/day, zeros only *(old)* | 1.000 | 28.0% | 37th |
+   | $0.28/day, bottom-coded (PIP's floor) | 0.814 | 32.3% | 15th |
+   | **1% of country mean, bottom-coded** *(now)* | **0.801** | **32.7%** | **13th** |
+   | drop zero bins entirely | 0.713 | 35.3% | 12th |
+   | *WID published Gini, for reference* | | | *12th* |
+
+   The chosen rule keeps everyone in the distribution, is scale-invariant (so
+   unaffected by the price base or the per-adult/per-capita basis), and
+   correlates 0.94 with WID's own Gini against 0.81 under the old convention.
+   It leaves PIP untouched and moves WID post-tax by ~0.2pp; the change is
+   almost entirely in the WID PRE-TAX series.
+
+   **One exception.** `fig_between_share_trend` (one slide) still uses the old
+   convention, because it needs all 35 years of bins and only the display year
+   is cached — the deck's WID vintage came from owid/etl#6806's staging server
+   and is not in the public catalog. The slide says so.
+
+5. **Consumption -> income uses WID's profile, not a fit on PIP.** PIP mixes
+   income and consumption countries; the consumption ones are put on an income
+   basis by scaling each rank by a correction profile,
+
+   `Q_I(p) / Q_C(p) = 0.85 + 0.12 * log(p/(1-p))`
+
+   — WID's scaled logit (Chancel, Cogneau, Gethin & Myczkowski 2019, WID.world
+   WP 2019/13, section 3.2 and Table A.1), with WID's own parameters. Income is
+   below consumption for the poor and above it for the rich, crossing over at
+   about P79.
+
+   **The slope is a range, not a point.** WID publish three values for b —
+   **0.10 / 0.12 / 0.14** — and b carries the whole shape of the correction
+   (a factors out as a level: `a*(1 + (b/a)*logit p)`). At P90 the income/
+   consumption ratio is 1.07 / 1.11 / 1.16 across the three; at the top 0.05%
+   it is 1.61 / 1.76 / 1.91. All three live in
+   `consinc.WID_PROFILE_B_SCENARIOS`, with the middle one — `WID_PROFILE_B`, the
+   deck's baseline — asserted to be one of them. Because the top adjustment is
+   built ON the income-basis series, the two choices compound rather than add;
+   `32_fig_consinc_topadj_cross.py` computes the full 3 x 6 cross (see caveat 6)
+   and the deck shows it as a table. Global effect, holding the top adjustment
+   at the deck's baseline: between share 57.6% / 55.5% / 53.3%, so the slope is
+   worth about 2pp per step — smaller than the top-adjustment choice, which
+   moves it about 6pp at a fixed slope.
+
+   **Why not fit it on PIP's own data.** PIP publishes both welfare types for 88
+   country-years, and until 2026-09-09 the deck fitted a per-percentile log-log
+   regression on them. That sample does not support this model: **73 of the 88
+   pairs compare two DIFFERENT surveys** (usually a household budget survey for
+   consumption against EU-SILC for income — checked against PIP's API
+   `survey_acronym` field), and EU-SILC reports more at every rank. Fitting the
+   profile to them gives a = 1.13, income above consumption at *every* rank,
+   crossing at about P12 rather than P79 — contradicting the mechanism the form
+   encodes. Restricting to the 15 same-instrument pairs raises R-squared from
+   0.42 to 0.90 but leaves the level unchanged, because 9 of those 15 are the
+   Philippines, which behaves the same way. And none of the 88 are from
+   Sub-Saharan Africa or South Asia, where the mapping is applied; WID's 21
+   surveys mostly are.
+
+   Effect on the top-adjusted between-country share, 2023, all four measured
+   with the top graft at P95 (the baseline anchor at the time; it is P98 now, so
+   the levels sit ~1.3pp higher today while the spread between them stands):
+   WID's parameters 54.2%, PIP single-instrument 56.3%, PIP all-88 56.8%,
+   superseded regression 55.2% — the parameter choice moves it about 2.6pp,
+   against a PIP-vs-WID gap of roughly 16pp on that column.
+
+   The profile is continuous in rank, so unlike the regression — whose
+   coefficients existed only per percentile — it needs no special handling for
+   the ten 0.1% bins above P99.
+
+6. **The top adjustment is a choice, and the deck's baseline is one of six.**
+   PIP's surveys are thought to under-capture top incomes, so the deck adds a
+   deliberately generous allowance for the missing top — assuming WID is right
+   about the top and asking what PIP would then look like. Two methods x three
+   anchors (`topadj.py`, tabulated by `30_fig_topadj_sensitivity.py`):
+
+   - **graft** — above the anchor, incomes follow the *shape* of WID's post-tax
+     distribution, anchored at PIP's own level in the anchor bin:
+     `adj(Py) = base(Px) * WID(Py) / WID(Px)`. The resulting top share follows.
+   - **share match** — WID's ten top-1% sub-shares are imposed exactly and the
+     shape follows. Closed form: `Y' = A/(1-S)` where A is income at or below
+     the anchor and S the imposed top share.
+
+   Anchors P95, P98, P99 (anchor bin `p{n-1}p{n}`, first adjusted bin `p{n}p{n+1}`).
+   Both methods are uniform rescalings of WID's top; they differ only in the
+   scale factor, which is why countries where PIP sits far below WID at the
+   anchor (India) move a lot between the two and countries where it does not
+   (the UK) barely move.
+
+   **The deck's baseline is the graft at P98** (Joe's call, 2026-09-09; it was
+   P95 before). It lives in **`etl_source.TOPADJ_SPLICE_PERCENTILE`**, and every
+   figure that shows `PIP_topadj` — or `WID_posttax_rescaled`, whose country
+   means are forced onto it — reads it from there. Anchoring later is the more
+   conservative allowance: PIP falls further below WID the higher up you look,
+   so a later anchor means a smaller scale factor and a lower grafted top.
+
+   Global MLD, 2023, across the six (base = income basis, 0.349 within / 58.1%
+   between):
+
+   | method | anchor | within | between share | median top-1% multiplier |
+   |---|---|---|---|---|
+   | graft | P95 | 0.417 | 54.2% | 1.79 |
+   | graft | **P98** | **0.394** | **55.5%** | **1.45** |
+   | graft | P99 | 0.387 | 55.9% | 1.34 |
+   | share | P95 | 0.500 | 47.7% | 1.97 |
+   | share | P98 | 0.460 | 50.7% | 1.92 |
+   | share | P99 | 0.439 | 52.1% | 1.88 |
+
+   So the baseline is **not** an upper bound on the six — share matching at P95
+   is. Any claim of the form "even with a generous allowance for the missing
+   top…" should be read against this table, not against the baseline alone.
+
+   Crossed with the three consumption -> income slopes of caveat 5 (18 cells,
+   `32_fig_consinc_topadj_cross.py`) the between share spans **46.4%–58.0%** and
+   the within component **0.360–0.523** — against PIP as published at 69.2% /
+   0.214 and WID post-tax per capita at 38.7% / 0.615. Neither modelling choice,
+   nor both together, closes the gap between the sources.
+
+7. **Top-end resolution.** Both sources are on the same 109-bin structure:
    99 one-percent bins, nine 0.1% bins across p99–p99.9, and the top 0.1%.
    PIP's 1000 equal bins nest exactly into this, so the aggregation
    (03_harmonize.py) introduces no approximation error. *(The old project
    aggregated PIP to 101 bins, with a coarser top than WID — fixed here.)*
-6. **2023 only, extrapolations included.** The WID pull is a single year;
+
+   **Since 2026-09-09 the deck's ANALYTICAL grid is 100 percentile bins.**
+   `etl_source.load_bins()` collapses those ten top bins into one 1%-wide bin at
+   their population-weighted mean, before anything else is built, so every series
+   it returns sits on a plain percentile grid (`etl_source.DECK_BINS`). The raw
+   `etl_source.load()` still returns the ETL's own 109 bins, and anything
+   genuinely about the top 0.1% — `24_fig_top_of_distribution_from_etl.py` —
+   reads that instead.
+
+   Measured cost, on both grids before the change: at most **0.3pp** on any
+   between share, and the between components not at all — aggregation preserves
+   each country's total income and population, so country means and top-1% shares
+   are untouched by construction. Only dispersion inside the top 1% is given up.
+   Country Ginis computed from bins do fall by ~0.03, but every Gini the deck
+   displays comes from the sources' own published values, not from bins.
+
+   One consequence worth knowing: **select by rank window, never by bin label.**
+   A label lookup assumes both the grid and that a label describes the rank,
+   which stops being true for a re-ranked series.
+   `21_fig_bridging_from_etl.py`'s `rank_window()` is the pattern.
+8. **2023 only, extrapolations included.** The WID pull is a single year;
    surveys underlying both sources are often older and extrapolated to 2023
    by the source. A time-series extension means re-running the fetch with
    more years and revisiting file layouts.

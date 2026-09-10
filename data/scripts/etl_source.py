@@ -115,6 +115,7 @@ import gzip
 import json
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 # Version of both ETL datasets (they are versioned together).
@@ -271,6 +272,79 @@ PIP_PPP_VERSION = 2021
 # refresh: if WID's latest year moves, this moves with it.
 WID_PRICE_BASE_YEAR = 2025
 
+# WHICH top-1% method the deck's own PIP_topadj uses. THE deck-wide baseline:
+# every figure that shows PIP_topadj (and WID_posttax_rescaled, whose means are
+# forced onto it) reads it from here, so this one line moves the whole deck.
+#
+#   "match"  — under-reporting: PIP's own top 1% is rescaled until its income
+#              share equals WID's. Expressible on the percentile grid, so the whole
+#              pipeline downstream is unaffected.
+#   "append" — under-representation: the survey IS the bottom 99% and a new top
+#              percentile is appended (Anand & Segal 2015). This lands OFF the
+#              percentile grid, so it cannot currently be the bridging column
+#              without a re-binning step that does not exist yet. It appears in
+#              the eight-scenario comparison instead.
+#
+# Joe chose "append" on 2026-09-09, on the merits: the under-representation
+# story is the one the deck tells, and it is the only method it now reports.
+#
+# CONSEQUENCE — PIP_topadj IS RAGGED. Append re-reads the survey as the bottom
+# 99%, so its bins land at ranks the percentile grid does not have: 101 bins for
+# an adjusted country, DECK_BINS for one the gate skipped. Its bin LABELS are
+# rewritten to the ranks they actually occupy, so any lookup written for the grid
+# fails loudly. Read it by rank window, and decompose it with expect_bins=None.
+# Every other series in the frame — including WID_posttax_rescaled, which takes
+# only its country MEANS from PIP_topadj — stays on the grid.
+TOPADJ_METHOD = "append"
+
+# THE DECK'S ANALYTICAL GRID (2026-09-09): 100 PERCENTILE BINS.
+# The ETL publishes 109 bins — 99 one-percent bins, nine 0.1% bins across
+# p99-p99.9, and the top 0.1%. load_bins() collapses those ten into ONE 1%-wide
+# bin at their population-weighted mean, before anything else is built, so every
+# analytical series in the deck sits on a plain percentile grid.
+#
+# WHY. The extra resolution bought almost nothing and cost a lot of friction: it
+# made the top adjustment's output awkward to express, produced charts with ten
+# identical points pretending to be resolution, and forced bin-label lookups that
+# break the moment a series is re-ranked. Measured before the change, collapsing
+# it moves the MLD decompositions by at most 0.3pp on any between share, and the
+# BETWEEN components not at all — aggregation preserves each country's total
+# income and population, so country means are untouched by construction.
+#
+# WHAT IT COSTS. Anything genuinely about the top 0.1% — the top-of-distribution
+# thresholds figure (24) — must read the RAW loader, es.load(), which still
+# returns the ETL's own 109 bins. Only load_bins() applies this convention.
+DECK_BINS = 100
+
+
+def aggregate_to_percentiles(bins):
+    """Collapse each (series, country, year)'s top 1% into one 1%-wide bin.
+
+    Preserves total income and population exactly, so means, top-1% shares and
+    the between-country component are unchanged; only dispersion INSIDE the top
+    1% is given up.
+    """
+    m = bins["p_low"].to_numpy(dtype=float) >= TOP1_START - 1e-9
+    keep, top = bins[~m], bins[m]
+    grp = ["series", "country", "year"]
+    inc = (top["avg"].to_numpy(float) * top["pop"].to_numpy(float))
+    agg = top.assign(_inc=inc).groupby(grp, observed=True).agg(
+        pop=("pop", "sum"), _inc=("_inc", "sum")).reset_index()
+    agg["avg"] = agg["_inc"] / agg["pop"]
+    agg = agg.drop(columns="_inc")
+    agg["p_low"], agg["p_high"] = TOP1_START, 1.0
+    agg["percentile"] = TOP1_LABEL
+    out = pd.concat([keep, agg[keep.columns.intersection(agg.columns)]],
+                    ignore_index=True, sort=False)
+    for col in keep.columns:
+        if col not in out.columns:
+            out[col] = np.nan
+    return out[keep.columns].sort_values(grp + ["p_low"], ignore_index=True)
+
+
+TOP1_START = 0.99          # where the top 1% begins; mirrors topadj.TOP1_START
+TOP1_LABEL = "p99p100"
+
 # Each source's own published inequality measures. Used by the observation-matched
 # reference-year figures, which only ever read a country-year the source actually
 # surveyed or observed — never an interpolated or extrapolated one.
@@ -371,6 +445,72 @@ def _to_deck_series(df):
     if "percentile" in df.columns and not pd.api.types.is_numeric_dtype(df["percentile"]):
         df["percentile"] = df["percentile"].astype(str)
     return df
+
+
+def load_bins(table, source="cache", branch=None):
+    """Bins for a figure, with PIP_consinc rebuilt on the deck's own method.
+
+    THE GRID IS 100 PERCENTILE BINS. The ETL's ten 0.1% bins across the top 1%
+    are collapsed FIRST, before anything is rebuilt, so every series in the
+    returned frame — the ETL's own as well as the ones rebuilt here — sits on the
+    same plain percentile grid. See DECK_BINS above for why, and use the raw
+    load() if you need the ETL's own resolution.
+
+    The ETL builds PIP_consinc with a per-percentile log-log regression fitted on
+    PIP's 88 dual country-years. Since 2026-09-09 this project instead uses WID's
+    scaled-logit correction profile with WID's own parameters — see consinc.py for
+    the method, the reasoning, and why PIP's dual pairs are not a usable
+    estimation sample. Everything else in the frame is passed through untouched.
+    """
+    import consinc, rescale, topadj
+
+    bins = aggregate_to_percentiles(load(table, source=source, branch=branch))
+    basis = load("pip_welfare_basis", source=source, branch=branch)
+
+    # The PIP-side chain is rebuilt END TO END, because each step feeds the next:
+    # PIP_consinc -> PIP_topadj (the top-1% method) -> WID_posttax_rescaled
+    # (whose country means are forced onto PIP_topadj). Rebuilding only the first
+    # would leave the other two paired with the ETL's superseded version.
+    untouched = ~bins["series"].isin(["PIP_consinc", "PIP_topadj", "WID_posttax_rescaled"])
+    out = [bins[untouched]]
+    for y in sorted(bins["year"].unique()):
+        gy = bins[bins["year"] == y]
+        by = basis[basis["year"] == y]
+        wt = dict(zip(by["country"], by["welfare_type"]))
+        ci = consinc.build_pip_consinc_profile(gy, wt)
+        ta = topadj.build_top1(pd.concat([gy[untouched[gy.index]], ci], ignore_index=True),
+                               TOPADJ_METHOD, out_series="PIP_topadj",
+                               grid=TOPADJ_METHOD != "append")
+        rs = rescale.build_from_bins(pd.concat([gy[untouched[gy.index]], ta], ignore_index=True),
+                                     mean_source="PIP_topadj")
+        out += [ci, ta, rs]
+    res = pd.concat(out, ignore_index=True)
+
+    # Guards. The conversion is a pure per-rank rescaling, so: income countries
+    # must be untouched, consumption countries must differ from PIP by exactly
+    # the profile, and the bin structure must be intact.
+    pip = bins[bins["series"] == "PIP"].set_index(["country", "year", "percentile"])
+    ci = res[res["series"] == "PIP_consinc"].set_index(["country", "year", "percentile"])
+    common = pip.index.intersection(ci.index)
+    assert len(common) == len(ci), "PIP_consinc lost or gained bins"
+    # Every series must be on the grid, except PIP_topadj when the top-1% method
+    # is one that re-ranks (see TOPADJ_METHOD above).
+    ragged = {"PIP_topadj"} if TOPADJ_METHOD == "append" else set()
+    n_bins = res[~res["series"].isin(ragged)].groupby(
+        ["series", "country", "year"], observed=True).size()
+    assert (n_bins == DECK_BINS).all(), \
+        f"not on the {DECK_BINS}-bin grid: {n_bins[n_bins != DECK_BINS].head(3).to_dict()}"
+    ratio = (ci.loc[common, "avg"] / pip.loc[common, "avg"]).to_numpy(float)
+    mid = ((pip.loc[common, "p_low"] + pip.loc[common, "p_high"]) / 2).to_numpy(float)
+    expected = consinc.correction_profile(mid)
+    # Welfare basis is per COUNTRY-YEAR: a country can switch between the two.
+    wtype = dict(zip(zip(basis["country"], basis["year"]), basis["welfare_type"]))
+    is_income = np.array([wtype.get((c, y)) != "consumption" for c, y, _ in common])
+    assert np.allclose(ratio[is_income], 1.0, rtol=1e-9), \
+        "income-basis countries should pass through unchanged"
+    assert np.allclose(ratio[~is_income], expected[~is_income], rtol=1e-6), \
+        "consumption countries do not match the correction profile"
+    return res
 
 
 def load(table, source="cache", branch=None, columns=None):

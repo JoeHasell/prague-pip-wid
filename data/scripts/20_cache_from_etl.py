@@ -143,6 +143,9 @@ def main():
     # because an open ETL pull request can change them.
     print(f"\nReading the comparison dataset and WID from {where}, PIP percentiles and regions "
           "from the OWID catalog…")
+    basis = es.load("pip_welfare_basis", source=source, branch=args.staging)
+    print(f"  {'pip_welfare_basis':<38} {len(basis):>7,} rows -> {es.write_cache('pip_welfare_basis', basis).name}")
+
     dual = es.load_pip_dual_percentiles()
     print(f"  {'pip_dual_percentiles':<38} {len(dual):>7,} rows -> {es.write_cache('pip_dual_percentiles', dual).name}")
 

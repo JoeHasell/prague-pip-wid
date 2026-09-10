@@ -16,7 +16,7 @@
 Deck.registerComponent('fig-consinc-explainer', (el, props, ctx) => {
   const DATA_URL = props.dataUrl || 'data/figures/fig_consinc_explainer.json';
   const CONS_C = '#0072B2';     // consumption (observed)
-  const PRED_C = '#D55E00';     // predicted income (the model)
+  const PRED_C = '#D55E00';     // predicted income (the correction profile)
   const INC_C = '#009E73';      // actual income (dual countries only)
 
   el.innerHTML = `<div class="fce-loading">Loading figure data…</div>`;
@@ -137,9 +137,9 @@ Deck.registerComponent('fig-consinc-explainer', (el, props, ctx) => {
         lx += s.label.length * 7 + 40;
       });
 
-      if (!d.inc) out += `<text x="${X0}" y="${yTop - 8}" class="fce-note">No actual income series for this country — the prediction is an out-of-sample transfer.</text>`;
+      if (!d.inc) out += `<text x="${X0}" y="${yTop - 8}" class="fce-note">No actual income series for this country, so no check on the prediction here.</text>`;
       out += `<text transform="translate(16,${(yTop + yBot) / 2}) rotate(-90)" text-anchor="middle" class="fce-axis">Income / consumption per month (int-$, log scale)</text>`;
-      out += `<text x="${X0}" y="448" class="fce-source">PIP percentile bin averages, 2021 PPPs, most recent national consumption year. Prediction: ln y&#8346; = &alpha;&#8346; + &beta;&#8346; ln c&#8346;, fitted on 88 dual country-years (data/scripts/04_fit_consinc.py). * in the dropdown = actual income available.</text>`;
+      out += `<text x="${X0}" y="448" class="fce-source">PIP percentile bin averages, 2021 PPPs, most recent national consumption year. Prediction: income/consumption = 0.85 + 0.12&nbsp;log(p/(1&minus;p)) &mdash; WID&rsquo;s correction profile with WID&rsquo;s own parameters (consinc.py), not fitted on these countries. * in the dropdown = actual income available, so an out-of-sample check.</text>`;
 
       svg.innerHTML = out;
       svg._hover = hover;
@@ -149,10 +149,8 @@ Deck.registerComponent('fig-consinc-explainer', (el, props, ctx) => {
       const pt = e.target.closest && e.target.closest('.fce-pt');
       if (!pt) return;
       const h = svg._hover[+pt.dataset.h];
-      const cr = pt.getBoundingClientRect(), wr = wrap.getBoundingClientRect();
-      tip.style.left = (cr.left + cr.width / 2 - wr.left) + 'px';
-      tip.style.top = (cr.top - wr.top - 6) + 'px';
       tip.innerHTML = h.t;
+      Deck.placeTooltip(tip, pt, wrap);
       tip.style.opacity = '1';
     }
     function onOut(e) {

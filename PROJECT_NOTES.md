@@ -104,9 +104,11 @@ rules; the essentials:
 - `src/*`, `components/*` and `data/*` are Claude-only in practice (the browser
   editor writes `slides.json` alone), so those never collide.
 - **Note on `src/` changes:** editing `src/deck.js`, `src/editor.js` or the CSS
-  requires Joe to **restart the dev server + hard-refresh**. `slides.json`-only
-  changes need just a reload. In a local session, if `:4173` is already answering
-  it's Joe's dev server — use it, don't kill it, don't start a second one.
+  needs **no dev-server restart** — the server serves from disk, so a reload is
+  enough (hard-reload if the browser cached the JS/CSS). These notes and
+  CLAUDE.md both used to say a restart was required; it is not, and Joe has had
+  to correct it more than once. In a local session, if `:4173` is already
+  answering it's Joe's dev server — use it, don't kill it, don't start a second.
 - **When Claude adds a NEW file** (e.g. anything under `content/images/`), say so
   explicitly in the reply — a missing image breaks the slide for everyone else.
 
@@ -374,6 +376,273 @@ Full detail in `CLAUDE.md`. Everything runs on Joe's Mac.
   predate a critical PPP bug fix and are stale). New chart components must
   fetch their data from per-figure files produced by pipeline scripts — no
   hard-coded data arrays in component JS.
+- **DONE 2026-09-09 — the variants slide shows BOTH choices, on one key
+  alphabet.** `slide-topadj-variants` splits the cons->income column as well as
+  the top-adjusted one, and i/ii/iii now name the same slope in both, so a single
+  merged key line serves the whole chart (the component dedupes keys across the
+  varied columns rather than repeating a key per column).
+  New idea in the JSON: a variant may be marked **`aside`**. It is drawn set
+  apart (an 11px gap), carries its OWN value labels inside its segments plus its
+  total above, and is left OUT of the labelled range — the range box is centred
+  on the run of comparable bars, not on the whole cluster. The one aside variant
+  is "NA": the top-1% adjustment applied to raw PIP with no cons->income step,
+  which answers a different question from the three slopes beside it and would
+  misdescribe the spread if pooled into one min-max.
+- **DONE 2026-09-09 — the bridging column is APPEND on the central slope.**
+  `etl_source.TOPADJ_METHOD = "append"`, Joe's choice on the merits: the
+  under-representation story is the one the deck tells, and it is the only method
+  it reports. `PIP_topadj` is therefore append on `PIP_consinc` at b = 0.12,
+  which is exactly variant c of the four on the variants slide — asserted by eye
+  and by the figure (bar c and the single bars agree to 4dp).
+  What moved: PIP top-adjusted within 0.437 -> **0.487**, between 0.478 ->
+  **0.465**, total 0.914 -> **0.952**, between share 52.2% -> **48.9%**; WID
+  post-tax rescaled 43.8% -> **43.2%**.
+  **PIP_topadj IS NOW RAGGED** — 101 bins where adjusted, 100 where the gate
+  skipped the country — because append re-reads the survey as the bottom 99% and
+  lands at ranks the grid does not have. Three things make that safe:
+  (1) its bin LABELS are rewritten to the ranks they actually occupy
+  (`p0p0.99`, `p98.01p99`, `p99p100`), so a lookup written for the grid raises
+  instead of silently returning a bin a whole percentile off;
+  (2) everything that reads it selects by RANK WINDOW (`rank_window`), not label;
+  (3) the `load_bins` grid assert exempts exactly this series, and the two
+  `decompose` calls that see it pass `expect_bins=None`.
+  Every other series, including `WID_posttax_rescaled` (which takes only country
+  MEANS from PIP_topadj), stays on the 100-bin grid.
+  The rank-window fix earns its keep immediately: the US P90 lollipop is now
+  $5,805 rather than the $5,558 a stale label lookup would have given — the 4.4%
+  error predicted before the switch.
+- **DONE 2026-09-09 — the deck's analytical grid is 100 PERCENTILE BINS.**
+  Joe's call, after measuring the cost on both grids first.
+  `etl_source.load_bins()` collapses the ETL's ten 0.1% bins across the top 1%
+  into one 1%-wide bin at their population-weighted mean, BEFORE the PIP-side
+  chain is rebuilt, so every series it returns is on a plain percentile grid
+  (`DECK_BINS = 100`, `aggregate_to_percentiles()`). `etl_mld.decompose`
+  defaults to 100.
+  What it cost: at most **0.3pp** on any between share (PIP cons->income
+  58.1 -> 58.4%), within down by <=0.003, and the between components identical —
+  aggregation preserves each country's total income and population, so means and
+  top-1% shares cannot move. Country Ginis from bins drop ~0.03, but the deck's
+  Ginis are the sources' published ones.
+  The raw `es.load()` still returns 109 bins, so
+  `24_fig_top_of_distribution_from_etl.py` keeps its top-0.1% threshold row
+  (slide 95, the 60-min section). That split — raw loader keeps the ETL's
+  resolution, `load_bins` applies the deck's convention — is the thing to
+  preserve if this is revisited.
+  **Select by rank window, never by bin label.** `lollipop_records` was reading
+  `by_pct["p90p91"]`, which assumes the grid AND that the label describes the
+  rank — false for a re-ranked series (append re-reads every rank as 0.99x). It
+  now integrates the window via `rank_window()`. Measured error from the old
+  approach under append: 0.5% at P10 but **4.4-6.1% at P90**, because the
+  displacement grows with rank (0.01 x p) while the income gradient is ~5% per
+  percentile point at both.
+  Also deleted: `slide-topadj-slopes-ex` (the chain explainer with the slope
+  toggle) — Joe found it more confusing than helpful once the adjustment was
+  simplified. `fig-topadj-explainer` is now used only in `mode: 'consinc'`, on
+  `slide-consinc-slopes-ex`; its 'chain' mode still works but nothing uses it.
+- **DONE 2026-09-09 — the graft and the anchor dimension are GONE; the top
+  adjustment is the top 1%, two ways.** Joe's call. What replaced them, in
+  `topadj.build_top1(bins, method)`: **match** (under-reporting — PIP samples the
+  right people, its top 1% just reports too little, so that top 1% is rescaled
+  until its income share equals WID's) and **append** (under-representation —
+  the very rich are missing from the sample, so the WHOLE survey is re-read as
+  the bottom 99% and WID's top percentile is added; Anand & Segal 2015, Handbook
+  of Income Distribution 2A ch. 11, p. 954). Both aggregate the top 1% on both
+  sides, so they differ in exactly one thing: the retained income `A` in the
+  shared closed form `Y' = A/(1-S)` — `Y_s(1-s_P)` for match, `0.99 Y_s` for
+  append. Both carry a **gate**: no country is adjusted whose own top-1% share
+  already exceeds WID's, because "assume WID is right" would there mean revising
+  its top DOWN. 4-5 countries are skipped (Cyprus, Denmark, Iceland,
+  Switzerland, Tajikistan). With the gate, every adjusted country is monotone.
+  The eight scenarios (2 methods x 4 bases: raw PIP, then the income basis at
+  b = 0.10/0.12/0.14) span a between share of **46.8% to 58.7%**, all of them
+  between PIP as published (69.2%) and WID post-tax per capita (38.7%). Append's
+  mean uplift is 1.160 on every base — it depends on WID alone — while match's
+  falls from 1.093 to 1.060 as b rises, because a steeper slope has already
+  lifted PIP's top.
+  **The deck baseline is a PLACEHOLDER.** `etl_source.TOPADJ_METHOD = "match"`,
+  chosen because match is expressible on the 109-bin grid (its adjusted top is
+  written back as the base's own ten 0.1% bins, all at the matched value — the
+  same distribution, and every figure downstream keeps working) and append is
+  not: append re-ranks everything by 0.99, so it lands on ranks the grid does not
+  have. Making append the baseline needs a re-binning step that does not exist.
+  Joe has not chosen on the merits.
+  Torn out: `topadj.build_from_bins` / `build_share_matched_from_bins`,
+  `etl_source.TOPADJ_SPLICE_PERCENTILE`, `30_fig_topadj_sensitivity.py` and
+  `32_fig_consinc_topadj_cross.py` with their components, figures and slides.
+  `build_pip_topadj` and `anchor_bin_label` SURVIVE in topadj.py — scripts 10-14
+  and scenarios.py, the preserved reference implementation, still import them,
+  and nothing the deck displays goes through them.
+  Left alone deliberately: **Joe's own body text** on the slides still describes
+  grafting and anchors. He asked to fix that himself.
+- **DONE 2026-09-09 — the chain explainer now carries the whole cross, and its
+  controls are radio groups.** `fig_topadj_explainer.json` was one income basis
+  and six top-adjustment tails per country; it is now `consinc[beta]` and
+  `variants[beta][splice][method]` — WID's three slopes x three anchors x two
+  methods, each rebuilt end to end (359 KB -> 724 KB; income countries omit
+  `consinc` entirely, because for them the income basis IS the PIP series at
+  every slope, and the component falls back to `pip`). The script asserts the
+  baseline slope reproduces the deck's own `PIP_consinc`.
+  `fig-topadj-explainer` gained `mode` ('chain' | 'consinc'), `betas` and
+  `splices` props, and BOTH its dropdowns became radio groups (Joe's call: three
+  options each, so the whole choice set should be visible and one click away).
+  Two new slides: `slide-consinc-slopes-ex` (mode 'consinc' — one full-width
+  panel, consumption against the income basis at all three slopes, no top
+  adjustment, country selector only) and `slide-topadj-slopes-ex` (both radio
+  groups live, so the 3x6 cross is walkable one country at a time). The older
+  explainer slides pass no `betas`, so they stay on the baseline slope with only
+  the anchor control — the JSON shape changed under them but the component
+  handles both.
+  The three slopes are drawn as a light-to-dark ramp of the income-basis hue
+  PLUS a dash pattern each (fine dots = flattest, long dashes = steepest): a
+  redundant channel, since a single-hue lightness ramp of three dashed lines
+  that nearly coincide in the middle of the distribution is hard to read
+  otherwise. Not a categorical palette, so no validate_palette run.
+- **DONE 2026-09-09 — the consumption->income slope is a RANGE, and it is now
+  crossed with the top adjustment.** WID publish three values for the scaled
+  logit's slope, b = 0.10 / 0.12 / 0.14 (`consinc.WID_PROFILE_B_SCENARIOS`, the
+  middle one the deck's baseline and asserted to be a member). b carries the
+  whole shape of the correction — a factors out as a level — so those three are
+  the honest uncertainty in that step. Because the top adjustment is built ON the
+  income-basis series (the graft scales WID's shape from the income-basis anchor
+  value; share matching solves `Y' = A/(1-S)` from income-basis income below the
+  anchor), the two choices COMPOUND, so the sensible object is the 3 x 6 cross,
+  not two separate sensitivities. New: `32_fig_consinc_topadj_cross.py`,
+  `components/fig-consinc-topadj-cross.js` and the cross slide
+  (`slide-consinc-topadj-cross`) — rows are the seven top-adjustment options,
+  column groups are the three slopes, cells are within / between / between share.
+  The three slopes are ALSO drawn as split bars: `21_fig_bridging_from_etl.py`
+  now emits TWO variant sets into one `variants` dict keyed by series — the six
+  top-adjustment variants (on `PIP_topadj` / `WID_posttax_rescaled`) and the
+  three slopes (on `PIP_consinc`, keyed i/ii/iii so the keys never clash with the
+  top adjustment's a-f one slide away), each computed at the other choice's
+  baseline.
+  `fig-raw-comparison`'s `variants` prop therefore takes an ARRAY of series
+  names, not just `true`, so `slide-consinc-variants` splits the income-basis
+  column with the top-adjusted column blanked (`dimOpacity: 0`) and
+  `slide-topadj-variants` does the reverse. `true` still means "every series with
+  a block", which is now the wrong thing on either of those slides — name the set.
+  Each variants block carries its own `caption` for the a/b/c key line, so no
+  English about which choice is being varied lives in the component.
+  The script asserts the baseline cell reproduces the deck's own `PIP_consinc`,
+  `PIP_topadj` AND `WID_posttax_rescaled` exactly.
+  Findings: the slope moves the between share ~2pp per step (57.6 / 55.5 / 53.3%
+  at the baseline top adjustment); the top-adjustment choice moves it ~6pp at a
+  fixed slope. Across all 18 cells: between share 46.4-58.0%, within 0.360-0.523
+  — versus PIP as published 69.2% / 0.214 and WID post-tax 38.7% / 0.615. Both
+  directions are monotone: steeper b or a more generous top method means more
+  within-country inequality and a lower between share. **Trap worth remembering:**
+  `etl_mld.floor_for()` recognises the deck's WID series BY NAME, so a rescaled
+  WID series built under a scratch series name silently falls back to the ETL's
+  $0.01 zero convention and lands ~5pp off. Pass `floor_rule` explicitly for
+  scratch names — the cross script's `cell()` documents this.
+- **DONE 2026-09-09 — the deck's baseline top adjustment moved from the graft at
+  P95 to the graft at P98** (Joe's call). One line does it:
+  `etl_source.TOPADJ_SPLICE_PERCENTILE`, which `load_bins()` uses to rebuild the
+  whole PIP-side chain, so `PIP_topadj` and `WID_posttax_rescaled` move together
+  everywhere — the global decomposition, the three-country (US / Indonesia /
+  Nigeria) lollipops and bars, the explainer's default, the sensitivity table's
+  marker, and the top-1% scatter's default series. `21`, `23`, `29`, `30` and
+  `31` now READ that constant instead of restating it; `23`'s anchor-bin
+  assertion was pinned to bin index 94 and had to be derived instead.
+  What changed: global within-country MLD 0.417 -> 0.394, total 0.910 -> 0.886,
+  between share 54.2% -> 55.5%; the median country's top-1% multiplier 1.79 ->
+  1.45 and its top-1% share 12.5% -> 11.0% (WID 14.6%); grafted P99 thresholds
+  fall about 9-14% (US $13,810 -> $12,370/month). `WID_posttax_rescaled` barely
+  moves (between share 44.5% -> 44.4%) because its within component is
+  untouched by definition. PIP and PIP_consinc are unchanged.
+  Why it moves that way: PIP sits further below WID the higher up you look, so a
+  later anchor gives a smaller scale factor — P98 is the more CONSERVATIVE
+  allowance for the missing top. Which means the slide kicker "guesstimated
+  upper bound" is now a weaker claim than it was: the baseline is fourth of the
+  six variants, and share matching at P95 (within 0.500, between share 47.7%) is
+  the actual upper bound. Two figures still carry the OLD baseline and the ETL's
+  own PIP_topadj because they read `es.load()` rather than `es.load_bins()`:
+  `fig_top_thresholds` (slide 89, the 60-min deck) and `fig_between_share_trend`
+  (which is also still on the old zero convention, and says so on its slide).
+- **DONE 2026-09-09 — the top adjustment is a 2x3 cross, and the choice is now
+  drawn.** Two methods x three anchors: the **graft** imports WID's post-tax
+  *shape* above the anchor and lets the resulting top share follow
+  (`topadj.build_from_bins`); **share matching** imports WID's ten top-1%
+  *sub-shares* exactly and lets the shape follow
+  (`topadj.build_share_matched_from_bins`, closed form `Y' = A/(1-S)`). Anchors
+  P95 / P98 / P99. Both are uniform rescalings of WID's top, differing only in
+  the scale factor — which is why India moves a lot (PIP is 25% of WID on
+  average but only 14% at P98) and the UK barely does. Three deck surfaces:
+  `fig-topadj-explainer` gained an anchor toggle and draws both methods;
+  `fig-topadj-sensitivity` (slide 27) tabulates the cross; and slide 28
+  (`slide-topadj-variants`) draws all six onto the global bars via
+  `fig-raw-comparison`'s new `variants: true` prop — one thin stacked bar per
+  variant inside the same column footprint, so only the column that moves (PIP
+  top-adjusted) has any width. WID post-tax rescaled moves with the choice too,
+  since its country means are forced onto PIP top-adjusted, and the JSON carries
+  its variants; Joe dropped that column from this slide (2026-09-09), so it
+  splits only if a `sources` prop puts it back. The labelled ranges are **synthetic envelopes**: each
+  component's and each share's min and max taken separately, so the endpoints
+  need not come from one variant (`within` bottoms out at the P99 graft while
+  `between` tops out at the P95 graft). Joe's call, and the chart says so. The
+  whole spread of the between share for PIP top-adjusted is 48-56% — narrower
+  than the gap that remains to the WID side, which is the point of showing it.
+  The abandoned branch: WID's own survey->fiscal (Lomax) correction was built
+  and then removed at Joe's request; don't rebuild it.
+- **DONE 2026-09-09 — consumption->income switched to WID's correction profile.**
+  Chasing a kink at the top of the explainer chart led to the real problem: the
+  per-percentile log-log regression made the correction depend on the income
+  LEVEL, and its coefficients existed only at percentile resolution, so the ten
+  0.1% bins above P99 borrowed the p=100 pair — flattening inequality inside the
+  top percentile. Replaced with WID's scaled logit,
+  `Q_I(p)/Q_C(p) = 0.85 + 0.12*log(p/(1-p))` (Chancel, Cogneau, Gethin &
+  Myczkowski 2019, WID.world WP 2019/13), using **WID's parameters**, because
+  PIP's 88 dual country-years are not a usable estimation sample: 73 of them
+  compare two DIFFERENT surveys (budget survey vs EU-SILC — verified against
+  PIP's API `survey_acronym`), giving income above consumption at every rank and
+  a crossover at ~P12 instead of ~P79. The 15 same-instrument pairs fix the fit
+  (R2 0.42 -> 0.90) but not the level, because 9 of them are the Philippines.
+  None of the 88 are from Sub-Saharan Africa or South Asia, where it is applied.
+  2023 between-country shares: PIP_consinc 60.0% -> 58.1%, PIP_topadj
+  55.2% -> 54.2%, WID_posttax_rescaled 41.8% -> 44.5%. PIP itself unchanged.
+  **The whole PIP-side chain is now rebuilt in this repo** (`etl_source.load_bins`
+  -> consinc -> topadj -> rescale), because each step feeds the next; leaving the
+  ETL's PIP_topadj would pair a rebuilt base with a graft anchored to the old one.
+  Guards assert income countries pass through untouched and consumption countries
+  match the profile exactly.
+  This also SUPERSEDED the top-1%-aggregation fix made earlier the same day — the
+  profile is continuous in rank, so it needs no special handling above P99.
+  **The reference implementation is now out of step:** `04_fit_consinc.py` and
+  `13_fig_consinc_explainer.py` still implement the regression, and
+  `consumption_income_model` in the ETL cache is no longer read by any deck figure.
+  **Open:** whether to raise the method change with the ETL team, as with the
+  zero-income floor.
+- **DONE 2026-09-08 — the zero-income floor: WID now bottom-coded at 1% of
+  country mean.** Found while checking two oddities on the country-level MLD
+  scatter: an apparent floor of ~0.7 on WID within-MLD, and the US ranking 37th
+  of 44 on within-MLD against 12th on WID's own Gini. Both had one cause — WID
+  pre-tax reports exactly zero for the bottom ~5 percentiles in 184 of 211
+  countries (DINA allocates zero rather than dropping people), and at the ETL's
+  $0.01/day replacement those bins supplied a **median 43.5%** of each country's
+  within-MLD. The US is one of only 26 countries with NO zero bins, so it was
+  the only one being measured honestly.
+  Now: WID series bottom-coded at 1% of each country's raw mean (LIS practice);
+  PIP left exactly as the World Bank publishes it (already bottom-coded at
+  $0.28/day, no zero bins). Rule defined once in `mld.py:country_floor()`,
+  applied on the ETL path by the new `etl_mld.py`.
+  Effects, 2023: WID pre-tax per capita within 1.000 -> 0.801, between share
+  28.0% -> 32.7%; per-adult 21.1% -> 25.5%. Post-tax moves ~0.2pp, PIP not at
+  all. US rank 37th -> 13th (Gini rank 12th); correlation with WID's Gini
+  0.81 -> 0.94; the 0.7 floor is gone (min within-MLD 0.433).
+  **The decompositions are now computed in this repo** (`etl_mld.py`) rather
+  than read from the ETL's ready-made tables — a deliberate step back from the
+  "computed once" principle in `etl_source.py`, taken because the ETL's floor
+  is not defensible for WID. `etl_mld.main()` is the regression test: with the
+  ETL's own convention the recompute reproduces its published numbers to 6e-08.
+  **Raise upstream with the ETL team** — the floor belongs there, not here.
+  **Known gap:** `fig_between_share_trend` (slide 103) still uses the old
+  convention and says so on the slide; it needs all 35 years of bins and only
+  the display year is cached, because the deck's WID vintage lives only in
+  owid/etl#6806's staging output, not the public catalog (verified: the catalog
+  copy differs from the cache for 95-99% of WID rows).
+  Also dropped the `mld_by_year` / `lollipop_by_year` blocks from four figure
+  JSONs — no component ever read them (`fig_raw_comparison.json` 298 KB -> 11 KB,
+  `fig_bridging_all.json` 73 KB -> 5 KB).
 - **DONE 2026-09-08 — price-basis audit and documentation fix.** Established
   what the two sources' monetary values actually are, and corrected five wrong
   statements in the docs. The headline: **both sources use the 2021 PPP round;

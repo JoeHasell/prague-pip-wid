@@ -206,7 +206,10 @@ def main():
     out = {
         "meta": {
             "title": "Surveys capture only part of national income",
-            "x_label": "PIP survey mean — disposable income or consumption, per capita",
+            # The deck displays incomes per MONTH (config.DAILY_TO_MONTHLY); the
+            # axis used to leave the period unstated.
+            "x_label": "PIP survey mean — disposable income or consumption, "
+                       "per capita per month",
             "y_label": "WID national income mean, per capita",
             "ratio_label": "WID national income ÷ PIP survey mean",
             "share_label": "PIP survey mean as a share of WID national income",

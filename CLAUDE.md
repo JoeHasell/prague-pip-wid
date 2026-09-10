@@ -87,8 +87,11 @@ Call out **new files** explicitly in your reply (e.g. anything under
 ## Environment — Joe's Mac
 
 - **Don't fight his dev server.** If `:4173` is already answering, it's his — use
-  it, don't start a second one and don't kill it. Only `src/` changes need a
-  restart (ask him); `slides.json` changes need only a reload.
+  it, don't start a second one and don't kill it. **Nothing needs a restart.**
+  The server reads every file from disk per request, so `src/`, `components/`
+  and `slides.json` edits all show up on a plain reload (a hard reload if the
+  browser has cached the JS/CSS). Corrected 2026-09-10 — this file used to claim
+  `src/` changes needed a restart, and Joe had to correct it twice.
 - The Python and Node here are his, not a clean container: **Python 3.9.7** and
   **Node v16.9.1** (checked 2026-09-02). Write pipeline scripts for 3.9 — no
   `match`, no `X | Y` annotations evaluated at runtime. pandas and pyarrow are
@@ -162,9 +165,8 @@ python data/scripts/99_verify.py                                          # any 
 
 Unlike a vanilla copy of this framework, **`src/` is fair game here** — the
 annotation/draw layer was added to `deck.js`/`editor.js` for this deck. README's
-"don't touch `src/`" line applies to plain content projects. After an `src/` change
-Joe must restart the dev server and hard-refresh; `slides.json`-only changes need
-just a reload.
+"don't touch `src/`" line applies to plain content projects. A reload picks up
+`src/` edits like any other — **don't tell Joe to restart the dev server.**
 
 ## Data pipeline rules
 

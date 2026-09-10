@@ -16,18 +16,31 @@ The JSON contract, including the deck's own series names (WID_pretax_per_adult,
 PIP_topadj, ...). The component and every `sources` prop in content/slides.json
 keep working untouched.
 
-WHAT IS NEW
------------
-Both JSONs now carry EVERY YEAR the two sources share (1990-2024), not just
-2023, because the ETL computes the whole panel. Each JSON gains:
+ONE YEAR, NOT THIRTY-FIVE (2026-09-08)
+--------------------------------------
+These JSONs used to carry every year 1990-2024 in `mld_by_year` /
+`lollipop_by_year`, on the theory that a component might expose a year control.
+None ever did — `fig-raw-comparison` reads the flat `mld` / `lollipop` arrays
+and hardcodes 2023 in its source note — so the blocks were ~35x of dead weight
+in four figure files. They are gone. The only genuine MLD time series in the
+deck is `fig_between_share_trend` (one slide), which has its own script.
 
-    meta.years        the available years
-    meta.default_year the year shown unless a slide overrides it
-    mld_by_year       {year: [ ...the same records as `mld`... ]}
-    lollipop_by_year  {year: [ ...the same records as `lollipop`... ]}
+The decompositions here are now COMPUTED from the ETL's bins rather than read
+from its ready-made `inequality_decomposition` tables, because the deck applies
+its own zero-income floor to the WID series — see etl_mld.py for why, and
+`etl_mld.main()` for the regression test proving the recompute reproduces the
+ETL exactly when the ETL's own convention is used.
 
-`mld` and `lollipop` still hold the default year, so a component that ignores
-the new fields behaves exactly as before.
+THE `variants` BLOCK (2026-09-09)
+---------------------------------
+Both global-bar figures also carry a `variants` block: the 2x3 cross of top
+adjustment method (graft / share match) x anchor (P95 / P98 / P99), keyed a-f,
+for the only two series that move with that choice — PIP_topadj, and
+WID_posttax_rescaled, whose country means are forced onto it. Each entry has
+that variant's decomposition, plus a `range` of the min and max of each field
+taken SEPARATELY, so a range's endpoints need not come from one variant. The
+`fig-raw-comparison` component draws it under `variants: true` (one thin bar per
+variant, inside the same column footprint) and says so on the chart.
 
 Run:  python data/scripts/21_fig_bridging_from_etl.py
 """
@@ -36,16 +49,21 @@ import json
 from pathlib import Path
 
 import numpy as np
+import pandas as pd
 
+import consinc
+import etl_mld
 import etl_source as es
+import rescale
+import topadj
 
 FIGURES_DIR = Path(__file__).resolve().parents[1] / "figures"
 DEFAULT_YEAR = 2023
 
-# Method parameters, recorded in the JSON meta for provenance. These are the
-# ETL step's constants, not choices made here.
-SPLICE_PERCENTILE = 95
-ANCHOR_BIN = "p94p95"
+# Method parameters, recorded in the JSON meta for provenance. The splice is the
+# deck-wide baseline — read it, never restate it, or a figure silently drifts
+# from the series it plots.
+TOPADJ_METHOD = es.TOPADJ_METHOD
 ZERO_REPLACEMENT = 0.01
 
 NOTES_COMMON = [
@@ -59,112 +77,228 @@ NOTES_COMMON = [
     "series are still converted to per capita with WID's own adult share. (The deck "
     "originally weighted by WID's demography; the switch moved every between share "
     "by at most 0.02pp, since WID's counts are UN WPP too.)",
-    f"Zero incomes are replaced with ${ZERO_REPLACEMENT}/day inside the MLD only. "
-    "This matters for the WID PRE-TAX series, where the bottom ~5 percentiles of "
-    "almost every country are zero (4.3% of the sample population in 2023): "
-    "across floors from $0.001 to $1.00/day the pre-tax between-country share "
-    "moves by about 5 percentage points. It does not affect the PIP-side series "
-    "(no zero bins) and barely affects WID post-tax (0.05% of population).",
+    "Zero incomes: the WID series are BOTTOM-CODED at 1% of each country's own "
+    "raw mean before the MLD is taken; PIP is left as the World Bank publishes it "
+    "(already bottom-coded at $0.28/day, and it has no zero bins). WID's pre-tax "
+    "series reports exactly zero for the bottom ~5 percentiles of almost every "
+    "country — DINA allocates zero rather than dropping people — and at the ETL's "
+    "$0.01/day floor those bins supplied a median 43.5% of each country's "
+    "within-MLD, putting an artificial floor of about 0.7 under it. See "
+    "data/README.md and etl_mld.py.",
 ]
 
 
-def global_mld_records(dec, year):
-    """The GLOBAL decomposition for one year, over the whole common sample — one
-    record per series, in bridging order. Read straight from the ETL table."""
-    d = dec[dec["year"] == year].set_index("series")
-    out = []
-    for s in es.BRIDGING_ORDER:
-        if s not in d.index:
-            continue
-        r = d.loc[s]
-        out.append(
-            {
-                "between": float(r["mld_between"]),
-                "within": float(r["mld_within"]),
-                "total": float(r["mld_total"]),
-                "between_share": float(r["between_share"]),
-                "grand_mean": float(r["grand_mean"]),
-                "zero_bins_replaced": int(r["num_zero_bins_replaced"]),
-                "source": s,
-                "label": es.DECK_SERIES_LABELS[s],
-            }
-        )
-    return out
+def mld_records(bins, year, with_countries=False):
+    """The decomposition for one year over EVERY country in `bins` — one record
+    per series, in bridging order.
 
-
-def subset_mld_records(by_country, year, countries):
-    """The decomposition restricted to `countries` — the pedagogical "if the world
-    were just these three" version the per-country slide shows.
-
-    This is EXACT, not a re-estimate. The MLD decomposition is additive in
-    population-weighted country terms, and the ETL publishes each country's
-    weight, mean and within-country MLD, so restricting the sample is just a
-    matter of renormalising the weights:
-
-        P_c     = w_c / sum(w over the subset)
-        mu      = sum(P_c * mu_c)
-        between = sum(P_c * ln(mu / mu_c))
-        within  = sum(P_c * mld_within_c)
-
-    The country means and within-MLDs already carry the ETL's zero-income floor,
-    so the subset inherits the same conventions as the global figure.
+    Computed here from the bins rather than read from the ETL's ready-made
+    decomposition, because the deck applies its own zero-income floor (see
+    etl_mld.py). Called with the whole common sample this is the global
+    decomposition; called with the three example countries' bins it is the
+    pedagogical "if the world were just these three" version, which is exact
+    because the decomposition is additive in population-weighted country terms.
     """
-    d = by_country[(by_country["year"] == year) & (by_country["country"].isin(countries))]
     out = []
-    for s in es.BRIDGING_ORDER:
-        g = d[d["series"] == s]
-        if g.empty:
+    for s_ in es.BRIDGING_ORDER:
+        if s_ not in set(bins["series"].unique()):
             continue
-        w = g["population_weight"].to_numpy(float)
-        mu_c = g["mean"].to_numpy(float)
-        within_c = g["mld_within"].to_numpy(float)
-        p = w / w.sum()
-        mu = float((p * mu_c).sum())
-        between = float((p * np.log(mu / mu_c)).sum())
-        within = float((p * within_c).sum())
+        # expect_bins=None: PIP_topadj is ragged when the top-1% method
+        # re-ranks (etl_source.TOPADJ_METHOD), and every other series is checked
+        # on the grid by load_bins itself.
+        g = etl_mld.decompose(bins, s_, year, expect_bins=None)
         out.append(
             {
-                "between": between,
-                "within": within,
-                "total": between + within,
-                "between_share": between / (between + within),
-                "grand_mean": mu,
-                "source": s,
-                "label": es.DECK_SERIES_LABELS[s],
-                "countries": [
-                    {
-                        "country": c.country,
-                        "pop": float(c.population_weight),
-                        "mean": float(c.mean),
-                        "mld_within": float(c.mld_within),
-                    }
-                    for c in g.itertuples()
-                ],
+                "between": g["between"],
+                "within": g["within"],
+                "total": g["total"],
+                "between_share": g["between_share"],
+                "grand_mean": g["grand_mean"],
+                "zero_bins_replaced": g["num_zero_bins"],
+                "bins_bottom_coded": g["num_bins_coded"],
+                "source": s_,
+                "label": es.DECK_SERIES_LABELS[s_],
+                # Per-country detail only for the small pedagogical sample; on the
+                # global figure it would be 211 x 8 records the component never reads.
+                **({"countries": [
+                    {"country": c, "pop": float(r.population_weight),
+                     "mean": float(r["mean"]), "mld_within": float(r.mld_within)}
+                    for c, r in g["by_country"].iterrows()]} if with_countries else {}),
             }
         )
     return out
+
+
+# TWO INDEPENDENT SETS OF VARIANTS, one per modelling choice, each attached to
+# the columns that actually move with it, and each keyed with its own alphabet
+# so the two can never be confused one slide apart.
+#
+# 1. The top adjustment: two methods x four bases = eight scenarios. Both act on
+#    the TOP 1% ONLY (no anchor choice any more) and differ in what they assume
+#    the survey got wrong — under-reporting (match) or under-representation
+#    (append); see topadj.build_top1. The four bases are raw PIP and the
+#    income-basis series at each of WID's three slopes, so the grid prices the
+#    two modelling choices against each other. Moves PIP_topadj and
+#    WID_posttax_rescaled (whose country means are forced onto it).
+# REPORTED METHODS. Both are built and both work (topadj.build_top1); only
+# `append` is SHOWN. Joe dropped `match` from the deck on 2026-09-09 — it lands
+# close enough to append that carrying both only complicated the story. Put
+# "match" back in this tuple to restore it everywhere it used to appear.
+TOPADJ_METHODS = ("append",)
+# The key alphabet is SHARED with the consumption->income set below: i/ii/iii
+# name the same three slopes in both columns, so one key line serves both. "NA"
+# is the top-1% adjustment applied to raw PIP, with no cons->income step at all
+# — a different kind of thing, so it is drawn set apart and left out of the
+# labelled range.
+TOPADJ_KEYS = ("NA", "i", "ii", "iii")
+TOPADJ_ASIDE = ("NA",)
+TOPADJ_BASES = [("PIP", None)] + [(None, b) for b in consinc.WID_PROFILE_B_SCENARIOS]
+TOPADJ_SPEC = [(m, base, beta) for m in TOPADJ_METHODS for base, beta in TOPADJ_BASES]
+TOPADJ_VARIED = ("PIP_topadj", "WID_posttax_rescaled")
+SLOPE_CAPTION = "Consumption\u2192income slope (and the base for the top-1% adjustment)"
+
+# 2. The consumption -> income slope: WID's three values for b. Moves
+#    PIP_consinc, and everything downstream of it — but the downstream columns
+#    are left single valued here, because a slide that split both at once would
+#    be showing the cross, not this one choice.
+# Roman numerals, not a/b/c: the top-adjustment set uses the letters, and the
+# two sets sit on consecutive build-up slides, so distinct keys stop "b" from
+# meaning two different things one slide apart. (A tuple, not a string —
+# "iii" is not one character.)
+CONSINC_KEYS = ("i", "ii", "iii")
+CONSINC_VARIED = ("PIP_consinc",)
+CONSINC_CAPTION = SLOPE_CAPTION
+
+
+def _envelopes(out, caption):
+    """{series: [records]} -> {series: {variants, range, caption}}.
+
+    The ranges are taken component by component and share by share, so an
+    endpoint pair need not come from a single variant — `within` bottoms out at
+    the P99 graft while `between` tops out at the P95 graft. That is deliberate
+    and stated on the slide: the range answers "how far can this component move",
+    not "which single bar is the extreme".
+    """
+    res = {}
+    for s, recs in out.items():
+        # An `aside` variant is drawn but deliberately left OUT of the labelled
+        # range: it answers a different question from the others, so pooling it
+        # into one min-max would misdescribe the spread.
+        inrange = [r for r in recs if not r.get("aside")]
+        rng = {}
+        for f in ("within", "between", "total", "between_share"):
+            v = [r[f] for r in inrange]
+            rng[f] = [min(v), max(v)]
+        res[s] = {"variants": recs, "range": rng, "caption": caption}
+    return res
+
+
+def consinc_variant_records(bins, year, welfare):
+    """PIP_consinc under each of WID's three slopes, at the baseline top adjustment."""
+    import consinc
+    keep = ~bins["series"].isin(("PIP_consinc",) + TOPADJ_VARIED)
+    out = {s: [] for s in CONSINC_VARIED}
+    for key, b in zip(CONSINC_KEYS, consinc.WID_PROFILE_B_SCENARIOS):
+        ci = consinc.build_pip_consinc_profile(bins[keep], welfare, b=b,
+                                               out_series="PIP_consinc")
+        full = pd.concat([bins[keep], ci], ignore_index=True)
+        for s in CONSINC_VARIED:
+            g = etl_mld.decompose(full, s, year)
+            out[s].append({"key": key, "beta": b,
+                           # Just the value: the caption names the parameter, and a
+                           # label of "b = 0.10" would read as "b b = 0.10" against
+                           # the variant key letters a/b/c in the chart's key line.
+                           "label": f"\u03b2 {b:.2f}",
+                           "is_baseline": b == consinc.WID_PROFILE_B,
+                           "within": round(g["within"], 4),
+                           "between": round(g["between"], 4),
+                           "total": round(g["total"], 4),
+                           "between_share": round(g["between_share"], 5)})
+    return _envelopes(out, CONSINC_CAPTION)
+
+
+def variant_records(bins, year, welfare):
+    """PIP_topadj and WID_posttax_rescaled under each of the eight scenarios.
+
+    Each cell is rebuilt END TO END from its own base: raw PIP or the income
+    basis at that slope, then the top-1% method on top of it, then WID post-tax
+    rescaled onto the result. The append scenarios land off the 109-bin grid
+    (see topadj.build_top1), so their decomposition skips the grid guard.
+    """
+    keep = ~bins["series"].isin(("PIP_consinc",) + TOPADJ_VARIED)
+    upstream = bins[keep]
+    out = {s_: [] for s_ in TOPADJ_VARIED}
+    for key, (method, base, beta) in zip(TOPADJ_KEYS, TOPADJ_SPEC):
+        if base == "PIP":
+            frame = upstream.copy()
+            base_series, label_base = "PIP", "no cons\u2192income step"
+        else:
+            ci = consinc.build_pip_consinc_profile(upstream, welfare, b=beta,
+                                                   out_series="PIP_consinc")
+            frame = pd.concat([upstream, ci], ignore_index=True)
+            base_series, label_base = "PIP_consinc", f"\u03b2 {beta:.2f}"
+        ta = topadj.build_top1(frame, method, base_series=base_series,
+                               out_series="PIP_topadj")
+        base_frame = pd.concat([frame, ta], ignore_index=True)
+        rs = rescale.build_from_bins(base_frame, mean_source="PIP_topadj")
+        full = pd.concat([base_frame, rs], ignore_index=True)
+        for s_ in TOPADJ_VARIED:
+            g = etl_mld.decompose(full, s_, year, expect_bins=None)
+            out[s_].append({"key": key, "method": method, "base": label_base,
+                            "label": label_base,
+                            "aside": key in TOPADJ_ASIDE,
+                            "within": round(g["within"], 4),
+                            "between": round(g["between"], 4),
+                            "total": round(g["total"], 4),
+                            "between_share": round(g["between_share"], 5)})
+    return _envelopes(out, SLOPE_CAPTION)
+
+
+def rank_window(g, lo, hi):
+    """Population-weighted average income over the rank window [lo, hi].
+
+    SELECT BY RANK, NEVER BY BIN LABEL. A label lookup ("p90p91") assumes the
+    frame is on the deck's grid and that its ranks mean what the label says —
+    which stops being true the moment a series is re-ranked (the append top-1%
+    method re-reads every rank as 0.99 x its old value) or lands on a different
+    grid. Integrating the window works on any frame: 100 bins, the ETL's 109,
+    a ragged one, or a re-ranked one.
+
+    Each bin is treated as uniform across its own width, which is all the bin
+    data supports.
+    """
+    p0 = g["p_low"].to_numpy(dtype=float)
+    p1 = g["p_high"].to_numpy(dtype=float)
+    w = np.clip(np.minimum(p1, hi) - np.maximum(p0, lo), 0, None)
+    assert w.sum() > 0, f"empty rank window [{lo}, {hi}]"
+    return float(np.average(g["avg"].to_numpy(dtype=float), weights=w))
 
 
 def lollipop_records(bins, year):
-    """The `lollipop` array for one year: P10 / P90 / mean / extremes, per month."""
+    """The `lollipop` array for one year: P10 / P90 / mean / extremes, per month.
+
+    P10 and P90 are the average income of the population between those ranks and
+    the next percentile — read off as rank windows, not bin labels.
+    """
     k = es.DAILY_TO_MONTHLY
     d = bins[bins["year"] == year]
     out = []
     for s in es.BRIDGING_ORDER:
         for c in es.EXAMPLE_COUNTRIES:
-            g = d[(d["series"] == s) & (d["country"] == c)]
+            g = d[(d["series"] == s) & (d["country"] == c)].sort_values("p_low")
             if g.empty:
                 continue
-            by_pct = g.set_index("percentile")["avg"]
             out.append(
                 {
                     "source": s,
                     "country": c,
-                    "p10": float(by_pct["p10p11"]) * k,
-                    "p90": float(by_pct["p90p91"]) * k,
+                    "p10": rank_window(g, 0.10, 0.11) * k,
+                    "p90": rank_window(g, 0.90, 0.91) * k,
                     "mean": float(np.average(g["avg"], weights=g["pop"])) * k,
-                    "p0": float(by_pct["p0p1"]) * k,
-                    "p999": float(by_pct["p99.9p100"]) * k,
+                    "p0": rank_window(g, 0.00, 0.01) * k,
+                    # the top 1% since the deck moved to a percentile grid; it was
+                    # the top 0.1% while the ETL's ten sub-bins were carried
+                    "p999": rank_window(g, es.TOP1_START, 1.00) * k,
                 }
             )
     return out
@@ -172,14 +306,32 @@ def lollipop_records(bins, year):
 
 def main():
     print(f"Reading ETL version {es.ETL_VERSION} from the committed cache")
-    dec = es.load("inequality_decomposition")
-    by_country = es.load("inequality_decomposition_by_country")
-    bins = es.load("example_country_bins")
+    # display_year_bins is the whole common sample for the display year;
+    # example_country_bins is the three-country mini-world.
+    global_bins = es.load_bins("display_year_bins")
+    bins = es.load_bins("example_country_bins")
 
-    years = sorted(int(y) for y in dec["year"].unique())
-    default_year = DEFAULT_YEAR if DEFAULT_YEAR in years else years[-1]
-    n_countries = int(dec.loc[dec["year"] == default_year, "num_countries"].iloc[0])
-    print(f"  years {years[0]}-{years[-1]} | {n_countries} countries in the common sample")
+    default_year = DEFAULT_YEAR
+    years = [default_year]
+    n_countries = int(global_bins.loc[global_bins["year"] == default_year, "country"].nunique())
+    print(f"  {default_year} | {n_countries} countries in the common sample")
+    # The two variant sets are merged into ONE dict keyed by series, so a slide
+    # picks what to split with the component's `variants` prop (true = all with a
+    # block; an array = only those). No series appears in both sets.
+    basis = es.load("pip_welfare_basis")
+    basis = basis[basis["year"] == default_year]
+    welfare = dict(zip(basis["country"], basis["welfare_type"]))
+    variants = variant_records(global_bins, default_year, welfare)
+    variants.update(consinc_variant_records(global_bins, default_year, welfare))
+    assert set(variants) == set(TOPADJ_VARIED) | set(CONSINC_VARIED), \
+        "a variant set has collided with another"
+    for sname, v in variants.items():
+        r = v["range"]
+        print("  %-24s between share %.1f-%.1f%% | within %.3f-%.3f | total %.3f-%.3f"
+              % (sname, 100 * r["between_share"][0], 100 * r["between_share"][1],
+                 r["within"][0], r["within"][1], r["total"][0], r["total"][1]))
+    print(f"  zero-income floor: WID bottom-coded at "
+          f"{etl_mld.DECK_FLOOR_RULE[1]:.0%} of each country's raw mean; PIP unchanged")
 
     sources = {s: es.DECK_SERIES_LABELS[s] for s in es.BRIDGING_ORDER}
     meta_common = {
@@ -188,9 +340,10 @@ def main():
         "default_year": default_year,
         "etl_version": es.ETL_VERSION,
         "etl_dataset": f"garden/poverty_inequality/{es.ETL_VERSION}/harmonized_income_distributions",
-        "zero_replacement_usd_per_day": ZERO_REPLACEMENT,
-        "topadj_splice_percentile": SPLICE_PERCENTILE,
-        "topadj_anchor_bin": ANCHOR_BIN,
+        "wid_floor_rule": "1% of each country's raw mean",
+        "pip_floor_rule": "unchanged (World Bank bottom-coding, $0.28/day)",
+        "topadj_method": TOPADJ_METHOD,
+        
         "topadj_shape_source": "WID_posttax_per_capita",
         "topadj_base_source": "PIP_consinc",
         "rescale_mean_source": "PIP_topadj",
@@ -219,18 +372,11 @@ def main():
             ],
         },
         "lollipop": lollipop_records(bins, default_year),
-        "mld": subset_mld_records(by_country, default_year, es.EXAMPLE_COUNTRIES),
-        "lollipop_by_year": {str(y): lollipop_records(bins, y) for y in years},
-        "mld_by_year": {
-            str(y): subset_mld_records(by_country, y, es.EXAMPLE_COUNTRIES) for y in years
-        },
+        "mld": mld_records(bins, default_year, with_countries=True),
     }
     write(out1, "fig_raw_comparison.json")
 
     # ---- Figure 2: full sample, bars only (empty lollipop) -----------------
-    def bars_only(year):
-        return global_mld_records(dec, year)
-
     out2 = {
         "meta": {
             **meta_common,
@@ -251,8 +397,8 @@ def main():
             ],
         },
         "lollipop": [],
-        "mld": bars_only(default_year),
-        "mld_by_year": {str(y): bars_only(y) for y in years},
+        "mld": mld_records(global_bins, default_year),
+        "variants": variants,
     }
     write(out2, "fig_bridging_all.json")
 
@@ -289,7 +435,8 @@ def main():
             ],
         },
         "lollipop": lollipop_records(bins, default_year),
-        "mld": global_mld_records(dec, default_year),
+        "mld": mld_records(global_bins, default_year),
+        "variants": variants,
     }
     write(out3, "fig_examples_global_mld.json")
 

@@ -44,6 +44,37 @@ WID_TOTAL_POP_SOURCE = "WID_pretax_per_capita"
 WID_ADULT_POP_SOURCE = "WID_pretax_per_adult"
 
 
+def country_floor(x, w, rule):
+    """THE definition of a bottom-coding floor for one country's bins.
+
+    `rule` is a (kind, value) pair:
+        ("absolute", v)       floor at v, in the data's own units ($/day here).
+                              PIP's own published convention is ("absolute", 0.28).
+        ("mean_fraction", f)  floor at f x the country's RAW mean — LIS practice
+                              (historically f = 0.01). Scale-invariant, so it is
+                              unaffected by the price base or per-adult/per-capita
+                              basis.
+        None                  no floor.
+
+    The mean used to set a "mean_fraction" floor is the RAW mean, computed before
+    any coding, so the floor cannot depend on itself. Callers apply the returned
+    value with np.maximum(x, floor) and then compute the index on the CODED
+    distribution — i.e. the MLD's mu is the coded mean. That is what LIS does and
+    what makes the result the MLD of an actual distribution rather than a hybrid.
+
+    Returns None when no floor applies.
+    """
+    if rule is None:
+        return None
+    kind, value = rule
+    if kind == "absolute":
+        return float(value)
+    if kind == "mean_fraction":
+        return float(value) * float(np.average(np.asarray(x, dtype=float),
+                                               weights=np.asarray(w, dtype=float)))
+    raise ValueError(f"unknown floor rule kind: {kind!r}")
+
+
 def reference_populations(h, weights="wid", basis="total"):
     """Country -> population under the chosen yardstick and basis (persons).
 
@@ -60,7 +91,7 @@ def reference_populations(h, weights="wid", basis="total"):
 
 
 def mld_decomposition(h, source, countries, zero_replacement=0.01,
-                      weights="wid", basis=None):
+                      weights="wid", basis=None, floor_rule=None):
     """Between/within MLD decomposition of `source` over `countries`.
 
     Weights follow the project convention: WID demography, matched to the
@@ -68,8 +99,12 @@ def mld_decomposition(h, source, countries, zero_replacement=0.01,
     name ("per_adult" -> adults, else total); pass explicitly otherwise.
     weights="pip" is for sensitivity reporting only.
 
+    Zero handling: by default zeros are replaced by `zero_replacement` and
+    nothing else is touched (the historical convention). Pass `floor_rule` to
+    bottom-code instead — see country_floor() for the rules.
+
     Returns a dict: between, within, total, between_share, grand_mean,
-    zero_bins_replaced, and per-country details.
+    zero_bins_replaced, bins_bottom_coded, and per-country details.
     """
     if basis is None:
         basis = "adult" if "per_adult" in source else "total"
@@ -88,8 +123,20 @@ def mld_decomposition(h, source, countries, zero_replacement=0.01,
     # The convention: reference country population spread over bins by width
     w = (d["country"].map(ref_pop) * (d["p_high"] - d["p_low"])).to_numpy(dtype=float)
 
+    # Zero handling. The default reproduces the historical convention exactly:
+    # replace zeros with `zero_replacement`, touch nothing else. `floor_rule`
+    # instead bottom-codes every bin, per country, via country_floor() above.
     n_replaced = int((x == 0).sum())
-    x = np.where(x == 0, zero_replacement, x)
+    if floor_rule is None:
+        x = np.where(x == 0, zero_replacement, x)
+        n_bottom_coded = n_replaced
+    else:
+        n_bottom_coded = 0
+        for c in countries:
+            m = country == c
+            f = country_floor(x[m], w[m], floor_rule)
+            n_bottom_coded += int((x[m] < f).sum())
+            x[m] = np.maximum(x[m], f)
 
     total_pop = w.sum()
     mu = np.average(x, weights=w)
@@ -119,5 +166,7 @@ def mld_decomposition(h, source, countries, zero_replacement=0.01,
         "between_share": float(between_total / total),
         "grand_mean": float(mu),
         "zero_bins_replaced": n_replaced,
+        "bins_bottom_coded": n_bottom_coded,
+        "floor_rule": floor_rule,
         "countries": details,
     }

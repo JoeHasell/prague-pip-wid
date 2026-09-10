@@ -281,10 +281,8 @@ Deck.registerComponent('fig-top1-treemap', (el, props, ctx) => {
       const b = e.target.closest && e.target.closest('.ftm-bin');
       if (!b) return;
       const h = svg._hover[+b.dataset.h];
-      const cr = b.getBoundingClientRect(), wr = wrap.getBoundingClientRect();
-      tip.style.left = Math.max(70, Math.min(wr.width - 70, cr.left + cr.width / 2 - wr.left)) + 'px';
-      tip.style.top = Math.max(40, cr.top - wr.top - 4) + 'px';
       tip.innerHTML = h.t;
+      Deck.placeTooltip(tip, b, wrap);
       tip.style.opacity = '1';
     }
     function onOut(e) {

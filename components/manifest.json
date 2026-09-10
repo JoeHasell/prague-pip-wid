@@ -5,6 +5,7 @@
     "fig-mld-decomp.js",
     "fig-raw-comparison.js",
     "fig-topadj-explainer.js",
+    "fig-top1-share-scatter.js",
     "fig-consinc-explainer.js",
     "fig-top-thresholds.js",
     "fig-top1-treemap.js",
