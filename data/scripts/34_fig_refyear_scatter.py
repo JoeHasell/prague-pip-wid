@@ -45,6 +45,8 @@ SERIES_LABELS = {
     "PIP": "PIP, as published",
     "PIP_consinc": "PIP on an income basis",
     "PIP_topadj": "PIP with WID's top 1% appended",
+    "PIP_consinc_wb": "PIP on an income basis — Wollburg et al. (2023) inverse",
+    "PIP_topadj_wb": "PIP with WID's top 1% appended — on the Wollburg et al. basis",
     "WID_pretax_per_capita": "WID pre-tax national income, per capita",
     "WID_posttax_per_capita": "WID post-tax national income, per capita",
 }
@@ -106,6 +108,11 @@ def main():
                 "All measures are computed from the harmonized bins on the deck's 100-percentile grid, "
                 "for PIP as published, PIP on an income basis (WID's logit profile) and PIP with WID's "
                 "top 1% appended (Anand-Segal), and for WID's two per-capita series.",
+                "The two `_wb` PIP series are a parallel comparison chain: consumption countries put on "
+                "PIP's own disposable-income basis by inverting Wollburg, Hallegatte & Mahler (2023)'s "
+                "income->consumption fit, inc = (con - g)^(1/0.93) with g = 0.68 + 0.26 ln(median income), "
+                "floored at $0.28/day, then the same top-1% append. The deck's baseline remains the WID "
+                "profile; see consinc.py and data/README.md caveat 5.",
                 "The component pairs two years with the rules of refyears.pair(): a PIP pair keeps only "
                 "the same welfare concept on both ends, and the two survey years must differ. The ETL's "
                 "inequality_comparison instead re-matches a country to a same-welfare pair further away, "

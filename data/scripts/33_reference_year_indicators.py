@@ -38,7 +38,13 @@ PROVENANCE — READ THIS BEFORE USING THE FILE
   by one of them, not both.
 - `top1_adjusted` is False for the countries the top-1% gate left alone (their
   survey already shows a larger top-1% share than WID; see topadj.py) — there
-  PIP_topadj equals PIP_consinc.
+  PIP_topadj equals PIP_consinc. The gate is decided per chain (GATE_BASE).
+- `PIP_consinc_wb` / `PIP_topadj_wb` are a PARALLEL comparison chain: consumption
+  countries put on PIP's own disposable-income basis by inverting Wollburg,
+  Hallegatte & Mahler (2023)'s income->consumption fit (consinc.py, "A SECOND
+  METHOD"), floored at $0.28/day, then the same top-1% append. The deck's
+  baseline is still the WID profile; these two exist only here and on the
+  year-vs-year scatters (34_).
 - One survey serves up to eleven reference years. For a comparison between two
   reference years use refyears.pair(), which enforces the ETL's same-welfare rule
   and refuses to compare a survey with itself. The ETL's own 1993/2019 table
@@ -80,6 +86,16 @@ EXCLUDED_YEARS = ()
 COLUMNS = ["country", "series", "ref_year", "year", "distance", "tie", "welfare_type", "adjusted",
            "top1_adjusted", "wid_extrapolated", "n_bins"] + refyears.INDICATORS
 
+# The top-1% gate is decided per CHAIN, on the income-basis series the append is
+# built on (topadj.top1_shares): the baseline chain on PIP_consinc, the Wollburg
+# et al. chain on PIP_consinc_wb. `top1_adjusted` therefore differs between the
+# two chains for the same country-year.
+GATE_BASE = {
+    "PIP": "PIP_consinc", "PIP_consinc": "PIP_consinc", "PIP_topadj": "PIP_consinc",
+    "PIP_consinc_wb": "PIP_consinc_wb", "PIP_topadj_wb": "PIP_consinc_wb",
+}
+assert set(GATE_BASE) == set(refyears.PIP_SIDE), "every PIP-side series needs a gate base"
+
 
 def main():
     print("Reading the ETL cache")
@@ -97,8 +113,11 @@ def main():
     ind = refyears.indicators_from_bins(bins[bins["series"].isin(refyears.PIP_SIDE)])
     gate = []
     for y, gy in bins.groupby("year", observed=True):
-        g8 = topadj.top1_shares(gy, "PIP_consinc")
-        gate.append(pd.DataFrame({"country": g8.index, "year": int(y), "top1_adjusted": g8["adjust"].to_numpy()}))
+        for base in sorted(set(GATE_BASE.values())):
+            g8 = topadj.top1_shares(gy, base)
+            for s in [s for s, b in GATE_BASE.items() if b == base]:
+                gate.append(pd.DataFrame({"country": g8.index, "year": int(y), "series": s,
+                                          "top1_adjusted": g8["adjust"].to_numpy()}))
     gate = pd.concat(gate, ignore_index=True)
 
     matches = refyears.match_reference_years(surveys, REFERENCE_YEARS, maximum_distance=MAXIMUM_DISTANCE,
@@ -106,7 +125,7 @@ def main():
                                              excluded_years=EXCLUDED_YEARS)
     pip = (matches.merge(ind, on=["country", "year"], how="inner")
                   .merge(surveys, on=["country", "year"], how="left")
-                  .merge(gate, on=["country", "year"], how="left"))
+                  .merge(gate, on=["country", "year", "series"], how="left"))
     assert pip["welfare_type"].notna().all() and pip["top1_adjusted"].notna().all()
     assert len(pip) == len(matches) * len(refyears.PIP_SIDE), "a matched survey year lost a series"
     pip["wid_extrapolated"] = np.nan
@@ -147,7 +166,8 @@ def main():
     print("  distance of the survey used: " +
           ", ".join(f"{d} yr: {n}" for d, n in p["distance"].value_counts().sort_index().items()))
     print(f"  ties broken: {int(p['tie'].sum())} country-reference-years")
-    print(f"  top-1% gate left {int((~p['top1_adjusted'].astype(bool)).sum())} PIP country-reference-years unadjusted")
+    print(f"  top-1% gate left {int((~p['top1_adjusted'].astype(bool)).sum())} PIP country-reference-years unadjusted"
+          f" (Wollburg chain: {int((~out.loc[out['series'] == 'PIP_topadj_wb', 'top1_adjusted'].astype(bool)).sum())})")
     w = out[out["series"] == "WID_posttax_per_capita"]
     print(f"  WID: {w['country'].nunique()} countries every year; "
           f"{int((w['wid_extrapolated'] == 'no').sum())} country-years rated as directly data-backed")

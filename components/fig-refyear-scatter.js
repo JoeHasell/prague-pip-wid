@@ -26,7 +26,8 @@
  *   metric       "gini" (default) | "top10" | "top1" | "palma"
  *   metrics      which of those to offer (default all four)
  *   yearA, yearB the two years (default 1993 and 2019, the ETL's comparison)
- *   pipSeries    "PIP" | "PIP_consinc" | "PIP_topadj" (default)
+ *   pipSeries    "PIP" | "PIP_consinc" | "PIP_topadj" (default) | "PIP_consinc_wb" |
+ *                "PIP_topadj_wb" (the same chain on the Wollburg et al. income basis)
  *   widSeries    "WID_pretax_per_capita" | "WID_posttax_per_capita" (default)
  *   sameWelfare  false to allow income-vs-consumption pairs on the PIP side (default true)
  *   mode         change scatter only: "abs" (default) | "rel"
@@ -64,6 +65,8 @@
   };
   const SHORT = {
     PIP: 'PIP, as published', PIP_consinc: 'PIP, income basis', PIP_topadj: "PIP + WID's top 1%",
+    // the parallel chain on the Wollburg et al. (2023) income basis (consinc.py)
+    PIP_consinc_wb: 'PIP, income basis (Wollburg)', PIP_topadj_wb: "PIP + WID's top 1% (Wollburg)",
     WID_pretax_per_capita: 'WID pre-tax', WID_posttax_per_capita: 'WID post-tax',
   };
   const WELFARE = { i: 'income', c: 'consumption', '-': '' };

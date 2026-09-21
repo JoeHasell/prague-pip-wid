@@ -75,8 +75,11 @@ RANK_EPS = 1e-6
 # The deck's PIP-side chain (etl_source.load_bins) and the two WID per-capita
 # series the dataset carries. Per-adult WID gives the same Gini and shares by
 # construction (a per-capita conversion is a uniform rescale); only `mean` and
-# `population` would differ.
-PIP_SIDE = ("PIP", "PIP_consinc", "PIP_topadj")
+# `population` would differ. The two `_wb` series are the parallel chain on the
+# Wollburg et al. (2023) income basis (consinc.py, "A SECOND METHOD") — a
+# comparison, never the deck's bridging column; appended last so nothing built
+# on the first three moves.
+PIP_SIDE = ("PIP", "PIP_consinc", "PIP_topadj", "PIP_consinc_wb", "PIP_topadj_wb")
 WID_SIDE = ("WID_pretax_per_capita", "WID_posttax_per_capita")
 
 # Shares are in PERCENT, as PIP and WID publish them.

@@ -207,6 +207,17 @@ DECK_SERIES_LABELS = {
         "PIP adjusted to an income basis (consumption countries mapped via the "
         "dual-country regression)"
     ),
+    # The parallel comparison chain on the Wollburg et al. (2023) income basis
+    # (consinc.py, "A SECOND METHOD"). Never in BRIDGING_ORDER: it exists only on
+    # the reference-year dataset and the year-vs-year scatters.
+    "PIP_consinc_wb": (
+        "PIP on a disposable-income basis via the Wollburg et al. (2023) inverse "
+        "(comparison method, not the bridging column)"
+    ),
+    "PIP_topadj_wb": (
+        "PIP on the Wollburg et al. (2023) income basis, with WID's top 1% appended "
+        "(comparison method, not the bridging column)"
+    ),
     "PIP": "PIP (disposable income or consumption, per capita)",
 }
 
@@ -221,6 +232,10 @@ BRIDGING_ORDER = [
     "WID_posttax_rescaled",
     "PIP_consinc",
 ]
+
+# The parallel chain load_bins() builds beside the bridging one, on the Wollburg
+# et al. (2023) income basis. Deliberately NOT in BRIDGING_ORDER.
+WB_CHAIN = ("PIP_consinc_wb", "PIP_topadj_wb")
 
 # The three example countries used by the per-country Q2 figure.
 EXAMPLE_COUNTRIES = ["United States", "Indonesia", "Nigeria"]
@@ -508,7 +523,7 @@ def load_bins(table, source="cache", branch=None):
     # PIP_consinc -> PIP_topadj (the top-1% method) -> WID_posttax_rescaled
     # (whose country means are forced onto PIP_topadj). Rebuilding only the first
     # would leave the other two paired with the ETL's superseded version.
-    untouched = ~bins["series"].isin(["PIP_consinc", "PIP_topadj", "WID_posttax_rescaled"])
+    untouched = ~bins["series"].isin(["PIP_consinc", "PIP_topadj", "WID_posttax_rescaled", *WB_CHAIN])
     out = [bins[untouched]]
     for y in sorted(bins["year"].unique()):
         gy = bins[bins["year"] == y]
@@ -520,7 +535,14 @@ def load_bins(table, source="cache", branch=None):
                                grid=TOPADJ_METHOD != "append")
         rs = rescale.build_from_bins(pd.concat([gy[untouched[gy.index]], ta], ignore_index=True),
                                      mean_source="PIP_topadj")
-        out += [ci, ta, rs]
+        # The parallel comparison chain (consinc.py, "A SECOND METHOD"): the same
+        # top-1% method on the Wollburg et al. income basis. Never the bridging
+        # column; read only by the reference-year dataset and scatters.
+        ci_wb = consinc.build_pip_consinc_wb(gy, wt)
+        ta_wb = topadj.build_top1(pd.concat([gy[untouched[gy.index]], ci_wb], ignore_index=True),
+                                  TOPADJ_METHOD, base_series="PIP_consinc_wb",
+                                  out_series="PIP_topadj_wb", grid=TOPADJ_METHOD != "append")
+        out += [ci, ta, rs, ci_wb, ta_wb]
     res = pd.concat(out, ignore_index=True)
 
     # Guards. The conversion is a pure per-rank rescaling, so: income countries
@@ -532,7 +554,7 @@ def load_bins(table, source="cache", branch=None):
     assert len(common) == len(ci), "PIP_consinc lost or gained bins"
     # Every series must be on the grid, except PIP_topadj when the top-1% method
     # is one that re-ranks (see TOPADJ_METHOD above).
-    ragged = {"PIP_topadj"} if TOPADJ_METHOD == "append" else set()
+    ragged = {"PIP_topadj", "PIP_topadj_wb"} if TOPADJ_METHOD == "append" else set()
     n_bins = res[~res["series"].isin(ragged)].groupby(
         ["series", "country", "year"], observed=True).size()
     assert (n_bins == DECK_BINS).all(), \
@@ -547,6 +569,21 @@ def load_bins(table, source="cache", branch=None):
         "income-basis countries should pass through unchanged"
     assert np.allclose(ratio[~is_income], expected[~is_income], rtol=1e-6), \
         "consumption countries do not match the correction profile"
+
+    # The same guards for the parallel Wollburg et al. chain: bins intact, income
+    # countries untouched, and the paper's forward model reproducing each
+    # consumption country's bins from the inverse (consinc.wb_verify_inverse).
+    ci_wb = res[res["series"] == "PIP_consinc_wb"].set_index(["country", "year", "percentile"])
+    assert len(pip.index.intersection(ci_wb.index)) == len(ci_wb) == len(pip), \
+        "PIP_consinc_wb lost or gained bins"
+    ratio_wb = (ci_wb.loc[common, "avg"] / pip.loc[common, "avg"]).to_numpy(float)
+    assert np.allclose(ratio_wb[is_income], 1.0, rtol=1e-9), \
+        "income-basis countries should pass through the Wollburg inverse unchanged"
+    wb_groups = {k: g["avg"].to_numpy(float) for k, g in
+                 ci_wb.reset_index().sort_values(["country", "year", "p_low"]).groupby(["country", "year"], observed=True)}
+    for (c, y), g in pip.reset_index().sort_values(["country", "year", "p_low"]).groupby(["country", "year"], observed=True):
+        if wtype.get((c, y)) == "consumption":
+            consinc.wb_verify_inverse(g["avg"].to_numpy(float), wb_groups[(c, y)])
     return res
 
 

@@ -508,6 +508,45 @@ live in `raw/wid/temp_country_data/` and `raw/wid/fetch_progress.json`
    coefficients existed only per percentile — it needs no special handling for
    the ten 0.1% bins above P99.
 
+   **A second method, run in parallel (2026-09-21) — the Wollburg et al. inverse.**
+   The profile above was estimated on *pre-tax* income, while PIP's income countries
+   report *disposable* income. To study that concept gap, `consinc.py` also carries
+   the inverse of Wollburg, Hallegatte & Mahler (2023, World Bank PRWP 10318,
+   appendix A), who fit
+
+   `ln(con_p) = ln(inc_p^0.93 + 0.68 + 0.26 · ln(inc_median))`
+
+   on 150 PIP surveys from 16 countries with both welfare types in the same year
+   (100 quantile pairs each, 2017 PPP $/day per capita; adj. R² 0.965, 0.887 below
+   $2.15). The two parameters are the ratio of the log-normal spreads (0.93) and a
+   *consumption floor* γ = 0.68 + 0.26 ln(median income) that rises with a country's
+   income level. On the same pairs, WID's ratio form fits with R² 0.772. Inverted per
+   country-year on the 100-bin grid: `inc_p = (con_p − γ)^(1/0.93)`, with the median
+   income solved from the median bin (`con_median = m^0.93 + γ(m)`, a unique root),
+   and **floored at $0.28/day** — PIP's own bottom code — where consumption sits at or
+   below γ (2023: 42 of the 103 consumption countries have such bins, 157 in all;
+   356 bins in 56 countries end up at the floor, South Sudan 30, Zambia 27,
+   Mozambique 26, DR Congo 25). **The constants are applied to the deck's 2021-PPP
+   values as they are** — the formula is not scale-free, but re-basing was not
+   adopted (the pure US price factor would be 1.1055).
+
+   Its one clear advantage is the income concept: PIP's own disposable income. Its
+   caveats are the ones this note already makes: it is fitted in the *other*
+   direction (inverting E[con | inc] is not E[inc | con]), and on the European-heavy
+   PIP dual sample rejected above as an estimation sample — nothing from Sub-Saharan
+   Africa or South Asia, where it is applied. In-sample, on the deck's 19 cached dual
+   surveys, the inverse predicts PIP's income percentiles from consumption better
+   than the WID profile (median log-RMSE 0.28 vs 0.45; predicted/actual 0.95 vs 0.75;
+   bottom five percentiles +16% vs −44%, where the WID profile pulls disposable income
+   far too low; top five +11% vs +6%) — but that sample is the paper's own.
+   `python data/scripts/consinc.py` prints the table. Against the baseline in 2023,
+   across the 103 consumption countries: median Gini 0.456 vs 0.478 (PIP as published
+   0.360), top-10% share 33.8% vs 36.5%, top-1% 8.2% vs 9.5%, country means within 1%
+   of consumption in the median (range 0.79–1.29). **It is never the bridging column**:
+   the series `PIP_consinc_wb` and `PIP_topadj_wb` (the same top-1% append on it, gate
+   decided per chain) exist only on the reference-year dataset and the year-vs-year
+   scatters (appendix slides), where the PIP dropdown offers them.
+
 6. **The top adjustment is a choice, and the deck's baseline is one of six.**
    PIP's surveys are thought to under-capture top incomes, so the deck adds a
    deliberately generous allowance for the missing top — assuming WID is right

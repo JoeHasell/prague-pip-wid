@@ -379,6 +379,20 @@ Full detail in `CLAUDE.md`. Everything runs on Joe's Mac.
   predate a critical PPP bug fix and are stale). New chart components must
   fetch their data from per-figure files produced by pipeline scripts — no
   hard-coded data arrays in component JS.
+- **DONE 2026-09-21 — a second consumption→income method (Wollburg et al. inverse),
+  in parallel, on the reference-year scatters only.** Prompted by the concept gap:
+  the baseline's WID profile was estimated on pre-tax income, PIP's income countries
+  are disposable income. `consinc.py` ("A SECOND METHOD") inverts Wollburg,
+  Hallegatte & Mahler (2023, PRWP 10318) — `inc = (con − γ)^(1/0.93)`,
+  γ = 0.68 + 0.26 ln(median income), the median solved by bisection from the median
+  bin, floored at $0.28/day (PIP's bottom code), constants applied to the 2021-PPP
+  values without re-basing (Pablo's call). `etl_source.load_bins()` builds
+  `PIP_consinc_wb` → `PIP_topadj_wb` beside the baseline chain, with its own guard
+  (forward model reproduces the bins; income countries untouched); `refyears.PIP_SIDE`,
+  `33_`, `34_` and `fig-refyear-scatter.js` carry the two series, the gate now decided
+  per chain. Nothing else reads them: every other figure rebuilt identically, the
+  old dataset rows are byte-identical. Verdict and numbers in `data/README.md`
+  caveat 5; the in-sample table in `python data/scripts/consinc.py`.
 - **DONE 2026-09-21 — reference-year indicators from the ADJUSTED PIP bins.**
   `data/processed/reference_year_indicators.csv`, built by
   `33_reference_year_indicators.py` from two new cache tables
