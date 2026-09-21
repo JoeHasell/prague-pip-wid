@@ -21,10 +21,13 @@ python data/scripts/refresh_from_etl.py --staging worktree-etl-data-wid-update
 ```
 
 Until owid/etl#6806 merges the catalog modes stop with an error, because
-`etl_source.WID_VERSION` is a version the catalog does not carry yet — use `--staging`.
+`etl_source.WID_VERSION` is a version the catalog does not carry yet — use `--staging`,
+or `--local <path to an owid/etl checkout>` in which the branch has been built (the
+staging server was already gone on 2026-09-21; the committed cache was rebuilt that way).
 
-Commit `data/raw/etl/` and `data/figures/` together. `python data/scripts/refresh_from_etl.py --check`
-reports staleness without changing anything (non-zero exit when the figures are behind).
+Commit `data/raw/etl/`, `data/figures/` and `data/processed/reference_year_indicators.csv`
+together. `python data/scripts/refresh_from_etl.py --check` reports staleness without
+changing anything (non-zero exit when the figures or the dataset are behind).
 
 Full detail, including the `ETL_VERSION` pin the refresh cannot check for you, in
 [`data/README.md`](data/README.md).
@@ -376,6 +379,26 @@ Full detail in `CLAUDE.md`. Everything runs on Joe's Mac.
   predate a critical PPP bug fix and are stale). New chart components must
   fetch their data from per-figure files produced by pipeline scripts — no
   hard-coded data arrays in component JS.
+- **DONE 2026-09-21 — reference-year indicators from the ADJUSTED PIP bins.**
+  `data/processed/reference_year_indicators.csv`, built by
+  `33_reference_year_indicators.py` from two new cache tables
+  (`reference_year_bins`, `wid_reference_year_indicators`) and `pip_welfare_basis`,
+  with the matcher and the bins-based indicator code in `refyears.py`. It is the
+  ETL's `inequality_comparison` method — nearest PIP SURVEY year within ±5 of a
+  reference year — applied to every reference year 1990–2024 independently, on
+  PIP / PIP_consinc / PIP_topadj (the deck's own chain, so the append top-1% and
+  the logit cons→income profile), plus the two WID per-capita series at the
+  reference year itself; Gini, top-10% / bottom-40% / top-1% shares, Palma, mean,
+  population, all from the bins on the deck's 100-bin grid. Both the reference
+  year and the survey year actually used are saved. Ties go to the earlier
+  survey and nothing is excluded (the ETL's 1988–89 / 2020–24 exclusions protect
+  one 1993/2019 pair; that is a decision for `refyears.pair()`, which also carries
+  the ETL's same-welfare rule). Against the ETL's own 1993/2019 output the port
+  reproduces the matched years for 95/97 and 97/97 countries; the two residuals
+  are countries the ETL re-matches to a same-welfare pair further away, which
+  independent matching cannot do. The cache was rebuilt from a local ETL build
+  (`--local`, a new source tier) because owid/etl#6806's staging server was gone;
+  every pre-existing cache table came back content-identical.
 - **DONE 2026-09-09 — the variants slide shows BOTH choices, on one key
   alphabet.** `slide-topadj-variants` splits the cons->income column as well as
   the top-adjusted one, and i/ii/iii now name the same slope in both, so a single
@@ -735,7 +758,8 @@ components/
 data/                   # REPRODUCIBLE DATA PIPELINE (see §12 and data/README.md)
   scripts/              # numbered pipeline steps + verification suite
   raw/                  # committed raw caches (WID API pull, PIP extract)
-  processed/            # regenerable outputs incl. pip_wid_harmonized_2023.csv
+  processed/            # regenerable outputs incl. pip_wid_harmonized_2023.csv (local
+                        # pipeline) and reference_year_indicators.csv (ETL-derived, 33_)
   figures/              # one fig_*.json per deck figure, fetched by fig-*.js
 src/
   deck.js               # engine: render, nav, components, ANNOTATION overlay

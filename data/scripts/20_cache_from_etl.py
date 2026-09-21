@@ -40,6 +40,17 @@ and the figures do not need all of it. What they need is:
   treemap_regions                      ~220 rows  the treemap's eight-region grouping,
                                                   built from PIP's regions plus a
                                                   Western Europe split
+  reference_year_bins                 480k rows   PIP and WID post-tax per capita, 109
+                                                  bins, at every PIP SURVEY country-year
+                                                  (2,201) — what load_bins() needs to
+                                                  rebuild the adjusted PIP chain in any
+                                                  year (33_reference_year_indicators.py)
+  wid_reference_year_indicators       ~15k rows   Gini / shares / Palma of the two WID
+                                                  per-capita series at EVERY country-year,
+                                                  computed here by refyears.py on the
+                                                  deck's grid — the 1.6M bin rows behind
+                                                  them are too large to commit, and 33_
+                                                  proves the table still matches the bins
 
 The scatter slides read `inequality_comparison` rather than recomputing their
 measures from the bins. That dataset already does the reference-year matching
@@ -57,15 +68,23 @@ USAGE
         pull from an OWID staging server, for use while the ETL pull request
         that adds these datasets is still open. Internal network only.
 
+    python data/scripts/20_cache_from_etl.py --local <path to an owid/etl checkout>
+        read that checkout's built data/garden/ directory — the same files a
+        staging server serves. For an ETL developer with the branch built
+        locally, or once its staging server has been torn down.
+
     python data/scripts/20_cache_from_etl.py --skip-heavy
         refresh only the small tables, leaving the bin-derived ones alone.
 
-After running, re-generate the figures:
+After running, re-generate the figures and the reference-year dataset (or let
+refresh_from_etl.py do all of it):
     python data/scripts/21_fig_bridging_from_etl.py
     python data/scripts/22_fig_reference_year_trends.py
     python data/scripts/23_fig_explainers_from_etl.py
     python data/scripts/24_fig_top_of_distribution_from_etl.py
     python data/scripts/25_fig_scatters_from_etl.py
+    ...
+    python data/scripts/33_reference_year_indicators.py
 """
 
 import argparse
@@ -74,6 +93,7 @@ import sys
 import numpy as np
 
 import etl_source as es
+import refyears
 
 # Tables cached verbatim from the ETL.
 PLAIN_TABLES = [
@@ -87,52 +107,92 @@ BIN_COLUMNS = ["country", "year", "series", "percentile", "p_low", "p_high", "po
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[1])
-    ap.add_argument("--staging", metavar="BRANCH", help="pull from staging-site-<BRANCH>")
+    where_from = ap.add_mutually_exclusive_group()
+    where_from.add_argument("--staging", metavar="BRANCH", help="pull from staging-site-<BRANCH>")
+    where_from.add_argument("--local", metavar="ETL_REPO",
+                            help="read a local owid/etl checkout's built data/garden/ directory")
     ap.add_argument("--skip-heavy", action="store_true", help="skip the bin-derived tables")
     args = ap.parse_args()
 
-    source = "staging" if args.staging else "catalog"
-    where = f"staging ({args.staging})" if args.staging else "the OWID catalog"
+    source = "staging" if args.staging else "local" if args.local else "catalog"
+    where = (f"staging ({args.staging})" if args.staging
+             else f"the local ETL build at {args.local}" if args.local
+             else "the OWID catalog")
+    tier = {"source": source, "branch": args.staging, "root": args.local}
     print(f"Pulling ETL version {es.ETL_VERSION} from {where}\n")
 
     for table in PLAIN_TABLES:
         try:
-            df = es.load(table, source=source, branch=args.staging)
+            df = es.load(table, **tier)
         except Exception as e:  # noqa: BLE001 - name the table, then stop
             print(f"ERROR fetching {table}: {e}")
             print(
                 "\nIf the ETL pull request is not merged yet, the catalog does not have "
-                "these datasets. Use --staging <etl-branch>."
+                "these datasets. Use --staging <etl-branch>, or --local <etl-repo> with the "
+                "branch built there."
             )
             return 1
         print(f"  {table:<38} {len(df):>7,} rows -> {es.write_cache(table, df).name}")
+
+    # The welfare basis is needed below to pick out PIP's survey years.
+    basis = es.load("pip_welfare_basis", **tier)
+    print(f"  {'pip_welfare_basis':<38} {len(basis):>7,} rows -> {es.write_cache('pip_welfare_basis', basis).name}")
 
     if args.skip_heavy:
         print("\n--skip-heavy: leaving the bin-derived tables as they are.")
         return 0
 
     # ------------------------------------------------------------------
-    # The bin-level table. Read once; three cache tables come out of it.
+    # The bin-level table. Read once; four cache tables come out of it.
     # ------------------------------------------------------------------
     print("\nReading the bin-level distributions (large: ~6.4M rows)…")
-    bins = es.load("income_distributions", source=source, branch=args.staging, columns=BIN_COLUMNS)
+    bins = es.load("income_distributions", columns=BIN_COLUMNS + ["wid_extrapolated"], **tier)
     bins["year"] = bins["year"].astype(int)
     for c in ("p_low", "p_high", "pop", "avg"):
         bins[c] = bins[c].astype(np.float64)
+    bins["wid_extrapolated"] = bins["wid_extrapolated"].astype(str)
     years = sorted(bins["year"].unique())
     print(f"  {len(bins):,} rows, {years[0]}-{years[-1]}, {bins['country'].nunique()} countries")
 
     # 1. The three example countries, every year (the per-country Q2 figure).
-    ex = bins[bins["country"].isin(es.EXAMPLE_COUNTRIES)].reset_index(drop=True)
+    ex = bins.loc[bins["country"].isin(es.EXAMPLE_COUNTRIES), BIN_COLUMNS].reset_index(drop=True)
     assert not ex.empty, "no rows for the example countries — check their names"
     check_full_bins(ex, "example_country_bins")
     print(f"  {'example_country_bins':<38} {len(ex):>7,} rows -> {es.write_cache('example_country_bins', ex).name}")
 
     # 2. One year, every country and series (top-of-distribution + explainers).
     year = es.DISPLAY_YEAR if es.DISPLAY_YEAR in years else years[-1]
-    dy = bins[bins["year"] == year].reset_index(drop=True)
+    dy = bins.loc[bins["year"] == year, BIN_COLUMNS].reset_index(drop=True)
     check_full_bins(dy, "display_year_bins")
     print(f"  {'display_year_bins':<38} {len(dy):>7,} rows -> {es.write_cache('display_year_bins', dy).name}  (year {year})")
+
+    # 3. Every PIP SURVEY country-year, for the two series load_bins() needs to
+    #    rebuild the adjusted PIP chain there (PIP itself, and WID post-tax per
+    #    capita for the top-1% share). The reference-year dataset reads this.
+    surveys = refyears.survey_years(basis)
+    ref = bins.merge(surveys[["country", "year"]], on=["country", "year"])
+    ref = ref.loc[ref["series"].isin(["PIP", "WID_posttax_per_capita"]), BIN_COLUMNS].reset_index(drop=True)
+    check_full_bins(ref, "reference_year_bins")
+    covered = ref.groupby(["country", "year"], observed=True)["series"].nunique()
+    assert len(covered) == len(surveys) and (covered == 2).all(), \
+        f"reference_year_bins: {len(covered)} of {len(surveys)} survey country-years carry both series"
+    print(f"  {'reference_year_bins':<38} {len(ref):>7,} rows -> {es.write_cache('reference_year_bins', ref).name}"
+          f"  ({len(surveys):,} survey country-years)")
+
+    # 4. The WID side of the reference-year dataset: indicators at EVERY
+    #    country-year, computed here on the deck's grid because the bins behind
+    #    them are too many to commit. 33_ re-derives the survey-year subset from
+    #    reference_year_bins and asserts it matches, so a stale table cannot pass.
+    wid = bins[bins["series"].isin(refyears.WID_SIDE)]
+    flag = (wid.groupby(["series", "country", "year"], observed=True)["wid_extrapolated"]
+               .agg(lambda s: s.iloc[0]).rename("wid_extrapolated").reset_index())
+    ind = refyears.indicators_from_bins(es.aggregate_to_percentiles(wid[BIN_COLUMNS]))
+    ind = ind.merge(flag, on=["series", "country", "year"], how="left")
+    assert ind["wid_extrapolated"].notna().all()
+    n_expected = bins["country"].nunique() * len(years) * len(refyears.WID_SIDE)
+    assert len(ind) == n_expected, f"wid_reference_year_indicators: {len(ind)} rows, expected {n_expected}"
+    print(f"  {'wid_reference_year_indicators':<38} {len(ind):>7,} rows -> "
+          f"{es.write_cache('wid_reference_year_indicators', ind).name}")
 
     # ------------------------------------------------------------------
     # PIP's own percentiles (the consumption->income explainer), the cross-source
@@ -143,16 +203,13 @@ def main():
     # because an open ETL pull request can change them.
     print(f"\nReading the comparison dataset and WID from {where}, PIP percentiles and regions "
           "from the OWID catalog…")
-    basis = es.load("pip_welfare_basis", source=source, branch=args.staging)
-    print(f"  {'pip_welfare_basis':<38} {len(basis):>7,} rows -> {es.write_cache('pip_welfare_basis', basis).name}")
-
     dual = es.load_pip_dual_percentiles()
     print(f"  {'pip_dual_percentiles':<38} {len(dual):>7,} rows -> {es.write_cache('pip_dual_percentiles', dual).name}")
 
-    comp = es.load_inequality_comparison(source=source, branch=args.staging)
+    comp = es.load_inequality_comparison(**tier)
     print(f"  {'inequality_comparison':<38} {len(comp):>7,} rows -> {es.write_cache('inequality_comparison', comp).name}")
 
-    posttax = es.load_wid_posttax_gini(source=source, branch=args.staging)
+    posttax = es.load_wid_posttax_gini(**tier)
     print(f"  {'wid_posttax_gini':<38} {len(posttax):>7,} rows -> {es.write_cache('wid_posttax_gini', posttax).name}")
 
     regions = es.load_country_regions()
@@ -162,7 +219,7 @@ def main():
     print(f"  {'pip_observed_inequality':<38} {len(pip_obs):>7,} rows -> "
           f"{es.write_cache('pip_observed_inequality', pip_obs).name}")
 
-    wid_obs = es.load_wid_observed_inequality(source=source, branch=args.staging)
+    wid_obs = es.load_wid_observed_inequality(**tier)
     print(f"  {'wid_observed_inequality':<38} {len(wid_obs):>7,} rows -> "
           f"{es.write_cache('wid_observed_inequality', wid_obs).name}")
 
@@ -170,7 +227,7 @@ def main():
     print(f"  {'treemap_regions':<38} {len(treemap_regions):>7,} rows -> "
           f"{es.write_cache('treemap_regions', treemap_regions).name}")
 
-    print("\nDone. Now re-run the figure scripts (21_ through 25_).")
+    print("\nDone. Now re-run the figure scripts (21_ onwards) and 33_reference_year_indicators.py.")
     return 0
 
 

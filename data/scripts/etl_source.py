@@ -80,14 +80,18 @@ THE TWO ETL DATASETS
       inequality_metrics                   Gini/GE(0)/GE(1)/GE(2) per country-year
       inequality_change_by_reference_year  rising/falling/stable per reference year
 
-WHERE THE DATA COMES FROM (three tiers, in order)
--------------------------------------------------
+WHERE THE DATA COMES FROM (four tiers, in order)
+------------------------------------------------
   1. the public OWID catalog — the permanent home. The datasets landed there with
      owid/etl#6764 (merged 2026-09-02), so this is the normal path and needs no VPN;
   2. an OWID staging server — only while a FUTURE ETL pull request changes these
      datasets and they exist there before merging (internal network only, and
      ephemeral: the server is torn down when the branch is merged or deleted);
-  3. the committed cache in data/raw/etl/ — written by 20_cache_from_etl.py.
+  3. a LOCAL ETL checkout's data directory (`--local <path to owid/etl>`) — the
+     same feather files a staging server serves, read straight from disk. For an
+     ETL developer who has built the branch locally; it also outlives a staging
+     server that has been torn down. Say which build it was in the commit;
+  4. the committed cache in data/raw/etl/ — written by 20_cache_from_etl.py.
 
 All four datasets the figures read follow those tiers: the two harmonized ones above,
 plus `inequality_comparison` and the WID dataset itself (the scatters' post-tax Gini
@@ -106,6 +110,7 @@ Refresh the cache AND every figure in one command (see refresh_from_etl.py):
 
     # only while an ETL pull request that changes these datasets is still open:
     python data/scripts/refresh_from_etl.py --staging <owid/etl branch name>
+    python data/scripts/refresh_from_etl.py --local <path to a built owid/etl checkout>
 
 Nothing here watches the ETL: until the refresh runs, the deck renders whatever
 was cached last.
@@ -143,11 +148,21 @@ CACHE_DIR = Path(__file__).resolve().parents[1] / "raw" / "etl"
 #   example_country_bins  the 109 bins of the three example countries, from
 #                         income_distributions (whose 6.4M rows are too large
 #                         to commit and unnecessary for the figures).
+#   reference_year_bins   PIP and WID post-tax per capita at every PIP SURVEY
+#                         country-year — enough for load_bins() to rebuild the
+#                         PIP-side chain in any year (33_reference_year_indicators.py).
+#   wid_reference_year_indicators
+#                         Gini / shares / Palma of the two WID per-capita series
+#                         at EVERY country-year, computed at cache time by
+#                         refyears.indicators_from_bins on the deck's grid: the
+#                         1.6M WID bin rows behind them are too large to commit.
 CACHE_ONLY_TABLES = {
     "pip_observed_inequality",
     "wid_observed_inequality",
     "example_country_bins",
     "display_year_bins",
+    "reference_year_bins",
+    "wid_reference_year_indicators",
     "pip_dual_percentiles",
     "country_regions",
     "inequality_comparison",
@@ -324,7 +339,7 @@ def aggregate_to_percentiles(bins):
     the between-country component are unchanged; only dispersion INSIDE the top
     1% is given up.
     """
-    m = bins["p_low"].to_numpy(dtype=float) >= TOP1_START - 1e-9
+    m = bins["p_low"].to_numpy(dtype=float) >= TOP1_START - RANK_EPS
     keep, top = bins[~m], bins[m]
     grp = ["series", "country", "year"]
     inc = (top["avg"].to_numpy(float) * top["pop"].to_numpy(float))
@@ -344,6 +359,12 @@ def aggregate_to_percentiles(bins):
 
 TOP1_START = 0.99          # where the top 1% begins; mirrors topadj.TOP1_START
 TOP1_LABEL = "p99p100"
+# Tolerance for rank tests. The ETL stores p_low / p_high as FLOAT32, so a rank
+# arrives as e.g. 0.8999999761581421 for p90p91: a test against 0.9 with a 1e-9
+# slack silently drops that bin, and 0.99 only survives because float32 happens
+# to round it UP. Anything comparing ranks uses this, or integrates over a rank
+# window instead (refyears.window_income).
+RANK_EPS = 1e-6
 
 # Each source's own published inequality measures. Used by the observation-matched
 # reference-year figures, which only ever read a country-year the source actually
@@ -377,11 +398,12 @@ WID_DATASET = ("wid", WID_VERSION, "world_inequality_database")
 REGION_RELABEL = {"Latin America and Caribbean": "Latin America and the Caribbean"}
 
 
-def garden_url(namespace, version, dataset, table, source="catalog", branch=None):
-    """URL of any garden table, from the public catalog or a branch's staging server.
+def garden_url(namespace, version, dataset, table, source="catalog", branch=None, root=None):
+    """URL (or local path) of any garden table.
 
     The catalog serves parquet and feather; a staging server serves the ETL data
-    directory as it sits on disk, which is feather. `read_garden` picks the reader.
+    directory as it sits on disk, which is feather; a local ETL checkout (`root`)
+    holds that same directory under data/garden/. `read_garden` picks the reader.
     """
     if source == "staging":
         assert branch, "source='staging' needs the ETL branch name"
@@ -389,12 +411,15 @@ def garden_url(namespace, version, dataset, table, source="catalog", branch=None
             f"http://staging-site-{branch}:{STAGING_PORT}/garden/"
             f"{namespace}/{version}/{dataset}/{table}.feather"
         )
+    if source == "local":
+        assert root, "source='local' needs the path to an owid/etl checkout"
+        return str(Path(root) / "data" / "garden" / namespace / version / dataset / f"{table}.feather")
     assert source == "catalog", f"unknown source: {source}"
     return f"{CATALOG_ROOT}/{namespace}/{version}/{dataset}/{table}.parquet"
 
 
 def read_garden(url, columns=None):
-    """Read a garden table from a catalog (parquet) or staging (feather) URL.
+    """Read a garden table from a catalog (parquet) or staging / local (feather) URL.
 
     A missing catalog path almost always means the ETL version pinned above is not published
     yet — the pyarrow error for that is unhelpful, so say what to do instead.
@@ -411,6 +436,12 @@ def read_garden(url, columns=None):
                 "committed cache in data/raw/etl/ was built; a plain catalog refresh works once "
                 "the ETL pull request merges."
             ) from e
+        if not url.startswith("http"):
+            raise RuntimeError(
+                f"{url} is not in that ETL checkout.\n"
+                "`--local` reads a checkout's data/garden/ directory, so the dataset must have been "
+                "built there (etlr) at the version pinned in etl_source.py."
+            ) from e
         raise
 
 
@@ -423,6 +454,12 @@ def staging_url(table, branch):
     """URL of one ETL table on the staging server of an OWID branch."""
     return garden_url("poverty_inequality", ETL_VERSION, TABLES[table], table,
                       source="staging", branch=branch)
+
+
+def local_url(table, root):
+    """Path of one ETL table inside a local owid/etl checkout's data directory."""
+    return garden_url("poverty_inequality", ETL_VERSION, TABLES[table], table,
+                      source="local", root=root)
 
 
 def cache_path(table):
@@ -513,12 +550,13 @@ def load_bins(table, source="cache", branch=None):
     return res
 
 
-def load(table, source="cache", branch=None, columns=None):
+def load(table, source="cache", branch=None, columns=None, root=None):
     """Return one ETL table as a DataFrame, with deck series names.
 
     source="cache"    read the committed cache (default: offline and reproducible).
     source="catalog"  read the public OWID catalog.
     source="staging"  read an OWID staging server (needs `branch`).
+    source="local"    read a local owid/etl checkout's data directory (needs `root`).
     """
     if table in CACHE_ONLY_TABLES:
         assert source == "cache", f"{table} is a derived cache subset; it has no {source} URL"
@@ -536,8 +574,13 @@ def load(table, source="cache", branch=None, columns=None):
             df = df[columns]
         return _to_deck_series(df)
 
-    url = staging_url(table, branch) if source == "staging" else catalog_url(table)
-    df = pd.read_feather(url, columns=columns)
+    if source == "staging":
+        url = staging_url(table, branch)
+    elif source == "local":
+        url = local_url(table, root)
+    else:
+        url = catalog_url(table)
+    df = read_garden(url, columns=columns)
     return _to_deck_series(df)
 
 
@@ -600,22 +643,22 @@ def load_country_regions():
     return latest[["country", "region"]].sort_values("country").reset_index(drop=True)
 
 
-def load_inequality_comparison(source="catalog", branch=None):
+def load_inequality_comparison(source="catalog", branch=None, root=None):
     """The cross-source comparison table: PIP and WID pre-tax Gini, top-10% share,
     Palma and (WID only) top-1% share, at the matched 1993 and 2019 observations."""
     df = read_garden(garden_url(*COMPARISON_DATASET, "inequality_comparison",
-                                source=source, branch=branch))
+                                source=source, branch=branch, root=root))
     for c in ("country", "ref_year", "reference_years", "only_all_series"):
         df[c] = df[c].astype(str)
     df["year"] = df["year"].astype(int)
     return df.reset_index(drop=True)
 
 
-def load_wid_posttax_gini(first_year=1985, source="catalog", branch=None):
+def load_wid_posttax_gini(first_year=1985, source="catalog", branch=None, root=None):
     """WID's post-tax national income Gini, with extrapolations — the second
     y-axis on the Gini scatter."""
     df = read_garden(
-        garden_url(*WID_DATASET, "inequality", source=source, branch=branch),
+        garden_url(*WID_DATASET, "inequality", source=source, branch=branch, root=root),
         columns=["country", "year", "welfare_type", "extrapolated", "gini"],
     )
     for c in ("country", "welfare_type", "extrapolated"):
@@ -715,7 +758,7 @@ def load_pip_observed_inequality():
     return out.sort_values(["country", "year"]).reset_index(drop=True)
 
 
-def load_wid_observed_inequality(source="catalog", branch=None):
+def load_wid_observed_inequality(source="catalog", branch=None, root=None):
     """WID's published inequality measures, excluding the country-years WID does not
     rate as directly supported by data.
 
@@ -725,7 +768,7 @@ def load_wid_observed_inequality(source="catalog", branch=None):
     extrapolation flag, so this is a wider set than it used to be.
     """
     df = read_garden(
-        garden_url(*WID_DATASET, "inequality", source=source, branch=branch),
+        garden_url(*WID_DATASET, "inequality", source=source, branch=branch, root=root),
         columns=["country", "year", "welfare_type", "extrapolated", "gini", "palma_ratio",
                  "share_top_10", "share_top_1"],
     )

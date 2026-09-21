@@ -35,6 +35,10 @@
 > # where the committed figures come from today (owid/etl#6806, WID 2026-09-02):
 > python data/scripts/refresh_from_etl.py --staging worktree-etl-data-wid-update
 >
+> # From a local owid/etl checkout in which the branch has been built (etlr) — what an
+> # ETL developer uses, and the fallback once a staging server has been torn down:
+> python data/scripts/refresh_from_etl.py --local /path/to/owid/etl
+>
 > # Change nothing, just report whether the committed figures are stale:
 > python data/scripts/refresh_from_etl.py --check
 > ```
@@ -52,13 +56,15 @@
 > refreshing from a version that no longer exists. Use `--staging` until then; after
 > the merge, `refresh_from_etl.py` with no arguments is the normal route again.
 >
-> Then **commit `data/raw/etl/` and `data/figures/` together**. `--check` rebuilds
-> into a temporary directory, restores the committed figures whatever happens, and
-> exits non-zero when they no longer match the ETL — so it is safe to run any time
-> and works as a pre-talk sanity check.
+> Then **commit `data/raw/etl/`, `data/figures/` and
+> `data/processed/reference_year_indicators.csv` together**. `--check` rebuilds into a
+> temporary directory, restores the committed figures and dataset whatever happens, and
+> exits non-zero when they no longer match the ETL — so it is safe to run any time and
+> works as a pre-talk sanity check.
 >
-> It runs the cache refresh and all eight figure scripts in dependency order. Running
-> them by hand still works if you need one in isolation:
+> It runs the cache refresh, every figure script in dependency order, and then the one
+> ETL-derived dataset script (`33_reference_year_indicators.py`, see "Reference-year
+> indicators" below). Running them by hand still works if you need one in isolation:
 >
 > ```bash
 > python data/scripts/20_cache_from_etl.py            # the ETL cache
@@ -70,7 +76,22 @@
 > python data/scripts/26_fig_reference_year_observed.py  # Q1, observed only
 > python data/scripts/27_fig_between_share_trend.py    # Q2 between-share over time
 > python data/scripts/28_fig_means_from_etl.py         # surveys vs national accounts
+> python data/scripts/29_fig_mld_scatter.py            # within-MLD, PIP vs WID
+> python data/scripts/31_fig_top1_share_scatter.py     # top-1% shares, PIP chain vs WID
+> python data/scripts/33_reference_year_indicators.py  # the reference-year DATASET (not a figure)
 > ```
+>
+> **Reference-year indicators** (`data/processed/reference_year_indicators.csv`) is the
+> ETL's `inequality_comparison` idea applied to the deck's ADJUSTED PIP: for every
+> reference year 1990–2024, each country's nearest PIP survey year within ±5 (ties to the
+> earlier survey; no excluded years), with Gini, top-10% / bottom-40% / top-1% shares,
+> Palma, mean and population computed from the bins for PIP, PIP_consinc and PIP_topadj —
+> and the two WID per-capita series at the reference year itself, from the same code on
+> the same 100-bin grid. It lives in `data/processed/` but is built from the ETL cache
+> (`reference_year_bins`, `wid_reference_year_indicators`, `pip_welfare_basis`), not by
+> the local pipeline. Each reference year is matched on its own; use `refyears.pair()` to
+> compare two of them under the ETL's same-welfare rule. Provenance and caveats are in
+> the script's docstring; the matcher and the indicator code are `data/scripts/refyears.py`.
 >
 > **One trap the refresh cannot catch for you.** `etl_source.ETL_VERSION` pins the
 > dataset version (currently `2026-08-25`). New data flowing through the *same*
@@ -552,8 +573,15 @@ live in `raw/wid/temp_country_data/` and `raw/wid/fetch_progress.json`
    between share, and the between components not at all — aggregation preserves
    each country's total income and population, so country means and top-1% shares
    are untouched by construction. Only dispersion inside the top 1% is given up.
-   Country Ginis computed from bins do fall by ~0.03, but every Gini the deck
-   displays comes from the sources' own published values, not from bins.
+   Country Ginis computed from bins move by at most 0.0006 (median 0.0001) between
+   the two grids — measured 2026-09-21; an earlier version of this note said ~0.03,
+   which was wrong — and every Gini the deck displays comes from the sources' own
+   published values, not from bins. Against PIP's published survey-year Gini, a
+   bins-based Gini is lower by a median 0.0006; 116 of 2,200 survey country-years
+   are more than 0.005 away and 21 more than 0.01, the worst Malawi 1997 (−0.063) —
+   the thousand bins are a lined-up distribution, not the survey microdata, so a
+   few country-years genuinely differ. Top-1% shares are within 1pp for 99.4% of
+   survey country-years. (`refyears.py`, `33_reference_year_indicators.py`.)
 
    One consequence worth knowing: **select by rank window, never by bin label.**
    A label lookup assumes both the grid and that a label describes the rank,

@@ -11,18 +11,24 @@ figure script, in the right order. This does both and reports what moved.
 
     python data/scripts/refresh_from_etl.py                      # from the public catalog
     python data/scripts/refresh_from_etl.py --staging <branch>   # while an ETL PR is open
+    python data/scripts/refresh_from_etl.py --local <etl-repo>   # from a local ETL build
     python data/scripts/refresh_from_etl.py --check              # report drift, change nothing
 
 The committed figures currently come from an ETL branch, not the catalog: etl_source.WID_VERSION
 is 2026-09-02, which the catalog does not carry until owid/etl#6806 merges. Until then the catalog
 modes (including --check) stop with a message naming the missing path; use
-`--staging worktree-etl-data-wid-update`.
+`--staging worktree-etl-data-wid-update` while that server is up, or `--local <path to an
+owid/etl checkout>` in which the branch has been built.
+
+Besides the figures this also rebuilds the one ETL-derived DATASET the repo carries,
+data/processed/reference_year_indicators.csv (33_reference_year_indicators.py).
 
 AFTER RUNNING
 -------------
-Commit both data/raw/etl/ and data/figures/. The --check mode is the useful one in
-CI or before a talk: it rebuilds into a temporary directory and tells you whether
-the committed figures are stale, without touching them.
+Commit data/raw/etl/, data/figures/ and data/processed/reference_year_indicators.csv
+together. The --check mode is the useful one in CI or before a talk: it rebuilds into a
+temporary directory and tells you whether the committed figures and dataset are stale,
+without touching them.
 
 THE ONE THING THIS CANNOT DO FOR YOU
 ------------------------------------
@@ -61,6 +67,13 @@ FIGURE_SCRIPTS = [
     "29_fig_mld_scatter.py",
     "31_fig_top1_share_scatter.py",
 ]
+
+# Scripts that write a DATASET rather than a figure, run after the figures. Their
+# outputs are listed by file so --check can back them up and compare them byte for
+# byte (they are written deterministically).
+PROCESSED = SCRIPTS.parent / "processed"
+DATASET_SCRIPTS = ["33_reference_year_indicators.py"]
+DATASET_FILES = [PROCESSED / "reference_year_indicators.csv"]
 
 
 def run(script: str, *args: str) -> None:
@@ -113,23 +126,31 @@ def compare(before: Path, after: Path) -> bool:
 
 def main() -> None:
     p = argparse.ArgumentParser(description=__doc__.split("WHY")[0].strip())
-    p.add_argument("--staging", metavar="BRANCH", help="read from an OWID staging server")
+    where_from = p.add_mutually_exclusive_group()
+    where_from.add_argument("--staging", metavar="BRANCH", help="read from an OWID staging server")
+    where_from.add_argument("--local", metavar="ETL_REPO", help="read from a local owid/etl checkout's build")
     p.add_argument("--check", action="store_true", help="report drift without changing anything")
     args = p.parse_args()
 
     print(f"ETL version pinned in etl_source.py: {es.ETL_VERSION}")
-    cache_args = ["--staging", args.staging] if args.staging else []
+    cache_args = (["--staging", args.staging] if args.staging
+                  else ["--local", args.local] if args.local else [])
 
     if args.check:
         with tempfile.TemporaryDirectory() as tmp:
             keep = Path(tmp) / "committed"
             shutil.copytree(FIGURES, keep)
+            kept_data = {f: f.read_bytes() for f in DATASET_FILES if f.exists()}
             try:
                 run("20_cache_from_etl.py", *cache_args)
-                for s in FIGURE_SCRIPTS:
+                for s in FIGURE_SCRIPTS + DATASET_SCRIPTS:
                     run(s)
                 print("\n=== drift against the committed figures ===")
                 moved = compare(keep, FIGURES)
+                for f in DATASET_FILES:
+                    same = f in kept_data and f.read_bytes() == kept_data[f]
+                    print(f"  {'same' if same else 'CHANGED':<8} {f.name}")
+                    moved = moved or not same
             finally:
                 # --check must leave the tree exactly as it found it, including when a
                 # script above raised part-way through writing the figures.
@@ -137,14 +158,19 @@ def main() -> None:
                     f.unlink()
                 for f in keep.glob("*.json"):
                     shutil.copy(f, FIGURES / f.name)
-                print("committed figures restored.")
+                for f in DATASET_FILES:
+                    if f in kept_data:
+                        f.write_bytes(kept_data[f])
+                    elif f.exists():
+                        f.unlink()
+                print("committed figures and dataset restored.")
         print("\nfigures differ from the ETL." if moved else "\nup to date.")
         sys.exit(1 if moved else 0)
 
     run("20_cache_from_etl.py", *cache_args)
-    for s in FIGURE_SCRIPTS:
+    for s in FIGURE_SCRIPTS + DATASET_SCRIPTS:
         run(s)
-    print("\nDone. Commit data/raw/etl/ and data/figures/ together.")
+    print("\nDone. Commit data/raw/etl/, data/figures/ and data/processed/reference_year_indicators.csv together.")
 
 
 if __name__ == "__main__":
