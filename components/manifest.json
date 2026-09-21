@@ -12,6 +12,7 @@
     "fig-reference-year-trends.js",
     "fig-between-share-trend.js",
     "fig-means-scatter.js",
+    "fig-refyear-scatter.js",
     "demo-line-chart.js",
     "demo-sortable-table.js",
     "demo-scrubber.js"

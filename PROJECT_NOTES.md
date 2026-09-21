@@ -21,10 +21,13 @@ python data/scripts/refresh_from_etl.py --staging worktree-etl-data-wid-update
 ```
 
 Until owid/etl#6806 merges the catalog modes stop with an error, because
-`etl_source.WID_VERSION` is a version the catalog does not carry yet — use `--staging`.
+`etl_source.WID_VERSION` is a version the catalog does not carry yet — use `--staging`,
+or `--local <path to an owid/etl checkout>` in which the branch has been built (the
+staging server was already gone on 2026-09-21; the committed cache was rebuilt that way).
 
-Commit `data/raw/etl/` and `data/figures/` together. `python data/scripts/refresh_from_etl.py --check`
-reports staleness without changing anything (non-zero exit when the figures are behind).
+Commit `data/raw/etl/`, `data/figures/` and `data/processed/reference_year_indicators.csv`
+together. `python data/scripts/refresh_from_etl.py --check` reports staleness without
+changing anything (non-zero exit when the figures or the dataset are behind).
 
 Full detail, including the `ETL_VERSION` pin the refresh cannot check for you, in
 [`data/README.md`](data/README.md).
@@ -376,6 +379,51 @@ Full detail in `CLAUDE.md`. Everything runs on Joe's Mac.
   predate a critical PPP bug fix and are stale). New chart components must
   fetch their data from per-figure files produced by pipeline scripts — no
   hard-coded data arrays in component JS.
+- **DONE 2026-09-21 — a second consumption→income method (Wollburg et al. inverse),
+  in parallel, on the reference-year scatters only.** Prompted by the concept gap:
+  the baseline's WID profile was estimated on pre-tax income, PIP's income countries
+  are disposable income. `consinc.py` ("A SECOND METHOD") inverts Wollburg,
+  Hallegatte & Mahler (2023, PRWP 10318) — `inc = (con − γ)^(1/0.93)`,
+  γ = 0.68 + 0.26 ln(median income), the median solved by bisection from the median
+  bin, floored at $0.28/day (PIP's bottom code), constants applied to the 2021-PPP
+  values without re-basing (Pablo's call). `etl_source.load_bins()` builds
+  `PIP_consinc_wb` → `PIP_topadj_wb` beside the baseline chain, with its own guard
+  (forward model reproduces the bins; income countries untouched); `refyears.PIP_SIDE`,
+  `33_`, `34_` and `fig-refyear-scatter.js` carry the two series, the gate now decided
+  per chain. Nothing else reads them: every other figure rebuilt identically, the
+  old dataset rows are byte-identical. Verdict and numbers in `data/README.md`
+  caveat 5; the in-sample table in `python data/scripts/consinc.py`.
+- **DONE 2026-09-21 — reference-year indicators from the ADJUSTED PIP bins.**
+  `data/processed/reference_year_indicators.csv`, built by
+  `33_reference_year_indicators.py` from two new cache tables
+  (`reference_year_bins`, `wid_reference_year_indicators`) and `pip_welfare_basis`,
+  with the matcher and the bins-based indicator code in `refyears.py`. It is the
+  ETL's `inequality_comparison` method — nearest PIP SURVEY year within ±5 of a
+  reference year — applied to every reference year 1990–2024 independently, on
+  PIP / PIP_consinc / PIP_topadj (the deck's own chain, so the append top-1% and
+  the logit cons→income profile), plus the two WID per-capita series at the
+  reference year itself; Gini, top-10% and top-1% shares, Palma and the mean, all
+  from the bins on the deck's 100-bin grid (`adjusted`, `n_bins`, `bottom40_share`
+  and `population` were dropped the same day as redundant or a weighting footgun;
+  `top1_adjusted` is set only on the two top-adjusted series). Both the reference
+  year and the survey year actually used are saved. Ties go to the earlier
+  survey and nothing is excluded (the ETL's 1988–89 / 2020–24 exclusions protect
+  one 1993/2019 pair; that is a decision for `refyears.pair()`, which also carries
+  the ETL's same-welfare rule). Against the ETL's own 1993/2019 output the port
+  reproduces the matched years for 95/97 and 97/97 countries; the two residuals
+  are countries the ETL re-matches to a same-welfare pair further away, which
+  independent matching cannot do. The cache was rebuilt from a local ETL build
+  (`--local`, a new source tier) because owid/etl#6806's staging server was gone;
+  every pre-existing cache table came back content-identical.
+  **Same day, the figure on top of it:** `34_fig_refyear_scatter.py` ships that dataset
+  as `data/figures/fig_refyear_scatter.json` and `components/fig-refyear-scatter.js`
+  registers `refyear-scatter` (year A vs year B, a PIP panel beside a WID panel) and
+  `refyear-change-scatter` (change in PIP vs change in WID), with the years, metric,
+  PIP series (as published / income basis / top 1% appended), WID series and the
+  same-welfare rule chosen on the slide. Two appendix slides mount them
+  (`slide-refyear-scatter`, `slide-refyear-change`, after the between-share trend).
+  It generalises the 1993-vs-2019 `ineq-trend` figure to any years and to the
+  adjusted PIP; the pairing rules are refyears.pair()'s.
 - **DONE 2026-09-09 — the variants slide shows BOTH choices, on one key
   alphabet.** `slide-topadj-variants` splits the cons->income column as well as
   the top-adjusted one, and i/ii/iii now name the same slope in both, so a single
@@ -735,7 +783,8 @@ components/
 data/                   # REPRODUCIBLE DATA PIPELINE (see §12 and data/README.md)
   scripts/              # numbered pipeline steps + verification suite
   raw/                  # committed raw caches (WID API pull, PIP extract)
-  processed/            # regenerable outputs incl. pip_wid_harmonized_2023.csv
+  processed/            # regenerable outputs incl. pip_wid_harmonized_2023.csv (local
+                        # pipeline) and reference_year_indicators.csv (ETL-derived, 33_)
   figures/              # one fig_*.json per deck figure, fetched by fig-*.js
 src/
   deck.js               # engine: render, nav, components, ANNOTATION overlay
