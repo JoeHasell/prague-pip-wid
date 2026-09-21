@@ -402,8 +402,10 @@ Full detail in `CLAUDE.md`. Everything runs on Joe's Mac.
   reference year — applied to every reference year 1990–2024 independently, on
   PIP / PIP_consinc / PIP_topadj (the deck's own chain, so the append top-1% and
   the logit cons→income profile), plus the two WID per-capita series at the
-  reference year itself; Gini, top-10% / bottom-40% / top-1% shares, Palma, mean,
-  population, all from the bins on the deck's 100-bin grid. Both the reference
+  reference year itself; Gini, top-10% and top-1% shares, Palma and the mean, all
+  from the bins on the deck's 100-bin grid (`adjusted`, `n_bins`, `bottom40_share`
+  and `population` were dropped the same day as redundant or a weighting footgun;
+  `top1_adjusted` is set only on the two top-adjusted series). Both the reference
   year and the survey year actually used are saved. Ties go to the earlier
   survey and nothing is excluded (the ETL's 1988–89 / 2020–24 exclusions protect
   one 1993/2019 pair; that is a decision for `refyears.pair()`, which also carries

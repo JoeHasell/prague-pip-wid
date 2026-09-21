@@ -10,15 +10,47 @@ The ETL's `inequality_comparison` compares PIP's published, survey-year measures
 with WID's at matched reference years. This is the same kind of table, but the
 PIP side comes from the harmonized bins — PIP as published, PIP on an income
 basis (PIP_consinc) and PIP with WID's top 1% appended (PIP_topadj), i.e. the
-deck's own chain (etl_source.load_bins) — and every reference year 1990-2024 is
-matched on its own. For each country, series and reference year it records the
-survey year actually used (`year`), how far away it was (`distance`), the
-welfare concept of that survey, and Gini, top-10% / bottom-40% / top-1% shares,
-Palma, mean and population computed from the bins by refyears.py.
+deck's own chain (etl_source.load_bins), plus the parallel Wollburg chain — and
+every reference year 1990-2024 is matched on its own. The WID side is the deck's
+two per-capita series at the reference year itself (WID has every year), from
+the same indicator code on the same 100-percentile grid, so the two sides are
+directly comparable.
 
-The WID side is the deck's two per-capita series at the reference year itself
-(WID has every year; `distance` is 0), from the same indicator code on the same
-100-percentile grid, so the two sides are directly comparable.
+ONE ROW PER country x series x ref_year. The columns:
+
+    country, series      the country, and which of the seven series the row is
+                         (PIP, PIP_consinc, PIP_topadj, PIP_consinc_wb,
+                         PIP_topadj_wb, WID_pretax_per_capita, WID_posttax_per_capita)
+    ref_year             the reference year being matched, 1990-2024
+    year                 the year the value actually comes from: the nearest PIP
+                         SURVEY year within +-5 on the PIP side, the reference
+                         year itself on the WID side
+    distance             |year - ref_year|, 0-5 (always 0 for WID)
+    tie                  True where two surveys were equidistant on either side
+                         of ref_year and the rule (earlier survey) decided —
+                         291 of 5,023 PIP country-reference-years; the value at
+                         that reference year is a convention there
+    welfare_type         the PIP survey's concept, income or consumption (empty
+                         for WID). It is what refyears.pair() compares
+    top1_adjusted        on the two PIP_topadj series only: False where the top-1%
+                         gate left the country as it was (its survey already
+                         shows a larger top-1% share than WID; topadj.py), so
+                         the series equals its income-basis input there. Decided
+                         per chain (GATE_BASE); empty on every other series
+    wid_extrapolated     on the WID series only: "no" where WID rates the
+                         country-year as directly supported by data (its
+                         data-quality score), "yes" otherwise
+    gini, top10_share,   the measures, computed from the bins by refyears.py:
+    top1_share, palma    Gini 0-1, shares in percent of total income, Palma =
+                         top-10% share / bottom-40% share
+    mean                 the country's mean income of that series, $/day —
+                         see the price-base caveat below
+
+Dropped as redundant (2026-09-21): `adjusted` (identical to welfare_type ==
+consumption), `n_bins` (the grid size), `bottom40_share` (palma = top10 /
+bottom40), and `population` (each series' own bin population, a footgun for
+weighting — it differed between the PIP and WID sides). refyears.indicators_from_bins
+still computes the last two if a script needs them.
 
 PROVENANCE — READ THIS BEFORE USING THE FILE
 -------------------------------------------
@@ -32,13 +64,10 @@ PROVENANCE — READ THIS BEFORE USING THE FILE
 - `mean` mixes price bases: PIP at 2021 prices, WID at 2025 prices (both 2021
   PPPs) — WID levels sit ~17% above a like-for-like comparison. Everything
   relative (Gini, shares, Palma) is unaffected. See etl_source.py.
-- `population` is each series' OWN bin population: PIP's own counts on the PIP
-  side, the ETL's yardstick (OWID population) on the WID side. They differ by
-  more than 1% for 38 countries (see etl_mld.py). Weight cross-country averages
-  by one of them, not both.
-- `top1_adjusted` is False for the countries the top-1% gate left alone (their
-  survey already shows a larger top-1% share than WID; see topadj.py) — there
-  PIP_topadj equals PIP_consinc. The gate is decided per chain (GATE_BASE).
+- There is no population column. Weighting across countries needs ONE yardstick
+  (the ETL's, carried on the WID bins — see etl_mld.py); the series' own bin
+  populations differ between the PIP and WID sides for 38 countries, so the file
+  does not offer them.
 - `PIP_consinc_wb` / `PIP_topadj_wb` are a PARALLEL comparison chain: consumption
   countries put on PIP's own disposable-income basis by inverting Wollburg,
   Hallegatte & Mahler (2023)'s income->consumption fit (consinc.py, "A SECOND
@@ -83,8 +112,12 @@ MAXIMUM_DISTANCE = 5
 TIE_BREAK_STRATEGY = "lower"
 EXCLUDED_YEARS = ()
 
-COLUMNS = ["country", "series", "ref_year", "year", "distance", "tie", "welfare_type", "adjusted",
-           "top1_adjusted", "wid_extrapolated", "n_bins"] + refyears.INDICATORS
+# What the file carries. refyears.indicators_from_bins also computes bottom40_share
+# and population; they are left out (see the docstring).
+CSV_INDICATORS = ["gini", "top10_share", "top1_share", "palma", "mean"]
+COLUMNS = ["country", "series", "ref_year", "year", "distance", "tie", "welfare_type",
+           "top1_adjusted", "wid_extrapolated"] + CSV_INDICATORS
+TOPADJ_SERIES = ("PIP_topadj", "PIP_topadj_wb")     # the only rows where top1_adjusted means something
 
 # The top-1% gate is decided per CHAIN, on the income-basis series the append is
 # built on (topadj.top1_shares): the baseline chain on PIP_consinc, the Wollburg
@@ -128,6 +161,8 @@ def main():
                   .merge(gate, on=["country", "year", "series"], how="left"))
     assert pip["welfare_type"].notna().all() and pip["top1_adjusted"].notna().all()
     assert len(pip) == len(matches) * len(refyears.PIP_SIDE), "a matched survey year lost a series"
+    # The gate only says something about the series it was applied to.
+    pip.loc[~pip["series"].isin(TOPADJ_SERIES), "top1_adjusted"] = np.nan
     pip["wid_extrapolated"] = np.nan
 
     # ---- WID side: the reference year itself, from the cache-time indicator table
@@ -146,7 +181,7 @@ def main():
     wid["ref_year"] = wid["year"]
     wid["distance"] = 0
     wid["tie"] = False
-    for c in ("welfare_type", "adjusted", "top1_adjusted"):
+    for c in ("welfare_type", "top1_adjusted"):
         wid[c] = np.nan
     wid = wid[wid["ref_year"].isin(list(REFERENCE_YEARS))]
 
@@ -166,8 +201,9 @@ def main():
     print("  distance of the survey used: " +
           ", ".join(f"{d} yr: {n}" for d, n in p["distance"].value_counts().sort_index().items()))
     print(f"  ties broken: {int(p['tie'].sum())} country-reference-years")
-    print(f"  top-1% gate left {int((~p['top1_adjusted'].astype(bool)).sum())} PIP country-reference-years unadjusted"
-          f" (Wollburg chain: {int((~out.loc[out['series'] == 'PIP_topadj_wb', 'top1_adjusted'].astype(bool)).sum())})")
+    unadj = {s: int((out.loc[out["series"] == s, "top1_adjusted"] == False).sum()) for s in TOPADJ_SERIES}  # noqa: E712
+    print(f"  top-1% gate left {unadj['PIP_topadj']} PIP_topadj country-reference-years unadjusted"
+          f" (Wollburg chain: {unadj['PIP_topadj_wb']})")
     w = out[out["series"] == "WID_posttax_per_capita"]
     print(f"  WID: {w['country'].nunique()} countries every year; "
           f"{int((w['wid_extrapolated'] == 'no').sum())} country-years rated as directly data-backed")

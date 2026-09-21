@@ -85,8 +85,9 @@
 > **Reference-year indicators** (`data/processed/reference_year_indicators.csv`) is the
 > ETL's `inequality_comparison` idea applied to the deck's ADJUSTED PIP: for every
 > reference year 1990–2024, each country's nearest PIP survey year within ±5 (ties to the
-> earlier survey; no excluded years), with Gini, top-10% / bottom-40% / top-1% shares,
-> Palma, mean and population computed from the bins for PIP, PIP_consinc and PIP_topadj —
+> earlier survey; no excluded years), with Gini, top-10% and top-1% shares, Palma and
+> the mean computed from the bins for PIP, PIP_consinc and PIP_topadj (and the parallel
+> Wollburg chain) —
 > and the two WID per-capita series at the reference year itself, from the same code on
 > the same 100-bin grid. It lives in `data/processed/` but is built from the ETL cache
 > (`reference_year_bins`, `wid_reference_year_indicators`, `pip_welfare_basis`), not by
