@@ -31027,7 +31027,7 @@
     {
       "id": "slide-9q50vh",
       "layout": "default",
-      "notes": "Appendix divider — not part of the talk.\n\nThese seven slides were in the deck until commit 4968bf3 (\"Update to many slides\", 2026-09-03), which rewrote slides.json wholesale and dropped them. Nothing else was removed with them, and nothing downstream broke: the components stayed registered and the figure data kept being rebuilt, so the charts were being refreshed with no slide to render them.\n\nWhat each one needs, if you move it back into the talk:\n- fig-reference-year-composition and fig-reference-year-change (both in components/fig-reference-year-trends.js), reading data/figures/fig_reference_year_trends.json (complete panel, 211 countries, compared with 2024) and data/figures/fig_reference_year_observed.json (observed surveys only, 79-155 countries depending on the reference year, compared with 2019). Written by data/scripts/22_fig_reference_year_trends.py and 26_fig_reference_year_observed.py.\n- fig-between-share-trend (components/fig-between-share-trend.js), reading data/figures/fig_between_share_trend.json, written by data/scripts/27_fig_between_share_trend.py.\n\nOriginal slide ids, in case you want to trace them in git history: slide-q1refyear-counts, -counts-obs, -alpha, -alpha-obs, -change, -change-obs, slide-q2trend. The restored slides carry fresh ids.\n\nThree numbers in the speaker notes below were re-checked against the current figure files and corrected: observed coverage now runs 79-155 countries (was 83-155 — WID's observed set is defined by its data-quality score since the 2026-09-02 release), the between-share trend now reads PIP 75.8% -> 66.5% -> 69.3% and WID pre-tax per adult 40.5% -> 22.9% -> 21.1% (was 40.6 -> 23.2 -> 21.6), and that chart draws seven series, not eight.\n\nOne known wart, harmless while nothing renders it: 26_fig_reference_year_observed.py hardcodes \"garden/wid/2026-06-18/...\" into the figure's meta.etl_dataset, though the data comes from WID 2026-09-02.\n\n[appendix-dropped-figures]",
+      "notes": "Appendix divider — not part of the talk.\n\nThese seven slides were in the deck until commit 4968bf3 (\"Update to many slides\", 2026-09-03), which rewrote slides.json wholesale and dropped them. Nothing else was removed with them, and nothing downstream broke: the components stayed registered and the figure data kept being rebuilt, so the charts were being refreshed with no slide to render them.\n\nWhat each one needs, if you move it back into the talk:\n- fig-reference-year-composition and fig-reference-year-change (both in components/fig-reference-year-trends.js), reading data/figures/fig_reference_year_trends.json (complete panel, 211 countries, compared with 2024) and data/figures/fig_reference_year_observed.json (observed surveys only, 79-155 countries depending on the reference year, compared with 2019). Written by data/scripts/22_fig_reference_year_trends.py and 26_fig_reference_year_observed.py.\n- fig-between-share-trend (components/fig-between-share-trend.js), reading data/figures/fig_between_share_trend.json, written by data/scripts/27_fig_between_share_trend.py.\n\nOriginal slide ids, in case you want to trace them in git history: slide-q1refyear-counts, -counts-obs, -alpha, -alpha-obs, -change, -change-obs, slide-q2trend. The restored slides carry fresh ids.\n\nThree numbers in the speaker notes below were re-checked against the current figure files and corrected: observed coverage now runs 79-155 countries (was 83-155 — WID's observed set is defined by its data-quality score since the 2026-09-02 release), the between-share trend now reads PIP 75.8% -> 66.5% -> 69.3% and WID pre-tax per adult 40.5% -> 22.9% -> 21.1% (was 40.6 -> 23.2 -> 21.6), and that chart draws seven series, not eight.\n\nOne known wart, harmless while nothing renders it: 26_fig_reference_year_observed.py hardcodes \"garden/wid/2026-06-18/...\" into the figure's meta.etl_dataset, though the data comes from WID 2026-09-02.\n\n[appendix-dropped-figures]\n\nAdded 2026-09-21, after the between-share trend: two more appendix slides, slide-refyear-scatter and slide-refyear-change (components/fig-refyear-scatter.js, reading data/figures/fig_refyear_scatter.json from data/scripts/34_fig_refyear_scatter.py) - inequality in one year against another with the years selectable, for PIP's adjusted series and WID.",
       "blocks": [
         {
           "id": "b-fhendg",
@@ -31236,6 +31236,65 @@
               "PIP_consinc",
               "PIP"
             ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "slide-refyear-scatter",
+      "layout": "default",
+      "notes": "Inequality in one year against another, with the years chosen on the slide - the 1993-vs-2019 scatter generalised to any pair of years, and to PIP's ADJUSTED series. Left panel a PIP series, right panel a WID series; the dashed diagonal is no change, dots above it rose.\n\nData: data/figures/fig_refyear_scatter.json, written by data/scripts/34_fig_refyear_scatter.py from data/processed/reference_year_indicators.csv (33_reference_year_indicators.py). For each reference year 1990-2024, each country's nearest PIP SURVEY year within five years (ties to the earlier survey), and WID at the reference year itself; Gini, top-10% and top-1% shares and the Palma ratio computed from the harmonized bins on the deck's 100-percentile grid, for PIP as published, PIP on an income basis (WID's logit profile) and PIP with WID's top 1% appended, and for WID pre-tax and post-tax national income per capita.\n\nPairing rules (refyears.pair): a PIP pair is drawn only when both years have a survey within the window, the two survey years differ (one survey can serve up to eleven reference years), and - unless the switch is off - both surveys use the same welfare concept. The ETL's inequality_comparison (the fixed 1993-vs-2019 slides) instead re-matches a country to a same-welfare pair further away, so its country set differs by a handful.\n\nHover a dot for the survey years actually used. The control bar can be hidden with controls:false in the props for a fixed talk slide; yearA, yearB, metric, pipSeries, widSeries set the defaults.",
+      "blocks": [
+        {
+          "id": "b-ry1-k",
+          "type": "html",
+          "html": "<p class=\"kicker\"><span style=\"letter-spacing: 0.12em;\">Q1: is income inequality rising everywhere?</span></p>"
+        },
+        {
+          "id": "b-ry1-h",
+          "type": "html",
+          "html": "<p>Inequality in one year against another &mdash; pick the years, the measure and the series</p>"
+        },
+        {
+          "id": "b-ry1-c",
+          "type": "component",
+          "component": "refyear-scatter",
+          "props": {
+            "yearA": 1993,
+            "yearB": 2019,
+            "metric": "gini",
+            "pipSeries": "PIP_topadj",
+            "widSeries": "WID_posttax_per_capita"
+          }
+        }
+      ]
+    },
+    {
+      "id": "slide-refyear-change",
+      "layout": "default",
+      "notes": "The change between two years in a PIP series (x) against the change in a WID series (y), for the countries both sources cover at both years. Dots in the top-right rose in both, bottom-left fell in both; the diagonal is where the sources agree on the size of the change; the off-diagonal quadrants are where they disagree on the direction.\n\nData: data/figures/fig_refyear_scatter.json, written by data/scripts/34_fig_refyear_scatter.py from data/processed/reference_year_indicators.csv (33_reference_year_indicators.py). For each reference year 1990-2024, each country's nearest PIP SURVEY year within five years (ties to the earlier survey), and WID at the reference year itself; Gini, top-10% and top-1% shares and the Palma ratio computed from the harmonized bins on the deck's 100-percentile grid, for PIP as published, PIP on an income basis (WID's logit profile) and PIP with WID's top 1% appended, and for WID pre-tax and post-tax national income per capita.\n\nPairing rules (refyears.pair): a PIP pair is drawn only when both years have a survey within the window, the two survey years differ (one survey can serve up to eleven reference years), and - unless the switch is off - both surveys use the same welfare concept. The ETL's inequality_comparison (the fixed 1993-vs-2019 slides) instead re-matches a country to a same-welfare pair further away, so its country set differs by a handful.\n\nHover a dot for the survey years actually used. The control bar can be hidden with controls:false in the props for a fixed talk slide; yearA, yearB, metric, pipSeries, widSeries set the defaults.",
+      "blocks": [
+        {
+          "id": "b-ry2-k",
+          "type": "html",
+          "html": "<p class=\"kicker\"><span style=\"letter-spacing: 0.12em;\">Q1: is income inequality rising everywhere?</span></p>"
+        },
+        {
+          "id": "b-ry2-h",
+          "type": "html",
+          "html": "<p>Do the two sources agree on how inequality changed? &mdash; PIP against WID</p>"
+        },
+        {
+          "id": "b-ry2-c",
+          "type": "component",
+          "component": "refyear-change-scatter",
+          "props": {
+            "yearA": 1993,
+            "yearB": 2019,
+            "metric": "gini",
+            "pipSeries": "PIP_topadj",
+            "widSeries": "WID_posttax_per_capita",
+            "mode": "abs"
           }
         }
       ]

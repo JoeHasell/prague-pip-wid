@@ -68,11 +68,12 @@ FIGURE_SCRIPTS = [
     "31_fig_top1_share_scatter.py",
 ]
 
-# Scripts that write a DATASET rather than a figure, run after the figures. Their
-# outputs are listed by file so --check can back them up and compare them byte for
-# byte (they are written deterministically).
+# Run AFTER the figures above: 33_ writes a DATASET rather than a figure, and 34_ is
+# the figure built from that dataset. Dataset outputs are listed by file so --check
+# can back them up and compare them byte for byte (they are written deterministically);
+# 34_'s JSON is in data/figures/ and is covered like every other figure.
 PROCESSED = SCRIPTS.parent / "processed"
-DATASET_SCRIPTS = ["33_reference_year_indicators.py"]
+DATASET_SCRIPTS = ["33_reference_year_indicators.py", "34_fig_refyear_scatter.py"]
 DATASET_FILES = [PROCESSED / "reference_year_indicators.csv"]
 
 

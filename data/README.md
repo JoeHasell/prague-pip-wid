@@ -79,6 +79,7 @@
 > python data/scripts/29_fig_mld_scatter.py            # within-MLD, PIP vs WID
 > python data/scripts/31_fig_top1_share_scatter.py     # top-1% shares, PIP chain vs WID
 > python data/scripts/33_reference_year_indicators.py  # the reference-year DATASET (not a figure)
+> python data/scripts/34_fig_refyear_scatter.py        # year-vs-year scatters with selectable years, from 33_
 > ```
 >
 > **Reference-year indicators** (`data/processed/reference_year_indicators.csv`) is the

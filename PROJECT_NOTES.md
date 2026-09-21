@@ -399,6 +399,15 @@ Full detail in `CLAUDE.md`. Everything runs on Joe's Mac.
   independent matching cannot do. The cache was rebuilt from a local ETL build
   (`--local`, a new source tier) because owid/etl#6806's staging server was gone;
   every pre-existing cache table came back content-identical.
+  **Same day, the figure on top of it:** `34_fig_refyear_scatter.py` ships that dataset
+  as `data/figures/fig_refyear_scatter.json` and `components/fig-refyear-scatter.js`
+  registers `refyear-scatter` (year A vs year B, a PIP panel beside a WID panel) and
+  `refyear-change-scatter` (change in PIP vs change in WID), with the years, metric,
+  PIP series (as published / income basis / top 1% appended), WID series and the
+  same-welfare rule chosen on the slide. Two appendix slides mount them
+  (`slide-refyear-scatter`, `slide-refyear-change`, after the between-share trend).
+  It generalises the 1993-vs-2019 `ineq-trend` figure to any years and to the
+  adjusted PIP; the pairing rules are refyears.pair()'s.
 - **DONE 2026-09-09 — the variants slide shows BOTH choices, on one key
   alphabet.** `slide-topadj-variants` splits the cons->income column as well as
   the top-adjusted one, and i/ii/iii now name the same slope in both, so a single
