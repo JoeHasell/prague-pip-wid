@@ -137,6 +137,13 @@ python data/scripts/99_verify.py                                          # any 
 
 ## Deck conventions
 
+- **Two decks share the engine.** `index.html` shows `content/slides.json` (everything
+  below is about that deck). `prague.html` shows `content/prague.json`, the Prague offsite
+  talk converted from Figma on 2026-09-23, styled by `src/prague.css` (scoped to
+  `body.deck-prague`). Its slides are one html block each, a `.pg-canvas` of absolutely
+  positioned elements at Figma coordinates x 2/3; edit them in place (the browser editor
+  saves to `content/prague.json`), don't reflow them into the kicker/heading pattern.
+  Slide 9 mounts `fig-global-gini-average` in place of the Figma sketch.
 - `content/slides.json` is the single source of truth: slides → ordered `blocks`
   (`html` / `component` / `row`), plus an optional per-slide `annotations` array
   (the drawing layer, stage coords 0–1280 × 0–720).

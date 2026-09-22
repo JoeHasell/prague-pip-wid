@@ -1,0 +1,478 @@
+{
+  "meta": {
+    "title": "Inequality — Prague offsite, 24 Sept 2026",
+    "accent": "rgb(16, 89, 229)",
+    "source": "Figma Slides EMLgMgGJVrefcOq2Uwr5UX (Inequality presentation in Prague), converted 2026-09-23"
+  },
+  "slides": [
+    {
+      "id": "pg-01",
+      "layout": "default",
+      "class": "pg pg-dark",
+      "notes": "[Figma node 1:35]",
+      "blocks": [
+        {
+          "id": "b-pg-01",
+          "type": "html",
+          "html": "<div class=\"pg-canvas\"><div class=\"pg-t\" style=\"left:85.3px;top:294px;width:214.2px;line-height:1.34;color:#a4b6ca;font-size:16px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-body);font-weight:400;font-size:16px\">Prague offsite— 24 Sept 2026</span></div></div><div class=\"pg-t\" style=\"left:85.3px;top:315.3px;width:824px;line-height:1.20;color:#ffffff;font-size:64px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-display);font-weight:700;font-size:64px\">Inequality</span></div></div><div class=\"pg-t\" style=\"left:85.3px;top:392px;width:824px;line-height:1.40;color:#a4b6ca;font-size:24px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-body);font-weight:400;font-size:24px\">.....</span></div></div><img class=\"pg-logo\" src=\"content/images/prague/owid-logo-on-navy.png\" alt=\"owid logo on navy\" style=\"left:1117.3px;top:677.3px;width:77.3px;height:42.7px\"></div>"
+        }
+      ]
+    },
+    {
+      "id": "pg-02",
+      "layout": "default",
+      "class": "pg",
+      "notes": "[Figma node 9:17]",
+      "blocks": [
+        {
+          "id": "b-pg-02",
+          "type": "html",
+          "html": "<div class=\"pg-canvas\"><div class=\"pg-t\" style=\"left:95.3px;top:48px;width:1209.2px;line-height:1.20;color:#000000;font-size:64px;\"><div><span style=\"font-family:var(--font-display);font-weight:700;font-size:64px\">In terms of </span><span style=\"font-family:var(--font-display);font-weight:700;font-size:64px;font-style:italic\">data</span><span style=\"font-family:var(--font-display);font-weight:700;font-size:64px\"> about inequality, we’re rich!</span></div></div><div class=\"pg-t\" style=\"left:572px;top:348px;width:50.8px;line-height:1.20;color:#000000;font-size:32px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-display);font-weight:700;font-size:32px\">LIS</span></div></div><div class=\"pg-t\" style=\"left:594px;top:510px;width:94.1px;line-height:1.20;color:#000000;font-size:32px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-display);font-weight:700;font-size:32px\">OECD</span></div></div><div class=\"pg-t\" style=\"left:236px;top:529.3px;width:53.6px;line-height:1.20;color:#000000;font-size:32px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-display);font-weight:700;font-size:32px\">PIP</span></div></div><div class=\"pg-t\" style=\"left:262px;top:342px;width:68.7px;line-height:1.20;color:#000000;font-size:32px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-display);font-weight:700;font-size:32px\">WID</span></div></div><div class=\"pg-t\" style=\"left:868px;top:340.7px;width:169.6px;line-height:1.20;color:#000000;font-size:32px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-display);font-weight:700;font-size:32px\">EUROSTAT</span></div></div><div class=\"pg-t\" style=\"left:1032px;top:535.3px;width:80.3px;line-height:1.20;color:#000000;font-size:32px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-display);font-weight:700;font-size:32px\">WIID</span></div></div></div>"
+        }
+      ]
+    },
+    {
+      "id": "pg-03",
+      "layout": "default",
+      "class": "pg",
+      "notes": "- .. including on OWID\n\n[Figma node 29:44]",
+      "blocks": [
+        {
+          "id": "b-pg-03",
+          "type": "html",
+          "html": "<div class=\"pg-canvas\"><div class=\"pg-t\" style=\"left:95.3px;top:48px;width:1209.2px;line-height:1.20;color:#000000;font-size:64px;\"><div><span style=\"font-family:var(--font-display);font-weight:700;font-size:64px\">In terms of </span><span style=\"font-family:var(--font-display);font-weight:700;font-size:64px;font-style:italic\">data</span><span style=\"font-family:var(--font-display);font-weight:700;font-size:64px\"> about inequality, we’re rich!</span></div></div><div class=\"pg-t\" style=\"left:572px;top:348px;width:50.8px;line-height:1.20;color:#000000;font-size:32px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-display);font-weight:700;font-size:32px\">LIS</span></div></div><div class=\"pg-t\" style=\"left:868.7px;top:407.3px;width:94.1px;line-height:1.20;color:#000000;font-size:32px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-display);font-weight:700;font-size:32px\">OECD</span></div></div><div class=\"pg-t\" style=\"left:179.3px;top:440px;width:53.6px;line-height:1.20;color:#000000;font-size:32px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-display);font-weight:700;font-size:32px\">PIP</span></div></div><div class=\"pg-t\" style=\"left:262px;top:342px;width:68.7px;line-height:1.20;color:#000000;font-size:32px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-display);font-weight:700;font-size:32px\">WID</span></div></div><div class=\"pg-t\" style=\"left:1058.7px;top:269.3px;width:169.6px;line-height:1.20;color:#000000;font-size:32px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-display);font-weight:700;font-size:32px\">EUROSTAT</span></div></div><div class=\"pg-t\" style=\"left:1032px;top:535.3px;width:80.3px;line-height:1.20;color:#000000;font-size:32px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-display);font-weight:700;font-size:32px\">WIID</span></div></div><img class=\"pg-img\" src=\"content/images/prague/rich-owid-gini-map.png\" alt=\"OWID Gini coefficient world map (World Bank PIP)\" style=\"left:95.3px;top:487.3px;width:271.3px;height:192.7px\"></div>"
+        }
+      ]
+    },
+    {
+      "id": "pg-04",
+      "layout": "default",
+      "class": "pg",
+      "notes": "[Figma node 29:53]",
+      "blocks": [
+        {
+          "id": "b-pg-04",
+          "type": "html",
+          "html": "<div class=\"pg-canvas\"><div class=\"pg-t\" style=\"left:95.3px;top:48px;width:1209.2px;line-height:1.20;color:#000000;font-size:64px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-display);font-weight:700;font-size:64px\">But no clear answers to basic questions</span></div></div><div class=\"pg-t\" style=\"left:121.3px;top:210.7px;width:445.6px;line-height:1.32;color:#000000;font-size:24px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-body);font-weight:700;font-size:24px\">Where in the world is inequality high/<wbr>low?</span></div></div><div class=\"pg-t\" style=\"left:122px;top:270px;width:352.9px;line-height:1.32;color:#000000;font-size:24px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-body);font-weight:700;font-size:24px\">Is inequality rising in most places?</span></div></div><div class=\"pg-t\" style=\"left:118px;top:446.7px;width:537.7px;line-height:1.32;color:#000000;font-size:24px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-body);font-weight:700;font-size:24px\">Are inequalities between rich and poor countries ....</span></div></div><div class=\"pg-t\" style=\"left:122px;top:379.3px;width:390px;line-height:1.32;color:#000000;font-size:24px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-body);font-weight:700;font-size:24px\">Who are the richest 1% in the world?</span></div></div></div>"
+        }
+      ]
+    },
+    {
+      "id": "pg-05",
+      "layout": "default",
+      "class": "pg",
+      "notes": "- before tax / after tax \n- data availability / comparability/ extrapolations - can't pick and choose\n- different measures\n\n[Figma node 29:82]",
+      "blocks": [
+        {
+          "id": "b-pg-05",
+          "type": "html",
+          "html": "<div class=\"pg-canvas\"><div class=\"pg-t\" style=\"left:95.3px;top:48px;width:1209.2px;line-height:1.20;color:#000000;font-size:64px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-display);font-weight:700;font-size:64px\">Why</span></div></div><div class=\"pg-t\" style=\"left:147.3px;top:173.3px;width:445.6px;line-height:1.32;color:#000000;font-size:24px;\"><div><span style=\"font-family:var(--font-body);font-weight:700;font-size:24px\">Mix of two things:</span></div><div>&nbsp;</div><ul><li><span style=\"font-family:var(--font-body);font-weight:700;font-size:24px\">Questions about “accuracy”</span></li><ul><li><span style=\"font-family:var(--font-body);font-weight:700;font-size:24px\">Top incomes are hard to capture</span></li><li><span style=\"font-family:var(--font-body);font-weight:700;font-size:24px\">Availability &amp; comparability of data</span></li></ul></ul><div>&nbsp;</div><div>&nbsp;</div><div>&nbsp;</div><ul><li><span style=\"font-family:var(--font-body);font-weight:700;font-size:24px\">What do mean by inequality?</span></li><ul><li><span style=\"font-family:var(--font-body);font-weight:700;font-size:24px\">Different “income concepts”</span></li><li><span style=\"font-family:var(--font-body);font-weight:700;font-size:24px\">Different measures</span></li></ul></ul></div><img class=\"pg-img\" src=\"content/images/prague/why-owid-charts.png\" alt=\"Three OWID data pages: Gini, income shares, top 1% share, annotated\" style=\"left:580px;top:152px;width:642.7px;height:425.3px\"><img class=\"pg-mark\" src=\"content/images/prague/mark-why-circle-black.png\" alt=\"mark why circle black\" style=\"left:724px;top:440px;width:32.7px;height:26px\"><img class=\"pg-mark\" src=\"content/images/prague/mark-why-underline-black.png\" alt=\"mark why underline black\" style=\"left:1075.3px;top:186.7px;width:68.7px;height:6.7px\"><img class=\"pg-mark\" src=\"content/images/prague/mark-why-circle-red.png\" alt=\"mark why circle red\" style=\"left:676px;top:440.7px;width:48.7px;height:28px\"><img class=\"pg-mark\" src=\"content/images/prague/mark-why-gini-circle-red.png\" alt=\"mark why gini circle red\" style=\"left:598px;top:161.3px;width:70.7px;height:18px\"><div class=\"pg-t\" style=\"left:395.3px;top:634.7px;width:135.3px;line-height:1.32;color:#000000;font-size:24px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-body);font-weight:700;font-size:24px\">+ lots more...</span></div></div></div>"
+        }
+      ]
+    },
+    {
+      "id": "pg-06",
+      "layout": "default",
+      "class": "pg",
+      "notes": "- (key finding WID report)\n\n[Figma node 29:91]",
+      "blocks": [
+        {
+          "id": "b-pg-06",
+          "type": "html",
+          "html": "<div class=\"pg-canvas\"><div class=\"pg-t\" style=\"left:95.3px;top:48px;width:1209.2px;line-height:1.20;color:#000000;font-size:64px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-display);font-weight:700;font-size:64px\">Why</span></div></div><img class=\"pg-img\" src=\"content/images/prague/why-wysk-wid.png\" alt=\"why wysk wid\" style=\"left:95.3px;top:204.7px;width:533.3px;height:405.3px\"><img class=\"pg-img\" src=\"content/images/prague/why-wysk-pip.png\" alt=\"why wysk pip\" style=\"left:682.7px;top:217.3px;width:551.3px;height:380px\"><img class=\"pg-mark\" src=\"content/images/prague/mark-why-national-income-underline.png\" alt=\"mark why national income underline\" style=\"left:210.7px;top:489.3px;width:84.7px;height:3.3px\"></div>"
+        }
+      ]
+    },
+    {
+      "id": "pg-07",
+      "layout": "default",
+      "class": "pg",
+      "notes": "- (key finding WID report)\n\n[Figma node 29:119]",
+      "blocks": [
+        {
+          "id": "b-pg-07",
+          "type": "html",
+          "html": "<div class=\"pg-canvas\"><div class=\"pg-t\" style=\"left:95.3px;top:48px;width:1209.2px;line-height:1.20;color:#000000;font-size:64px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-display);font-weight:700;font-size:64px\">Why</span></div></div><img class=\"pg-img\" src=\"content/images/prague/why-wysk-wid-faded.png\" alt=\"why wysk wid faded\" style=\"left:95.3px;top:204.7px;width:533.3px;height:405.3px\"><img class=\"pg-img\" src=\"content/images/prague/why-wysk-wid-strip.png\" alt=\"why wysk wid strip\" style=\"left:95.3px;top:319.3px;width:533.3px;height:90px\"><img class=\"pg-img\" src=\"content/images/prague/why-wysk-pip-faded.png\" alt=\"why wysk pip faded\" style=\"left:682.7px;top:217.3px;width:551.3px;height:380px\"><img class=\"pg-mark\" src=\"content/images/prague/mark-why-national-income-underline.png\" alt=\"mark why national income underline\" style=\"left:210.7px;top:493.3px;width:84.7px;height:3.3px\"></div>"
+        }
+      ]
+    },
+    {
+      "id": "pg-08",
+      "layout": "default",
+      "class": "pg",
+      "notes": "- According to PIP threshold - explain a bit what it is/ how the same threshold is being applied to different things\n- same chart for PIP and WID - population avg, quote? \n    - can we calculate the share of population for PIP?\n\n[Figma node 33:69]",
+      "blocks": [
+        {
+          "id": "b-pg-08",
+          "type": "html",
+          "html": "<div class=\"pg-canvas\"><div class=\"pg-t\" style=\"left:97.3px;top:45.3px;width:1209.2px;line-height:1.20;color:#000000;font-size:64px;\"><div><span style=\"font-family:var(--font-display);font-weight:700;font-size:64px\">Where in the world is inequality high/<wbr>low?</span></div></div><div class=\"pg-t\" style=\"left:97.3px;top:242px;width:119.5px;line-height:1.32;color:#000000;font-size:24px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-body);font-weight:700;font-size:24px\">PIP vs WID </span></div></div><img class=\"pg-img\" src=\"content/images/prague/where-pip-high-inequality-map.png\" alt=\"where pip high inequality map\" style=\"left:112px;top:300px;width:361.3px;height:219.3px\"><div class=\"pg-t\" style=\"left:752px;top:578.7px;width:473.1px;line-height:1.34;color:#1d3d63;font-size:16px;\"><div><span style=\"font-family:var(--font-body);font-weight:400;font-size:16px;font-style:italic\">Nationally, </span><span style=\"font-family:var(--font-body);font-weight:700;font-size:16px;font-style:italic\">83%</span><span style=\"font-family:var(--font-body);font-weight:400;font-size:16px;font-style:italic\"> of countries have high income inequality (using the World Bank definition of ‘high inequality’ as a Gini coefficient above 0.4). These countries account for 90% of the world’s</span></div><div><span style=\"font-family:var(--font-body);font-weight:400;font-size:16px;font-style:italic\">population.</span></div></div><div class=\"pg-t\" style=\"left:112px;top:575.3px;width:502px;line-height:1.34;color:#1d3d63;font-size:16px;\"><div><span style=\"font-family:var(--font-body);font-weight:400;font-size:16px;font-style:italic\">We now show the countries classified as high inequality based on the Gini threshold of 40. Fifty-two of the 169 [</span><span style=\"font-family:var(--font-body);font-weight:700;font-size:16px;font-style:italic\">30%</span><span style=\"font-family:var(--font-body);font-weight:400;font-size:16px;font-style:italic\">] countries with data are classified as high inequality.</span></div></div><div class=\"pg-t\" style=\"left:809.3px;top:378px;width:369.4px;line-height:1.32;color:#000000;font-size:24px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-body);font-weight:700;font-size:24px\">Add Gini &gt; 40 map for WID pre-tax</span></div></div><img class=\"pg-img\" src=\"content/images/prague/where-wir-high-medium-low.png\" alt=\"where wir high medium low\" style=\"left:1018.7px;top:146px;width:232.7px;height:192px\"></div>"
+        }
+      ]
+    },
+    {
+      "id": "pg-09",
+      "layout": "default",
+      "class": "pg pg-chart",
+      "notes": "- make a new chart? inequality 2000 vs 2024 or thereabouts + quotes\n- avg unweighted/ weighted\n- but if extract 1%\n\n.. and we'll come to these questions at the end\n\n[Deck] The Figma slide had a hand-drawn sketch here. It is replaced by the live chart (components/fig-global-gini-average.js, layout 'panels'): the average Gini across countries, unweighted on the left and population-weighted on the right, PIP with WID's top 1% appended against WID post-tax per capita, on the countries with a PIP survey within five years of each year. Data: data/figures/fig_global_gini_average.json from data/scripts/36_global_gini_averages.py. Unweighted, the two sources fall together after the late 1990s (2024: 0.477 PIP vs 0.498 WID); weighted, WID rises to 0.542 by 2010 and holds while PIP eases to 0.512 by 2024. Set controls:true in the component props to get the PIP / WID / sample selectors back.\n\n[Figma node 29:130]",
+      "blocks": [
+        {
+          "id": "b-pg-09",
+          "type": "html",
+          "html": "<div class=\"pg-canvas\"><div class=\"pg-t\" style=\"left:97.3px;top:45.3px;width:1209.2px;line-height:1.20;color:#000000;font-size:64px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-display);font-weight:700;font-size:64px\">Is inequality rising in most places?</span></div></div><div class=\"pg-t\" style=\"left:97.3px;top:242px;width:119.5px;line-height:1.32;color:#000000;font-size:24px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-body);font-weight:700;font-size:24px\">PIP vs WID </span></div></div><div class=\"pg-t\" style=\"left:752px;top:610.7px;width:473.1px;line-height:1.34;color:#1d3d63;font-size:16px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-body);font-weight:400;font-size:16px;font-style:italic\">QUOTE —</span></div></div><div class=\"pg-t\" style=\"left:112px;top:596.7px;width:502px;line-height:1.34;color:#1d3d63;font-size:16px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-body);font-weight:400;font-size:16px;font-style:italic\">QUOTE from PIP about how many countries saw rising inequality</span></div></div></div>"
+        },
+        {
+          "id": "b-pg-09-chart",
+          "type": "component",
+          "component": "fig-global-gini-average",
+          "props": {
+            "layout": "panels",
+            "sample": "common",
+            "pipSeries": "PIP_topadj",
+            "widSeries": "WID_posttax_per_capita",
+            "title": "",
+            "controls": false,
+            "height": 360
+          }
+        }
+      ]
+    },
+    {
+      "id": "pg-10",
+      "layout": "default",
+      "class": "pg",
+      "notes": "[Figma node 43:243]",
+      "blocks": [
+        {
+          "id": "b-pg-10",
+          "type": "html",
+          "html": "<div class=\"pg-canvas\"><img class=\"pg-img\" src=\"content/images/prague/google-rising-inequality.png\" alt=\"Google AI overview for &#x27;is inequality rising in most places?&#x27;\" style=\"left:141.3px;top:54px;width:1052.7px;height:612px\"></div>"
+        }
+      ]
+    },
+    {
+      "id": "pg-11",
+      "layout": "default",
+      "class": "pg",
+      "notes": "[Figma node 43:247]",
+      "blocks": [
+        {
+          "id": "b-pg-11",
+          "type": "html",
+          "html": "<div class=\"pg-canvas\"><img class=\"pg-img\" src=\"content/images/prague/google-rising-inequality.png\" alt=\"Google AI overview for &#x27;is inequality rising in most places?&#x27;\" style=\"left:47.3px;top:107.3px;width:417.3px;height:242.7px\"><img class=\"pg-img\" src=\"content/images/prague/un-inequality-bridging-divide-lower.png\" alt=\"un inequality bridging divide lower\" style=\"left:618px;top:368.7px;width:532.7px;height:320.7px\"><img class=\"pg-img\" src=\"content/images/prague/un-inequality-bridging-divide-upper.png\" alt=\"un inequality bridging divide upper\" style=\"left:618px;top:64.7px;width:530.7px;height:304px\"><svg class=\"pg-svg\" viewBox=\"0 0 1920 1080\" aria-hidden=\"true\"><defs><marker id=\"pg-head-11\" viewBox=\"0 0 12 12\" refX=\"11\" refY=\"6\" markerWidth=\"12\" markerHeight=\"12\" markerUnits=\"userSpaceOnUse\" orient=\"auto\"><path d=\"M1,1 L11,6 L1,11\" fill=\"none\" stroke=\"#000\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></marker><marker id=\"pg-head-grey-11\" viewBox=\"0 0 16 16\" refX=\"14\" refY=\"8\" markerWidth=\"16\" markerHeight=\"16\" markerUnits=\"userSpaceOnUse\" orient=\"auto\"><path d=\"M2,2 L14,8 L2,14\" fill=\"none\" stroke=\"#757575\" stroke-width=\"4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></marker></defs><line x1=\"494\" y1=\"254\" x2=\"899\" y2=\"254\" stroke=\"#000\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#pg-head-11)\"/></svg></div>"
+        }
+      ]
+    },
+    {
+      "id": "pg-12",
+      "layout": "default",
+      "class": "pg",
+      "notes": "[Figma node 43:252]",
+      "blocks": [
+        {
+          "id": "b-pg-12",
+          "type": "html",
+          "html": "<div class=\"pg-canvas\"><div class=\"pg-rect\" style=\"left:174px;top:426px;width:262.7px;height:252.7px;background:#cfcfcf;\"></div><div class=\"pg-rect\" style=\"left:580px;top:426px;width:262.7px;height:252.7px;background:#cfcfcf;\"></div><div class=\"pg-rect\" style=\"left:905.3px;top:426px;width:262.7px;height:252.7px;background:#cfcfcf;\"></div><img class=\"pg-img\" src=\"content/images/prague/google-rising-inequality.png\" alt=\"Google AI overview for &#x27;is inequality rising in most places?&#x27;\" style=\"left:47.3px;top:107.3px;width:434.7px;height:252.7px\"><img class=\"pg-img\" src=\"content/images/prague/un-inequality-bridging-divide-lower.png\" alt=\"un inequality bridging divide lower\" style=\"left:618px;top:210.7px;width:255.3px;height:153.3px\"><img class=\"pg-img\" src=\"content/images/prague/un-inequality-bridging-divide-upper.png\" alt=\"un inequality bridging divide upper\" style=\"left:618px;top:64.7px;width:254.7px;height:146px\"><div class=\"pg-t\" style=\"left:238.7px;top:514px;width:137.3px;line-height:1.20;color:#000000;font-size:64px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-display);font-weight:700;font-size:64px\">WID</span></div></div><div class=\"pg-t\" style=\"left:985.3px;top:514px;width:106.4px;line-height:1.20;color:#000000;font-size:64px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-display);font-weight:700;font-size:64px\">PIP</span></div></div><div class=\"pg-t\" style=\"left:620px;top:514px;width:187.5px;line-height:1.20;color:#000000;font-size:64px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-display);font-weight:700;font-size:64px\">OWID</span></div></div><div class=\"pg-t\" style=\"left:592px;top:364.7px;width:331.7px;line-height:1.34;color:#909090;font-size:13.3px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-body);font-weight:400;font-size:13.3px\">https:/<wbr>/<wbr>www.un.org/<wbr>en/<wbr>un75/<wbr>inequality-bridging-divide</span></div></div><svg class=\"pg-svg\" viewBox=\"0 0 1920 1080\" aria-hidden=\"true\"><defs><marker id=\"pg-head-12\" viewBox=\"0 0 12 12\" refX=\"11\" refY=\"6\" markerWidth=\"12\" markerHeight=\"12\" markerUnits=\"userSpaceOnUse\" orient=\"auto\"><path d=\"M1,1 L11,6 L1,11\" fill=\"none\" stroke=\"#000\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></marker><marker id=\"pg-head-grey-12\" viewBox=\"0 0 16 16\" refX=\"14\" refY=\"8\" markerWidth=\"16\" markerHeight=\"16\" markerUnits=\"userSpaceOnUse\" orient=\"auto\"><path d=\"M2,2 L14,8 L2,14\" fill=\"none\" stroke=\"#757575\" stroke-width=\"4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></marker></defs><line x1=\"494\" y1=\"254\" x2=\"899\" y2=\"254\" stroke=\"#000\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#pg-head-12)\"/><line x1=\"1097\" y1=\"574\" x2=\"1097\" y2=\"615\" stroke=\"#000\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#pg-head-12)\"/><line x1=\"888\" y1=\"556\" x2=\"697\" y2=\"639\" stroke=\"#000\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#pg-head-12)\"/><line x1=\"1282\" y1=\"833\" x2=\"1327\" y2=\"833\" stroke=\"#000\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#pg-head-12)\"/></svg></div>"
+        }
+      ]
+    },
+    {
+      "id": "pg-13",
+      "layout": "default",
+      "class": "pg",
+      "notes": "[Figma node 9:39]",
+      "blocks": [
+        {
+          "id": "b-pg-13",
+          "type": "html",
+          "html": "<div class=\"pg-canvas\"><div class=\"pg-t\" style=\"left:298.7px;top:336px;width:757.4px;line-height:1.20;color:#000000;font-size:40px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-display);font-weight:700;font-size:40px\">How do PIP and WID measure inequality?</span></div></div></div>"
+        }
+      ]
+    },
+    {
+      "id": "pg-14",
+      "layout": "default",
+      "class": "pg",
+      "notes": "- PIP is survey-based: built from household income surveys where they exist and consumption-expenditure surveys otherwise.\n- Which one you get depends on the country. High-income countries mostly report income after taxes and benefits; most low- and middle-income countries report consumption. That mixture is a comparability issue we come back to.\n- They do some transformations, e.g. everything is standardised to per capita, in 2021 international dollars.\n- Availability: not all countries do surveys every year, - > chart\n- A big strength is its coverage\n\n\n[Figma node 6:17]",
+      "blocks": [
+        {
+          "id": "b-pg-14",
+          "type": "html",
+          "html": "<div class=\"pg-canvas\"><div class=\"pg-t\" style=\"left:85.3px;top:61.3px;width:824px;line-height:1.20;color:#46688f;font-size:32px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-display);font-weight:700;font-size:32px\">PIP — overview</span></div></div><img class=\"pg-logo\" src=\"content/images/prague/owid-logo.png\" alt=\"owid logo\" style=\"left:1117.3px;top:677.3px;width:77.3px;height:42.7px\"><img class=\"pg-img\" src=\"content/images/prague/pip-overview-sketch.png\" alt=\"pip overview sketch\" style=\"left:796.7px;top:181.3px;width:274px;height:320.7px\"><div class=\"pg-box\" style=\"left:215.3px;top:408.7px;width:180px;height:103.3px;\">PIP “survey data”</div><div class=\"pg-box\" style=\"left:149.3px;top:163.3px;width:144px;height:117.3px;\">Income survey</div><div class=\"pg-box\" style=\"left:320px;top:163.3px;width:138.7px;height:117.3px;\">Consumption expenditure survey</div><div class=\"pg-t\" style=\"left:426.7px;top:348px;width:133.9px;line-height:1.50;color:#1e1e1e;font-size:16px;\"><div><span style=\"font-family:Inter, var(--font-body);font-weight:700;font-size:16px\">Transformations:</span></div><div><span style=\"font-family:Inter, var(--font-body);font-weight:500;font-size:16px\">Per capita</span></div><div><span style=\"font-family:Inter, var(--font-body);font-weight:500;font-size:16px\">LCUs to int.-$</span></div><div><span style=\"font-family:Inter, var(--font-body);font-weight:500;font-size:16px\">Bottom coding</span></div></div><div class=\"pg-t\" style=\"left:885.3px;top:523.3px;width:203.9px;line-height:1.32;color:#000000;font-size:24px;\"><div><span style=\"font-family:var(--font-body);font-weight:700;font-size:24px\">add diagram of reference year (line) and availability of</span></div></div><svg class=\"pg-svg\" viewBox=\"0 0 1920 1080\" aria-hidden=\"true\"><defs><marker id=\"pg-head-14\" viewBox=\"0 0 12 12\" refX=\"11\" refY=\"6\" markerWidth=\"12\" markerHeight=\"12\" markerUnits=\"userSpaceOnUse\" orient=\"auto\"><path d=\"M1,1 L11,6 L1,11\" fill=\"none\" stroke=\"#000\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></marker><marker id=\"pg-head-grey-14\" viewBox=\"0 0 16 16\" refX=\"14\" refY=\"8\" markerWidth=\"16\" markerHeight=\"16\" markerUnits=\"userSpaceOnUse\" orient=\"auto\"><path d=\"M2,2 L14,8 L2,14\" fill=\"none\" stroke=\"#757575\" stroke-width=\"4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></marker></defs><path d=\"M332,429 L332,493.0 Q332,517.0 356,517.0 L434,517.0 Q458,517.0 458,541.0 L458,605\" fill=\"none\" stroke=\"#757575\" stroke-width=\"4\" stroke-linecap=\"round\" stroke-linejoin=\"round\" marker-end=\"url(#pg-head-grey-14)\"/><path d=\"M584,429 L584,493.0 Q584,517.0 560,517.0 L482,517.0 Q458,517.0 458,541.0 L458,605\" fill=\"none\" stroke=\"#757575\" stroke-width=\"4\" stroke-linecap=\"round\" stroke-linejoin=\"round\" marker-end=\"url(#pg-head-grey-14)\"/></svg></div>"
+        }
+      ]
+    },
+    {
+      "id": "pg-15",
+      "layout": "default",
+      "class": "pg",
+      "notes": "[Figma node 37:147]",
+      "blocks": [
+        {
+          "id": "b-pg-15",
+          "type": "html",
+          "html": "<div class=\"pg-canvas\"><img class=\"pg-img\" src=\"content/images/prague/pip-consumption-or-income.png\" alt=\"Sketch: income inequality exceeds consumption inequality\" style=\"left:432.7px;top:99.3px;width:414px;height:520.7px\"><div class=\"pg-t\" style=\"left:85.3px;top:61.3px;width:824px;line-height:1.20;color:#46688f;font-size:32px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-display);font-weight:700;font-size:32px\">PIP — consumption or income?</span></div></div></div>"
+        }
+      ]
+    },
+    {
+      "id": "pg-16",
+      "layout": "default",
+      "class": "pg",
+      "notes": "- Usually, when a survey is done: whole pop -> households are sampled -> respond the survey \n- In this process, there are three main reasons why surveys have a blind spot at the top \n    - sampling: rich are few in number, so random sampling struggles to capture them\n    - response: when they are sampled, many decline to take part\n    - under-reporting: when they respond, they might underreport income, especially from investments and business ownership, the kinds more concentrated at the very top\n- This is inherent to surveys and an argument for using other kinds of data - which is a key motivation for WID\n\n[Figma node 34:78]",
+      "blocks": [
+        {
+          "id": "b-pg-16",
+          "type": "html",
+          "html": "<div class=\"pg-canvas\"><div class=\"pg-t\" style=\"left:85.3px;top:61.3px;width:824px;line-height:1.20;color:#46688f;font-size:32px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-display);font-weight:700;font-size:32px\">PIP — The “missing top”</span></div></div><img class=\"pg-logo\" src=\"content/images/prague/owid-logo.png\" alt=\"owid logo\" style=\"left:1117.3px;top:677.3px;width:77.3px;height:42.7px\"><img class=\"pg-img\" src=\"content/images/prague/pip-missing-rich-diagram.png\" alt=\"Diagram: surveys miss and under-report the richest\" style=\"left:192.7px;top:159.3px;width:844.7px;height:475.3px\"></div>"
+        }
+      ]
+    },
+    {
+      "id": "pg-17",
+      "layout": "default",
+      "class": "pg",
+      "notes": "- tax data \n- aligning with national accounts definitions\n- what's the main difference from national account/ income from survey\n\n[Figma node 37:150]",
+      "blocks": [
+        {
+          "id": "b-pg-17",
+          "type": "html",
+          "html": "<div class=\"pg-canvas\"><div class=\"pg-t\" style=\"left:85.3px;top:61.3px;width:824px;line-height:1.20;color:#46688f;font-size:32px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-display);font-weight:700;font-size:32px\">WID — overview</span></div></div><img class=\"pg-logo\" src=\"content/images/prague/owid-logo.png\" alt=\"owid logo\" style=\"left:1117.3px;top:677.3px;width:77.3px;height:42.7px\"><div class=\"pg-t\" style=\"left:784.7px;top:240.7px;width:397.6px;line-height:1.32;color:#000000;font-size:24px;\"><ul><li><span style=\"font-family:var(--font-body);font-weight:700;font-size:24px;text-decoration:underline\">Undistributed profits (mean + dist)</span></li><li><span style=\"font-family:var(--font-body);font-weight:700;font-size:24px\">~ Imputed rent (mean + dist)</span></li><li><span style=\"font-family:var(--font-body);font-weight:700;font-size:24px\">Redistirbution in kind</span></li><li><span style=\"font-family:var(--font-body);font-weight:700;font-size:24px\">Taxes on prod</span></li></ul></div><div class=\"pg-t\" style=\"left:784.7px;top:437.3px;width:499.2px;line-height:1.32;color:#000000;font-size:24px;\"><div><span style=\"font-family:var(--font-body);font-weight:700;font-size:24px\">→ Bundled here are reasonable conceptual questions but also worries about big assumptions needed</span></div><div>&nbsp;</div><div><span style=\"font-family:var(--font-body);font-weight:700;font-size:24px\">→ We’re not eganging with this conceptual issue. It’s not </span></div></div><div class=\"pg-box\" style=\"left:484.7px;top:180.7px;width:117.3px;height:117.3px;\">National accounts</div><div class=\"pg-box\" style=\"left:164.7px;top:180.7px;width:117.3px;height:117.3px;\">Household surveys</div><div class=\"pg-box\" style=\"left:324.7px;top:180.7px;width:117.3px;height:117.3px;\">Tax data</div></div>"
+        }
+      ]
+    },
+    {
+      "id": "pg-18",
+      "layout": "default",
+      "class": "pg",
+      "notes": "similar to Pablo's artifact - a little flow showing how each country's estimates are created \n\n[Figma node 37:159]",
+      "blocks": [
+        {
+          "id": "b-pg-18",
+          "type": "html",
+          "html": "<div class=\"pg-canvas\"><div class=\"pg-t\" style=\"left:85.3px;top:61.3px;width:824px;line-height:1.36;color:#46688f;font-size:20px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-body);font-weight:400;font-size:20px\">WID — Ghana??</span></div></div><img class=\"pg-logo\" src=\"content/images/prague/owid-logo.png\" alt=\"owid logo\" style=\"left:1117.3px;top:677.3px;width:77.3px;height:42.7px\"></div>"
+        }
+      ]
+    },
+    {
+      "id": "pg-19",
+      "layout": "default",
+      "class": "pg",
+      "notes": "[Figma node 37:166]",
+      "blocks": [
+        {
+          "id": "b-pg-19",
+          "type": "html",
+          "html": "<div class=\"pg-canvas\"><div class=\"pg-t\" style=\"left:85.3px;top:61.3px;width:824px;line-height:1.36;color:#46688f;font-size:20px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-body);font-weight:400;font-size:20px\">WID — India??</span></div></div><img class=\"pg-logo\" src=\"content/images/prague/owid-logo.png\" alt=\"owid logo\" style=\"left:1117.3px;top:677.3px;width:77.3px;height:42.7px\"></div>"
+        }
+      ]
+    },
+    {
+      "id": "pg-20",
+      "layout": "default",
+      "class": "pg",
+      "notes": "and still disagreement even with such rich data - auten & splinter (blurb)\n\n[Figma node 37:173]",
+      "blocks": [
+        {
+          "id": "b-pg-20",
+          "type": "html",
+          "html": "<div class=\"pg-canvas\"><div class=\"pg-t\" style=\"left:85.3px;top:61.3px;width:824px;line-height:1.36;color:#46688f;font-size:20px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-body);font-weight:400;font-size:20px\">WID — US</span></div></div><img class=\"pg-img\" src=\"content/images/prague/wid-us-tpc-top1.png\" alt=\"wid us tpc top1\" style=\"left:57.3px;top:170px;width:558px;height:329.3px\"><img class=\"pg-logo\" src=\"content/images/prague/owid-logo.png\" alt=\"owid logo\" style=\"left:1117.3px;top:677.3px;width:77.3px;height:42.7px\"><div class=\"pg-t\" style=\"left:43.3px;top:537.3px;width:565.1px;line-height:1.34;color:#1d3d63;font-size:16px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-body);font-weight:400;font-size:16px\">https:/<wbr>/<wbr>taxpolicycenter.org/<wbr>taxvox/<wbr>measuring-income-inequality-primer-debate</span></div></div><div class=\"pg-t\" style=\"left:631.3px;top:215.3px;width:580.2px;line-height:1.34;color:#1d3d63;font-size:16px;\"><div><span style=\"font-family:var(--font-body);font-weight:400;font-size:16px\"> Angus Deaton (2020) sums up the issue in this way:</span></div><div>&nbsp;</div><div><span style=\"font-family:var(--font-body);font-weight:400;font-size:16px\">Allocating from tax returns is hard enough, because tax units are neither individuals nor households, but allocating the other half of national income is an immensely more difficult task, requiring </span><span style=\"font-family:var(--font-body);font-weight:700;font-size:16px\">assumptions</span><span style=\"font-family:var(--font-body);font-weight:400;font-size:16px\"> that are rarely well supported by evidence and often seem </span><span style=\"font-family:var(--font-body);font-weight:700;font-size:16px\">arbitrary</span><span style=\"font-family:var(--font-body);font-weight:400;font-size:16px\">. Because distribution is such a controversial topic, these assumptions leave plenty of </span><span style=\"font-family:var(--font-body);font-weight:700;font-size:16px\">scope for politically-biased challenges</span><span style=\"font-family:var(--font-body);font-weight:400;font-size:16px\">, in which each commentator can choose their own alternatives and get almost any result they choose.</span></div><div>&nbsp;</div><div><span style=\"font-family:var(--font-body);font-weight:400;font-size:16px\">Many of the choices made in earlier research by Piketty and Saez (2003), and later by PSZ, tended to push measured inequality higher. In contrast, almost all the choices AS have made tend to push top income share estimates down, relative to PSZ. Still, these decisions are not “just” political. There are key substantive issues at stake.</span></div></div></div>"
+        }
+      ]
+    },
+    {
+      "id": "pg-21",
+      "layout": "default",
+      "class": "pg",
+      "notes": "- income measure\n- top incomes\n- (and some other things)\n- we don't know how much of this matters\n\n[Figma node 9:28]",
+      "blocks": [
+        {
+          "id": "b-pg-21",
+          "type": "html",
+          "html": "<div class=\"pg-canvas\"><div class=\"pg-t\" style=\"left:112px;top:53.3px;width:344px;line-height:1.32;color:#000000;font-size:24px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-body);font-weight:700;font-size:24px\">The perspective we’re aiming for</span></div></div><img class=\"pg-img\" src=\"content/images/prague/perspective-flow-sketch.png\" alt=\"perspective flow sketch\" style=\"left:73.3px;top:426.7px;width:247.3px;height:293.3px\"><div class=\"pg-t\" style=\"left:112px;top:160px;width:212.9px;line-height:1.32;color:#000000;font-size:24px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-body);font-weight:700;font-size:24px\">Takeaways from PIP</span></div></div><div class=\"pg-t\" style=\"left:976px;top:169.3px;width:246.5px;line-height:1.32;color:#000000;font-size:24px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-body);font-weight:700;font-size:24px\">Takeaways from WID</span></div></div><div class=\"pg-t\" style=\"left:134.7px;top:296px;width:606.3px;line-height:1.32;color:#000000;font-size:24px;\"><div><span style=\"font-family:var(--font-body);font-weight:700;font-size:24px;font-style:italic\">Are these robust to best efforts to address ‘accuracy’ problems (mix cons/<wbr>inc + missing top incomes)?</span></div></div><div class=\"pg-t\" style=\"left:752.7px;top:296px;width:427.8px;line-height:1.32;color:#000000;font-size:24px;\"><div><span style=\"font-family:var(--font-body);font-weight:700;font-size:24px;font-style:italic\">Are these robust to using the concept in common circulation?</span></div></div><div class=\"pg-t\" style=\"left:478.7px;top:442px;width:496.5px;line-height:1.32;color:#000000;font-size:24px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-body);font-weight:700;font-size:24px;font-style:italic\">*Disposable income, addressing missing top*</span></div></div><div class=\"pg-t\" style=\"left:174px;top:241.3px;width:216.3px;line-height:1.32;color:#000000;font-size:24px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-body);font-weight:700;font-size:24px\">Addressing accuracy</span></div></div><svg class=\"pg-svg\" viewBox=\"0 0 1920 1080\" aria-hidden=\"true\"><defs><marker id=\"pg-head-21\" viewBox=\"0 0 12 12\" refX=\"11\" refY=\"6\" markerWidth=\"12\" markerHeight=\"12\" markerUnits=\"userSpaceOnUse\" orient=\"auto\"><path d=\"M1,1 L11,6 L1,11\" fill=\"none\" stroke=\"#000\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></marker><marker id=\"pg-head-grey-21\" viewBox=\"0 0 16 16\" refX=\"14\" refY=\"8\" markerWidth=\"16\" markerHeight=\"16\" markerUnits=\"userSpaceOnUse\" orient=\"auto\"><path d=\"M2,2 L14,8 L2,14\" fill=\"none\" stroke=\"#757575\" stroke-width=\"4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></marker></defs><line x1=\"202\" y1=\"409\" x2=\"872\" y2=\"409\" stroke=\"#000\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#pg-head-21)\"/><line x1=\"1799\" y1=\"409\" x2=\"1129\" y2=\"409\" stroke=\"#000\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#pg-head-21)\"/></svg></div>"
+        }
+      ]
+    },
+    {
+      "id": "pg-22",
+      "layout": "default",
+      "class": "pg",
+      "notes": "[Figma node 39:107]",
+      "blocks": [
+        {
+          "id": "b-pg-22",
+          "type": "html",
+          "html": "<div class=\"pg-canvas\"></div>"
+        }
+      ]
+    },
+    {
+      "id": "pg-23",
+      "layout": "default",
+      "class": "pg",
+      "notes": "[Figma node 37:193]",
+      "blocks": [
+        {
+          "id": "b-pg-23",
+          "type": "html",
+          "html": "<div class=\"pg-canvas\"><img class=\"pg-img\" src=\"content/images/prague/pip-consumption-or-income.png\" alt=\"Sketch: income inequality exceeds consumption inequality\" style=\"left:432.7px;top:99.3px;width:414px;height:520.7px\"></div>"
+        }
+      ]
+    },
+    {
+      "id": "pg-24",
+      "layout": "default",
+      "class": "pg",
+      "notes": "- Now, the adjustment for the missing top\n- Following a 2015 paper by Anand & Segal\n- Assumes that the survey gets the people it reaches right; the problem is the rich people it misses\n- treat the survey as covering the bottom 99%, rescale that \n- Then we add a top 1% with the income share WID reports for that country and year (post-tax, per capita) (noting that also means we're importing an estimate when that number is imputed)\n\n[Figma node 37:195]",
+      "blocks": [
+        {
+          "id": "b-pg-24",
+          "type": "html",
+          "html": "<div class=\"pg-canvas\"><div class=\"pg-t\" style=\"left:85.3px;top:61.3px;width:824px;line-height:1.20;color:#46688f;font-size:32px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-display);font-weight:700;font-size:32px\">Adjusting for the “missing top”</span></div></div><img class=\"pg-logo\" src=\"content/images/prague/owid-logo.png\" alt=\"owid logo\" style=\"left:1117.3px;top:677.3px;width:77.3px;height:42.7px\"><img class=\"pg-img\" src=\"content/images/prague/top-adjustment-diagram.png\" alt=\"Diagram: adjusting PIP for the missing top 1%\" style=\"left:152px;top:131.3px;width:894px;height:503.3px\"></div>"
+        }
+      ]
+    },
+    {
+      "id": "pg-25",
+      "layout": "default",
+      "class": "pg",
+      "notes": "[Figma node 9:31]",
+      "blocks": [
+        {
+          "id": "b-pg-25",
+          "type": "html",
+          "html": "<div class=\"pg-canvas\"><div class=\"pg-t\" style=\"left:85.3px;top:61.3px;width:824px;line-height:1.36;color:#46688f;font-size:20px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-body);font-weight:400;font-size:20px\">What shifts?</span></div></div><img class=\"pg-logo\" src=\"content/images/prague/owid-logo.png\" alt=\"owid logo\" style=\"left:1117.3px;top:677.3px;width:77.3px;height:42.7px\"></div>"
+        }
+      ]
+    },
+    {
+      "id": "pg-26",
+      "layout": "default",
+      "class": "pg",
+      "notes": "[Figma node 9:20]",
+      "blocks": [
+        {
+          "id": "b-pg-26",
+          "type": "html",
+          "html": "<div class=\"pg-canvas\"><div class=\"pg-t\" style=\"left:85.3px;top:61.3px;width:824px;line-height:1.36;color:#46688f;font-size:20px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-body);font-weight:400;font-size:20px\">Our goals with the triangulation</span></div></div><img class=\"pg-logo\" src=\"content/images/prague/owid-logo.png\" alt=\"owid logo\" style=\"left:1117.3px;top:677.3px;width:77.3px;height:42.7px\"></div>"
+        }
+      ]
+    },
+    {
+      "id": "pg-27",
+      "layout": "default",
+      "class": "pg",
+      "notes": "[Figma node 6:26]",
+      "blocks": [
+        {
+          "id": "b-pg-27",
+          "type": "html",
+          "html": "<div class=\"pg-canvas\"><div class=\"pg-t\" style=\"left:564px;top:336px;width:246.5px;line-height:1.20;color:#000000;font-size:40px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-display);font-weight:700;font-size:40px\">Big questions</span></div></div></div>"
+        }
+      ]
+    },
+    {
+      "id": "pg-28",
+      "layout": "default",
+      "class": "pg",
+      "notes": "- Gini map - we'll pick whatever year makes sense + tolerance- align legend boxes\n- what about other metrics?\n\n[Figma node 48:277]",
+      "blocks": [
+        {
+          "id": "b-pg-28",
+          "type": "html",
+          "html": "<div class=\"pg-canvas\"><div class=\"pg-t\" style=\"left:85.3px;top:61.3px;width:824px;line-height:1.36;color:#46688f;font-size:20px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-body);font-weight:400;font-size:20px\">Where is inequality </span><span style=\"font-family:var(--font-body);font-weight:400;font-size:20px;text-decoration:line-through\">high</span><span style=\"font-family:var(--font-body);font-weight:400;font-size:20px\"> at least as high as the US?</span></div></div><img class=\"pg-img\" src=\"content/images/prague/us-threshold-map-pip.png\" alt=\"us threshold map pip\" style=\"left:85.3px;top:156px;width:518.7px;height:349.3px\"><img class=\"pg-logo\" src=\"content/images/prague/owid-logo.png\" alt=\"owid logo\" style=\"left:1117.3px;top:677.3px;width:77.3px;height:42.7px\"><div class=\"pg-t\" style=\"left:308.7px;top:106.7px;width:37.1px;line-height:1.32;color:#000000;font-size:24px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-body);font-weight:700;font-size:24px\">PIP</span></div></div><div class=\"pg-t\" style=\"left:885.3px;top:100px;width:51.5px;line-height:1.32;color:#000000;font-size:24px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-body);font-weight:700;font-size:24px\">WID</span></div></div><img class=\"pg-img\" src=\"content/images/prague/us-threshold-map-wid.png\" alt=\"us threshold map wid\" style=\"left:672px;top:156px;width:522.7px;height:349.3px\"><img class=\"pg-img\" src=\"content/images/prague/us-threshold-bars-pip.png\" alt=\"us threshold bars pip\" style=\"left:99.3px;top:522.7px;width:454px;height:146px\"><img class=\"pg-img\" src=\"content/images/prague/us-threshold-bars-wid.png\" alt=\"us threshold bars wid\" style=\"left:694.7px;top:519.3px;width:476.7px;height:149.3px\"></div>"
+        }
+      ]
+    },
+    {
+      "id": "pg-29",
+      "layout": "default",
+      "class": "pg",
+      "notes": "- Gini map - we'll pick whatever year makes sense + tolerance- align legend boxes\n- what about other metrics?\n\n[Figma node 51:309]",
+      "blocks": [
+        {
+          "id": "b-pg-29",
+          "type": "html",
+          "html": "<div class=\"pg-canvas\"><div class=\"pg-t\" style=\"left:734px;top:52px;width:461.4px;line-height:1.36;color:#46688f;font-size:20px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-body);font-weight:400;font-size:20px\">Where is inequality at least as low as Sweden?</span></div></div><img class=\"pg-logo\" src=\"content/images/prague/owid-logo.png\" alt=\"owid logo\" style=\"left:1117.3px;top:677.3px;width:77.3px;height:42.7px\"><div class=\"pg-t\" style=\"left:540.7px;top:572.7px;width:204.6px;line-height:1.32;color:#000000;font-size:24px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-body);font-weight:700;font-size:24px\">Adjusted inc→cons</span></div></div><div class=\"pg-t\" style=\"left:85.3px;top:46px;width:534.2px;line-height:1.36;color:#46688f;font-size:20px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-body);font-weight:400;font-size:20px\">Where is inequality at least as high as the US?</span></div></div></div>"
+        }
+      ]
+    },
+    {
+      "id": "pg-30",
+      "layout": "default",
+      "class": "pg",
+      "notes": "- Gini map - we'll pick whatever year makes sense + tolerance- align legend boxes\n- what about other metrics?\n\n[Figma node 51:332]",
+      "blocks": [
+        {
+          "id": "b-pg-30",
+          "type": "html",
+          "html": "<div class=\"pg-canvas\"><div class=\"pg-t\" style=\"left:734px;top:52px;width:461.4px;line-height:1.36;color:#46688f;font-size:20px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-body);font-weight:400;font-size:20px\">Where is inequality at least as low as Sweden?</span></div></div><img class=\"pg-logo\" src=\"content/images/prague/owid-logo.png\" alt=\"owid logo\" style=\"left:1117.3px;top:677.3px;width:77.3px;height:42.7px\"><div class=\"pg-t\" style=\"left:471.3px;top:572.7px;width:347.5px;line-height:1.32;color:#000000;font-size:24px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-body);font-weight:700;font-size:24px\">Adjusted inc→cons + top income</span></div></div><div class=\"pg-t\" style=\"left:85.3px;top:46px;width:534.2px;line-height:1.36;color:#46688f;font-size:20px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-body);font-weight:400;font-size:20px\">Where is inequality at least as high as the US?</span></div></div></div>"
+        }
+      ]
+    },
+    {
+      "id": "pg-31",
+      "layout": "default",
+      "class": "pg",
+      "notes": "- Marimekko: highlight the US, with a line\n- x number of countries with high inequality based on the PIP approach\n- what about other metrics?\n\n- PIP threshold: Gini > 40: x countries in PIP, x countries in WID (the US as a \"mark of high inequality\")\n\n[Figma node 1:121]",
+      "blocks": [
+        {
+          "id": "b-pg-31",
+          "type": "html",
+          "html": "<div class=\"pg-canvas\"><div class=\"pg-t\" style=\"left:85.3px;top:61.3px;width:824px;line-height:1.36;color:#46688f;font-size:20px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-body);font-weight:400;font-size:20px\">Where is inequality high and low?</span></div></div><img class=\"pg-logo\" src=\"content/images/prague/owid-logo.png\" alt=\"owid logo\" style=\"left:1117.3px;top:677.3px;width:77.3px;height:42.7px\"><div class=\"pg-t\" style=\"left:131.3px;top:132.7px;width:606.3px;line-height:1.32;color:#000000;font-size:24px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-body);font-weight:700;font-size:24px\">Marimekko — how does ranking shift (maybe interactive?)</span></div></div></div>"
+        }
+      ]
+    },
+    {
+      "id": "pg-32",
+      "layout": "default",
+      "class": "pg",
+      "notes": "- Marimekko: highlight the US, with a line\n- x number of countries with high inequality based on the PIP approach\n- what about other metrics?\n- different stories for Afica/ Latam\n\n[Figma node 9:42]",
+      "blocks": [
+        {
+          "id": "b-pg-32",
+          "type": "html",
+          "html": "<div class=\"pg-canvas\"><div class=\"pg-t\" style=\"left:85.3px;top:61.3px;width:824px;line-height:1.36;color:#46688f;font-size:20px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-body);font-weight:400;font-size:20px\">Where is inequality high and low?</span></div></div><img class=\"pg-logo\" src=\"content/images/prague/owid-logo.png\" alt=\"owid logo\" style=\"left:1117.3px;top:677.3px;width:77.3px;height:42.7px\"><div class=\"pg-t\" style=\"left:131.3px;top:132.7px;width:407.2px;line-height:1.32;color:#000000;font-size:24px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-body);font-weight:700;font-size:24px\">Different stories Africa /<wbr> Latin America</span></div></div></div>"
+        }
+      ]
+    },
+    {
+      "id": "pg-33",
+      "layout": "default",
+      "class": "pg",
+      "notes": "- does any of the story flip?\n\n[Figma node 20:51]",
+      "blocks": [
+        {
+          "id": "b-pg-33",
+          "type": "html",
+          "html": "<div class=\"pg-canvas\"><div class=\"pg-t\" style=\"left:85.3px;top:61.3px;width:824px;line-height:1.36;color:#46688f;font-size:20px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-body);font-weight:400;font-size:20px\">Where is inequality high and low?</span></div></div><img class=\"pg-logo\" src=\"content/images/prague/owid-logo.png\" alt=\"owid logo\" style=\"left:1117.3px;top:677.3px;width:77.3px;height:42.7px\"><div class=\"pg-t\" style=\"left:131.3px;top:132.7px;width:597.4px;line-height:1.32;color:#000000;font-size:24px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-body);font-weight:700;font-size:24px\">Other indicators - the US  in comparison: Palma, top 10%</span></div></div></div>"
+        }
+      ]
+    },
+    {
+      "id": "pg-34",
+      "layout": "default",
+      "class": "pg",
+      "notes": "key takeaways\n\n[Figma node 20:60]",
+      "blocks": [
+        {
+          "id": "b-pg-34",
+          "type": "html",
+          "html": "<div class=\"pg-canvas\"><div class=\"pg-t\" style=\"left:85.3px;top:61.3px;width:824px;line-height:1.36;color:#46688f;font-size:20px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-body);font-weight:400;font-size:20px\">Where is inequality high and low?</span></div></div><img class=\"pg-logo\" src=\"content/images/prague/owid-logo.png\" alt=\"owid logo\" style=\"left:1117.3px;top:677.3px;width:77.3px;height:42.7px\"></div>"
+        }
+      ]
+    },
+    {
+      "id": "pg-35",
+      "layout": "default",
+      "class": "pg",
+      "notes": "[Figma node 1:100]",
+      "blocks": [
+        {
+          "id": "b-pg-35",
+          "type": "html",
+          "html": "<div class=\"pg-canvas\"><div class=\"pg-t\" style=\"left:85.3px;top:61.3px;width:824px;line-height:1.36;color:#46688f;font-size:20px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-body);font-weight:400;font-size:20px\">Is inequality rising everywhere?</span></div></div><img class=\"pg-logo\" src=\"content/images/prague/owid-logo.png\" alt=\"owid logo\" style=\"left:1117.3px;top:677.3px;width:77.3px;height:42.7px\"></div>"
+        }
+      ]
+    }
+  ]
+}
