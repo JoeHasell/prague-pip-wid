@@ -19,7 +19,13 @@
  *   weighting  starting weighting: unweighted | weighted
  *   sample     starting sample: common | balanced | own | common_ex_ci
  *   sources    ordered array of series keys to draw (default: all seven)
- *   controls   false hides both selectors (a fixed talk slide)
+ *   controls   false hides the selectors (a fixed talk slide)
+ *   layout     "panels": PIP and WID side by side instead of one chart of every series.
+ *              Each panel draws its series' unweighted AND population-weighted average on
+ *              a y axis shared by both panels; the selectors then pick the PIP series, the
+ *              WID series and the country sample.
+ *   pipSeries  panels only: starting PIP series (default PIP_topadj)
+ *   widSeries  panels only: starting WID series (default WID_posttax_per_capita)
  *   height     viewBox height (default 540)
  */
 (function () {
@@ -37,6 +43,8 @@
     WID_posttax_per_capita: '#009E73',
   };
   const DASHED = new Set(['PIP_consinc_wb', 'PIP_topadj_wb']);
+  // Panels layout: the two weightings, not the series, carry the colour.
+  const WCOLOR = { unweighted: '#1D3D63', weighted: '#C8102E' };
   const CHROME = { grid: 'rgb(238,241,245)', tick: 'rgb(87,114,145)', axis: 'rgb(63,96,138)', faint: 'rgb(140,155,175)' };
 
   function styles(p) {
@@ -55,6 +63,8 @@
       .${p}-tick { font: 12px var(--font-body); fill: ${CHROME.tick}; }
       .${p}-axis { font: 600 13px var(--font-body); fill: ${CHROME.axis}; }
       .${p}-label { font: 700 12.5px var(--font-body); }
+      .${p}-ptitle { font: 700 22px var(--font-body); fill: var(--ink); }
+      .${p}-psub { font: 13px var(--font-body); fill: ${CHROME.axis}; }
       .${p}-shade { fill: rgb(0,33,71); fill-opacity: 0.045; }
       .${p}-shadelabel { font: italic 11.5px var(--font-body); fill: ${CHROME.faint}; }
       .${p}-hover { stroke: rgb(120,135,155); stroke-width: 1; stroke-dasharray: 3 3; }
@@ -75,6 +85,12 @@
     if (!out.includes(years[0])) out.unshift(years[0]);
     if (!out.includes(years[years.length - 1])) out.push(years[years.length - 1]);
     return out;
+  }
+
+  // Tick labels with as many decimals as the step needs (0.025 steps need three).
+  function tickFormatter(ticks) {
+    const d = ticks.some(t => Math.abs(t * 100 - Math.round(t * 100)) > 1e-6) ? 3 : 2;
+    return v => v.toFixed(d);
   }
 
   function niceTicks(lo, hi, n) {
@@ -137,6 +153,13 @@
       let weighting = weightKeys.includes(props.weighting) ? props.weighting : weightKeys[0];
 
       const order = meta.series.map(s => s.key);
+      const panels = props.layout === 'panels';
+      const pipKeys = order.filter(k => k.startsWith('PIP'));
+      const widKeys = order.filter(k => k.startsWith('WID'));
+      let pipSeries = pipKeys.includes(props.pipSeries) ? props.pipSeries : 'PIP_topadj';
+      let widSeries = widKeys.includes(props.widSeries) ? props.widSeries : 'WID_posttax_per_capita';
+      const seriesOpts = keys => keys.map(k => meta.series.find(x => x.key === k))
+        .map(x => ({ key: x.key, label: x.short }));
       const sources = (Array.isArray(props.sources) && props.sources.length)
         ? props.sources.filter(s => order.includes(s)) : order;
       const shortOf = k => (meta.series.find(s => s.key === k) || { short: k }).short;
@@ -149,7 +172,16 @@
         <style>${styles(prefix)}</style>
         <div class="${prefix}-wrap">
           ${title ? `<div class="${prefix}-title">${esc(title)}</div>` : ''}
-          ${showControls ? `
+          ${showControls && panels ? `
+          <div class="${prefix}-controls">
+            <label for="${prefix}-p">PIP</label>
+            <select id="${prefix}-p" class="${prefix}-select">${opts(seriesOpts(pipKeys), pipSeries)}</select>
+            <label for="${prefix}-d">WID</label>
+            <select id="${prefix}-d" class="${prefix}-select">${opts(seriesOpts(widKeys), widSeries)}</select>
+            <label for="${prefix}-s">Countries</label>
+            <select id="${prefix}-s" class="${prefix}-select">${opts(meta.samples, sample)}</select>
+          </div>` : ''}
+          ${showControls && !panels ? `
           <div class="${prefix}-controls">
             <label for="${prefix}-w">Average</label>
             <select id="${prefix}-w" class="${prefix}-select">${opts(meta.weightings, weighting)}</select>
@@ -168,6 +200,8 @@
       const note = el.querySelector(`.${prefix}-note`);
       const selW = el.querySelector(`#${prefix}-w`);
       const selS = el.querySelector(`#${prefix}-s`);
+      const selP = el.querySelector(`#${prefix}-p`);
+      const selD = el.querySelector(`#${prefix}-d`);
 
       function draw() {
         const w = meta.weightings.find(x => x.key === weighting);
@@ -187,10 +221,11 @@
         const yOf = v => y1 - ((v - lo) / (hi - lo)) * (y1 - y0);
 
         const parts = [];
-        niceTicks(lo, hi, 6).forEach(v => {
+        const ticks = niceTicks(lo, hi, 6), tf = tickFormatter(ticks);
+        ticks.forEach(v => {
           const y = yOf(v);
           parts.push(`<line class="${prefix}-grid" x1="${x0}" x2="${x1}" y1="${y}" y2="${y}"/>`);
-          parts.push(`<text class="${prefix}-tick" x="${x0 - 10}" y="${y + 4}" text-anchor="end">${v.toFixed(2)}</text>`);
+          parts.push(`<text class="${prefix}-tick" x="${x0 - 10}" y="${y + 4}" text-anchor="end">${tf(v)}</text>`);
         });
         yearTicks(years).forEach(y => {
           const i = years.indexOf(y);
@@ -262,9 +297,103 @@
         };
       }
 
-      draw();
-      if (selW) selW.addEventListener('change', () => { weighting = selW.value; draw(); });
-      if (selS) selS.addEventListener('change', () => { sample = selS.value; draw(); });
+      function drawPanels() {
+        const s = meta.samples.find(x => x.key === sample);
+        note.textContent = s.note;
+        const cov = data.coverage[sample];
+        const fmt = v => v.toFixed(3);
+        const wkeys = meta.weightings.map(w => w.key);
+        const wlabel = k => meta.weightings.find(w => w.key === k).label;
+        const sides = [
+          { key: pipSeries, name: 'PIP', cov: cov.pip },
+          { key: widSeries, name: 'WID', cov: cov.wid },
+        ];
+
+        const padL = 70, gap = 70, labelW = 190, padT = 58, padB = 64;
+        const pw = (W - padL - gap) / 2;
+        const y0 = padT, y1 = H - padB;
+        sides.forEach((sd, j) => {
+          sd.x0 = padL + j * (pw + gap);
+          sd.x1 = sd.x0 + pw - labelW;
+        });
+        const xOf = (sd, i) => sd.x0 + (years.length === 1 ? 0 : (i / (years.length - 1)) * (sd.x1 - sd.x0));
+
+        // One y axis for both panels, so the two sources' levels compare directly.
+        const vals = sides.flatMap(sd => wkeys.flatMap(w => data.data[sample][w][sd.key]));
+        const lo = Math.floor((Math.min(...vals) - 0.005) * 50) / 50;
+        const hi = Math.ceil((Math.max(...vals) + 0.005) * 50) / 50;
+        const yOf = v => y1 - ((v - lo) / (hi - lo)) * (y1 - y0);
+
+        const parts = [];
+        sides.forEach((sd, j) => {
+          parts.push(`<text class="${prefix}-ptitle" x="${sd.x0}" y="${padT - 30}">${esc(sd.name)}</text>`);
+          parts.push(`<text class="${prefix}-psub" x="${sd.x0}" y="${padT - 12}">${esc(shortOf(sd.key))} · ` +
+                     `${Math.min(...sd.cov.n)}-${Math.max(...sd.cov.n)} countries</text>`);
+          const ticks = niceTicks(lo, hi, 5), tf = tickFormatter(ticks);
+          ticks.forEach(v => {
+            const y = yOf(v);
+            parts.push(`<line class="${prefix}-grid" x1="${sd.x0}" x2="${sd.x1}" y1="${y}" y2="${y}"/>`);
+            parts.push(`<text class="${prefix}-tick" x="${sd.x0 - 8}" y="${y + 4}" text-anchor="end">${tf(v)}</text>`);
+          });
+          yearTicks(years).filter(y => y % 10 === 0 || y === years[0] || y === years[years.length - 1]).forEach(y => {
+            const i = years.indexOf(y);
+            if (i >= 0) parts.push(`<text class="${prefix}-tick" x="${xOf(sd, i)}" y="${y1 + 20}" text-anchor="middle">${y}</text>`);
+          });
+          parts.push(`<line class="${prefix}-grid" x1="${sd.x0}" x2="${sd.x1}" y1="${y1}" y2="${y1}"/>`);
+          const ends = [];
+          wkeys.forEach(w => {
+            const v = data.data[sample][w][sd.key];
+            const pts = v.map((x, i) => `${xOf(sd, i).toFixed(1)},${yOf(x).toFixed(1)}`).join(' ');
+            parts.push(`<polyline points="${pts}" fill="none" stroke="${WCOLOR[w]}" stroke-width="3" stroke-linejoin="round"/>`);
+            ends.push({ y: yOf(v[v.length - 1]), label: wlabel(w), c: WCOLOR[w], v: v[v.length - 1] });
+          });
+          ends.sort((a, b) => a.y - b.y);
+          if (ends.length > 1 && ends[1].y - ends[0].y < 18) ends[1].y = ends[0].y + 18;
+          ends.forEach(e => {
+            parts.push(`<text class="${prefix}-label" x="${sd.x1 + 10}" y="${e.y + 4}" fill="${e.c}">${esc(e.label)} ${fmt(e.v)}</text>`);
+          });
+        });
+        parts.push(`<text class="${prefix}-axis" transform="translate(${padL - 52},${(y0 + y1) / 2}) rotate(-90)" text-anchor="middle">Average Gini across countries</text>`);
+        parts.push(
+          `<text class="${prefix}-source" x="${padL}" y="${H - 8}">` +
+          `Deck calculation from the ETL's harmonized bins · ${esc(s.label)} · ` +
+          `PIP: nearest survey within 5 years · population at the reference year</text>`
+        );
+        svg.innerHTML = parts.join('');
+
+        svg.onmousemove = ev => {
+          const pt = svg.createSVGPoint();
+          pt.x = ev.clientX; pt.y = ev.clientY;
+          const loc = pt.matrixTransform(svg.getScreenCTM().inverse());
+          svg.querySelectorAll(`.${prefix}-hover`).forEach(nd => nd.remove());
+          const sd = sides.find(x => loc.x >= x.x0 && loc.x <= x.x1);
+          if (!sd || loc.y < y0 || loc.y > y1) { tip.style.opacity = 0; return; }
+          const t = Math.round(((loc.x - sd.x0) / (sd.x1 - sd.x0)) * (years.length - 1));
+          const i = Math.max(0, Math.min(years.length - 1, t));
+          const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+          line.setAttribute('class', `${prefix}-hover`);
+          line.setAttribute('x1', xOf(sd, i)); line.setAttribute('x2', xOf(sd, i));
+          line.setAttribute('y1', y0); line.setAttribute('y2', y1);
+          svg.appendChild(line);
+          const rows = wkeys.map(w => `<span class="sw" style="background:${WCOLOR[w]}"></span>${esc(wlabel(w))} ` +
+                                      `<b>${fmt(data.data[sample][w][sd.key][i])}</b>`);
+          tip.innerHTML = `<b>${esc(sd.name)} ${years[i]}</b> · ${sd.cov.n[i]} countries, ` +
+                          `${Math.round(sd.cov.pop[i] * 100)}% of world population<br>${rows.join('<br>')}`;
+          placeTip(svg, tip, { x0: sd.x0, x1: sd.x1, y0, y1 }, xOf(sd, i), loc.y);
+          tip.style.opacity = 1;
+        };
+        svg.onmouseleave = () => {
+          tip.style.opacity = 0;
+          svg.querySelectorAll(`.${prefix}-hover`).forEach(nd => nd.remove());
+        };
+      }
+
+      const render = () => (panels ? drawPanels() : draw());
+      render();
+      if (selW) selW.addEventListener('change', () => { weighting = selW.value; render(); });
+      if (selS) selS.addEventListener('change', () => { sample = selS.value; render(); });
+      if (selP) selP.addEventListener('change', () => { pipSeries = selP.value; render(); });
+      if (selD) selD.addEventListener('change', () => { widSeries = selD.value; render(); });
     }
 
     return () => { dead = true; };
