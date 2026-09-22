@@ -1,6 +1,6 @@
 .DS_Store
 node_modules/
-content/slides.json.bak
+content/*.json.bak
 
 # Data pipeline: transient WID fetch state (see data/README.md)
 data/raw/wid/temp_country_data/

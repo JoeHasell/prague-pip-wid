@@ -2,7 +2,9 @@
  * deck.js — core engine
  *
  * Responsibilities:
- *  - load content/slides.json and components/manifest.json
+ *  - load content/slides.json (or the file named by <body data-content>,
+ *    which is how a second deck such as prague.html shares this engine)
+ *    and components/manifest.json
  *  - render slides (data -> DOM)
  *  - navigation (keys, buttons, URL hash), stage scaling, notes
  *  - component registry + lazy mounting
@@ -21,6 +23,9 @@ window.Deck = (() => {
   let data = null;                // parsed slides.json
   let current = 0;                // active slide index
   let editMode = new URLSearchParams(location.search).has('edit');
+  // Which slides file this page shows: index.html uses the default, another
+  // deck page names its own with <body data-content="content/<name>.json">.
+  const contentUrl = (document.body && document.body.dataset.content) || 'content/slides.json';
   const changeListeners = [];     // editor hooks: fn(eventName)
 
   const $ = (sel, root = document) => root.querySelector(sel);
@@ -404,10 +409,10 @@ window.Deck = (() => {
    * -------------------------------------------------------- */
   async function boot() {
     try {
-      data = await fetchJSON('content/slides.json');
+      data = await fetchJSON(contentUrl);
     } catch (e) {
       $('#stage').innerHTML =
-        `<div class="boot-error">Could not load <code>content/slides.json</code>.<br>` +
+        `<div class="boot-error">Could not load <code>${escapeHtml(contentUrl)}</code>.<br>` +
         `If you opened this file directly (file://), run <code>node dev-server.js</code> ` +
         `and open the printed URL instead.<br><small>${escapeHtml(e.message)}</small></div>`;
       console.error(e);
@@ -487,5 +492,6 @@ window.Deck = (() => {
     get registry() { return registry; },
     get editMode() { return editMode; },
     STAGE_W, STAGE_H,
+    contentUrl,
   };
 })();

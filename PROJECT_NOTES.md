@@ -379,6 +379,16 @@ Full detail in `CLAUDE.md`. Everything runs on Joe's Mac.
   predate a critical PPP bug fix and are stale). New chart components must
   fetch their data from per-figure files produced by pipeline scripts — no
   hard-coded data arrays in component JS.
+- **DONE 2026-09-23 — a second deck, `prague.html`, from the Figma "Inequality presentation
+  in Prague".** 35 slides in `content/prague.json` (one Figma section, same order), each an html
+  block of elements at the Figma positions x 2/3; text kept as editable HTML (Playfair/Lato/Inter),
+  26 image exports + 5 annotation marks + 2 logo variants in `content/images/prague/`, arrows and
+  connectors as inline SVG, Figma speaker notes carried over (each ends with its Figma node id).
+  Slide 9's hand-drawn PIP-vs-WID sketch is the live `fig-global-gini-average` panels chart.
+  Engine: `deck.js` reads `<body data-content>` (default `content/slides.json`); the editor saves
+  to `/save?file=<that file>`; `dev-server.js` writes only existing `content/*.json`. The main
+  deck's content and styles are unchanged. Placeholder slides in Figma (WID Ghana/India, the
+  US/Sweden maps, the Marimekko ideas) are carried over as the placeholders they are.
 - **DONE 2026-09-22 — global averages of the country Ginis, and three appendix slides.**
   `36_global_gini_averages.py` averages `reference_year_indicators.csv`'s Ginis for every
   reference year and series, unweighted and weighted by population at the reference year (the

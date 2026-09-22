@@ -1,0 +1,46 @@
+/* ============================================================
+ * prague.css — the Prague offsite deck (prague.html) only.
+ *
+ * content/prague.json was converted from the Figma Slides file
+ * "Inequality presentation in Prague" (EMLgMgGJVrefcOq2Uwr5UX).
+ * Figma lays slides out on a 1920x1080 canvas; each slide here is
+ * one html block holding a .pg-canvas whose children are placed
+ * absolutely at the Figma coordinates x 2/3 (the 1280x720 stage).
+ * Everything is scoped to body.deck-prague, so index.html and
+ * content/slides.json are unaffected.
+ * ============================================================ */
+
+.deck-prague .slide.pg .slide-body { inset: 0; display: block; }
+.deck-prague .slide.pg-dark { background: #002147; }
+
+.deck-prague .pg-canvas { position: absolute; inset: 0; }
+.deck-prague .pg-canvas > * { position: absolute; margin: 0; }
+
+/* Text boxes: the spans carry family, weight and size; this resets the deck's
+   global .slide ul / li sizing (32px bullets) so Figma's sizes win. */
+.deck-prague .pg-t { font-family: var(--font-body); color: #000; }
+.deck-prague .pg-t div { min-height: 1em; }
+.deck-prague .pg-t ul {
+  font-size: inherit; line-height: inherit; margin: 0;
+  padding-left: 1.1em; list-style: disc;
+}
+.deck-prague .pg-t li { margin: 0; }
+
+.deck-prague .pg-img, .deck-prague .pg-mark, .deck-prague .pg-logo { display: block; object-fit: fill; }
+.deck-prague .pg-mark { pointer-events: none; }
+
+/* Figma "shape with text" boxes (slides 14 and 17). */
+.deck-prague .pg-box {
+  display: flex; align-items: center; justify-content: center; text-align: center;
+  box-sizing: border-box; padding: 8px 10px;
+  background: #fff; border: 2px solid #757575; border-radius: 4px;
+  font-family: Inter, var(--font-body); font-size: 16px; line-height: 1.5; color: #1e1e1e;
+}
+
+/* Arrows and connectors, drawn in Figma coordinates (viewBox 1920x1080). */
+.deck-prague .pg-svg { inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+
+/* Slide 9: the live chart takes the place of Figma's hand-drawn sketch. */
+.deck-prague .slide.pg-chart .block-component {
+  position: absolute; left: 97px; top: 283px; width: 1107px; height: 303px;
+}

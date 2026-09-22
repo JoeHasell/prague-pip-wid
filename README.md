@@ -25,6 +25,18 @@ The dev server is a zero-dependency Node script. While it runs, the editor's **S
 
 Presenting: arrow keys / PgUp / PgDn / Space to navigate, Home/End to jump, **N** toggles speaker notes, and `#4` in the URL deep-links to slide 4.
 
+## A second deck: `prague.html`
+
+The repo carries a second deck, the Prague offsite talk, on the same engine and components:
+`prague.html` (view: `http://localhost:4173/prague.html`, edit: `/prague.html?edit`) reads
+`content/prague.json` instead of `content/slides.json` and adds `src/prague.css` for its own look.
+Its Save writes `content/prague.json`; the main deck is untouched. It was converted on 2026-09-23
+from the Figma Slides file "Inequality presentation in Prague": each slide is one html block whose
+elements sit at the Figma positions scaled to the 1280x720 stage, with Figma's screenshots and
+diagrams exported to `content/images/prague/`. Any page can do the same: point
+`<body data-content="content/<name>.json">` at its own file; the dev server saves only to
+existing `content/*.json` files.
+
 ## Publishing (GitHub + Netlify)
 
 ```bash
@@ -130,6 +142,7 @@ One habit worth keeping: when both you and Claude are editing the same deck, sav
 
 ```
 index.html            entry point; loads the engine, and the editor only under ?edit
+prague.html           the Prague offsite deck: same engine, content/prague.json + src/prague.css
 content/slides.json   ALL deck content (the only file the editor writes)
 components/           one JS file per interactive component + manifest.json
 src/deck.js|deck.css  presentation engine + theme (styled after ourworldindata.org)

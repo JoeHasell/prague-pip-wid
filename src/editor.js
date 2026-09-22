@@ -3,7 +3,8 @@
  *
  * Loaded only when the URL contains ?edit. Everything here works
  * against the live Deck.data object, then persists via:
- *   1. POST /save  (dev-server.js writes content/slides.json)
+ *   1. POST /save?file=<Deck.contentUrl>  (dev-server.js writes that file;
+ *      content/slides.json for index.html)
  *   2. fallback: download slides.json (works on the static site)
  * A working draft is kept in localStorage so nothing is lost.
  * ============================================================ */
@@ -12,6 +13,9 @@
   'use strict';
 
   const DRAFT_KEY = `deckDraft:${location.pathname}`;
+  // The deck this page edits: content/slides.json, or another deck's file.
+  const CONTENT = Deck.contentUrl || 'content/slides.json';
+  const CONTENT_NAME = CONTENT.split('/').pop();
   let dirty = false;
   let draftTimer = null;
 
@@ -85,8 +89,8 @@
       </div>
       <div class="bar-group bar-right">
         <span class="save-status" id="save-status">All changes saved</span>
-        <button data-act="save" class="primary" title="Save to content/slides.json (or download if no save server)">Save</button>
-        <button data-act="export" title="Download slides.json">Export</button>
+        <button data-act="save" class="primary" title="Save to ${CONTENT} (or download if no save server)">Save</button>
+        <button data-act="export" title="Download ${CONTENT_NAME}">Export</button>
         <button data-act="exit" title="Leave edit mode">Done</button>
       </div>`;
     document.body.appendChild(bar);
@@ -888,31 +892,31 @@
   async function save() {
     const body = serialize();
     try {
-      const res = await fetch('/save', {
+      const res = await fetch(`/save?file=${encodeURIComponent(CONTENT)}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body,
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      markClean('Saved to content/slides.json');
-      toast('Saved to content/slides.json');
+      markClean(`Saved to ${CONTENT}`);
+      toast(`Saved to ${CONTENT}`);
     } catch {
       downloadFile(body);
-      markClean('Exported — replace content/slides.json with the download');
-      toast('No save server here — downloaded slides.json instead. Replace content/slides.json with it.');
+      markClean(`Exported — replace ${CONTENT} with the download`);
+      toast(`No save server here — downloaded ${CONTENT_NAME} instead. Replace ${CONTENT} with it.`);
     }
   }
 
   function exportFile() {
     downloadFile(serialize());
-    markClean('Exported — replace content/slides.json with the download');
+    markClean(`Exported — replace ${CONTENT} with the download`);
   }
 
   function downloadFile(text) {
     const blob = new Blob([text], { type: 'application/json' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = 'slides.json';
+    a.download = CONTENT_NAME;
     a.click();
     URL.revokeObjectURL(a.href);
   }

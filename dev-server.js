@@ -6,7 +6,9 @@
  *   node dev-server.js 5000     -> custom port
  *
  * Serves the deck as static files and accepts POST /save from
- * the inline editor, writing content/slides.json in place.
+ * the inline editor, writing content/slides.json in place — or,
+ * with ?file=content/<name>.json, another deck's file (prague.html
+ * edits content/prague.json). Only existing content/*.json files.
  * Not needed in production: Netlify serves the same files, and
  * the editor falls back to downloading the JSON there.
  * ============================================================ */
@@ -18,6 +20,17 @@ const path = require('path');
 const ROOT = __dirname;
 const PORT = Number(process.argv[2]) || 4173;
 const CONTENT_FILE = path.join(ROOT, 'content', 'slides.json');
+
+// The file a save targets: content/slides.json unless ?file= names another
+// EXISTING deck file directly under content/. Anything else is refused, so the
+// endpoint can never write outside the decks.
+function saveTarget(url) {
+  const q = new URL(url, 'http://localhost').searchParams.get('file');
+  if (!q) return CONTENT_FILE;
+  if (!/^content\/[A-Za-z0-9_-]+\.json$/.test(q)) return null;
+  const f = path.join(ROOT, q);
+  return fs.existsSync(f) ? f : null;
+}
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
@@ -39,20 +52,26 @@ const MIME = {
 
 const server = http.createServer((req, res) => {
   // --- save endpoint -------------------------------------------------
-  if (req.method === 'POST' && req.url === '/save') {
+  if (req.method === 'POST' && req.url.split('?')[0] === '/save') {
+    const target = saveTarget(req.url);
+    if (!target) {
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      res.end('{"ok":false,"error":"unknown deck file"}');
+      return;
+    }
     let body = '';
     req.on('data', chunk => { body += chunk; });
     req.on('end', () => {
       try {
         JSON.parse(body); // refuse to write invalid JSON
         // Keep one rolling backup, just in case.
-        if (fs.existsSync(CONTENT_FILE)) {
-          fs.copyFileSync(CONTENT_FILE, CONTENT_FILE + '.bak');
+        if (fs.existsSync(target)) {
+          fs.copyFileSync(target, target + '.bak');
         }
-        fs.writeFileSync(CONTENT_FILE, body);
+        fs.writeFileSync(target, body);
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end('{"ok":true}');
-        console.log(`[saved] content/slides.json  ${new Date().toLocaleTimeString()}`);
+        console.log(`[saved] ${path.relative(ROOT, target)}  ${new Date().toLocaleTimeString()}`);
       } catch (e) {
         res.writeHead(400, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ ok: false, error: String(e.message) }));
@@ -98,6 +117,7 @@ server.listen(PORT, () => {
   console.log('  Deck dev server running:');
   console.log(`    view   http://localhost:${PORT}`);
   console.log(`    edit   http://localhost:${PORT}/?edit`);
+  console.log(`    prague http://localhost:${PORT}/prague.html  (edit: /prague.html?edit)`);
   console.log('');
   console.log('  Edits made in the browser save directly to content/slides.json');
   console.log('  (a rolling backup is kept at content/slides.json.bak)');
