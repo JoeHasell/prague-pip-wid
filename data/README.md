@@ -110,7 +110,9 @@
 > source's own coverage, and the common sample without China and India. It is an average of
 > within-country inequality, not the Gini of the world distribution. The same script writes
 > `data/figures/fig_global_gini_average.json` for `components/fig-global-gini-average.js`
-> (appendix slides `slide-global-gini-unweighted`, `-weighted`, `-ex-china-india`).
+> (appendix slides `slide-global-gini-panels`, `-unweighted`, `-weighted`, `-ex-china-india`; the
+> first and last use the component's `layout: "panels"`, PIP and WID side by side with an
+> unweighted and a weighted line in each).
 >
 > **One trap the refresh cannot catch for you.** `etl_source.ETL_VERSION` pins the
 > dataset version (currently `2026-08-25`). New data flowing through the *same*
