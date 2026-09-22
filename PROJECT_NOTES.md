@@ -25,8 +25,8 @@ Until owid/etl#6806 merges the catalog modes stop with an error, because
 or `--local <path to an owid/etl checkout>` in which the branch has been built (the
 staging server was already gone on 2026-09-21; the committed cache was rebuilt that way).
 
-Commit `data/raw/etl/`, `data/figures/` and `data/processed/reference_year_indicators.csv`
-together. `python data/scripts/refresh_from_etl.py --check` reports staleness without
+Commit `data/raw/etl/`, `data/figures/`, `data/processed/reference_year_indicators.csv` and
+`data/processed/global_gini_averages.csv` together. `python data/scripts/refresh_from_etl.py --check` reports staleness without
 changing anything (non-zero exit when the figures or the dataset are behind).
 
 Full detail, including the `ETL_VERSION` pin the refresh cannot check for you, in
@@ -379,6 +379,22 @@ Full detail in `CLAUDE.md`. Everything runs on Joe's Mac.
   predate a critical PPP bug fix and are stale). New chart components must
   fetch their data from per-figure files produced by pipeline scripts — no
   hard-coded data arrays in component JS.
+- **DONE 2026-09-22 — global averages of the country Ginis, and three appendix slides.**
+  `36_global_gini_averages.py` averages `reference_year_indicators.csv`'s Ginis for every
+  reference year and series, unweighted and weighted by population at the reference year (the
+  WID per-capita bins' population, one yardstick for all series), over four samples: countries
+  PIP matches that year (WID restricted to them), a 77-country balanced panel, each source's own
+  coverage, and the common sample without China and India. Writes
+  `data/processed/global_gini_averages.csv` and `data/figures/fig_global_gini_average.json`;
+  runs in the refresh after 33_. `components/fig-global-gini-average.js` draws it (weighting and
+  sample selectors, Wollburg chain dashed) on three appendix slides after the year-vs-year
+  scatters: `slide-global-gini-unweighted`, `-weighted`, `-ex-china-india`. Readings, common
+  sample: unweighted, PIP + WID top 1% and WID post-tax stay within 0.02 of each other every year
+  (2019: 0.498 vs 0.511), both peaking in the mid-1990s; population-weighted they split — WID
+  post-tax rises to 0.542 by 2010 and holds, adjusted PIP peaks at 0.536 in 2001 and eases to 0.512
+  by 2024 — and India (WID 0.62 vs PIP 0.51 in 2019) with China carries most of the gap: without
+  the two the weighted series are back within 0.02. The notes of slides 117/118 still quoted the
+  paper's raw Wollburg constants; corrected to the 2021-PPP refit.
 - **DONE 2026-09-22 — the Wollburg consumption→income model re-fitted at 2021 PPP; the
   deck's `_wb` chain now runs on its own constants.** The paper's 0.93 / 0.68 / 0.26 are
   2017-PPP numbers and the formula is not scale-free, so `35_fit_consinc_wb.py` (a network
@@ -804,7 +820,8 @@ data/                   # REPRODUCIBLE DATA PIPELINE (see §12 and data/README.m
   scripts/              # numbered pipeline steps + verification suite
   raw/                  # committed raw caches (WID API pull, PIP extract)
   processed/            # regenerable outputs incl. pip_wid_harmonized_2023.csv (local
-                        # pipeline) and reference_year_indicators.csv (ETL-derived, 33_)
+                        # pipeline), reference_year_indicators.csv (ETL-derived, 33_)
+                        # and global_gini_averages.csv (from it, 36_)
   figures/              # one fig_*.json per deck figure, fetched by fig-*.js
 src/
   deck.js               # engine: render, nav, components, ANNOTATION overlay

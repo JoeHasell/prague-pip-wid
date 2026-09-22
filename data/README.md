@@ -56,15 +56,15 @@
 > refreshing from a version that no longer exists. Use `--staging` until then; after
 > the merge, `refresh_from_etl.py` with no arguments is the normal route again.
 >
-> Then **commit `data/raw/etl/`, `data/figures/` and
-> `data/processed/reference_year_indicators.csv` together**. `--check` rebuilds into a
+> Then **commit `data/raw/etl/`, `data/figures/`,
+> `data/processed/reference_year_indicators.csv` and `data/processed/global_gini_averages.csv` together**. `--check` rebuilds into a
 > temporary directory, restores the committed figures and dataset whatever happens, and
 > exits non-zero when they no longer match the ETL — so it is safe to run any time and
 > works as a pre-talk sanity check.
 >
-> It runs the cache refresh, every figure script in dependency order, and then the one
-> ETL-derived dataset script (`33_reference_year_indicators.py`, see "Reference-year
-> indicators" below). Running them by hand still works if you need one in isolation:
+> It runs the cache refresh, every figure script in dependency order, and then the two
+> ETL-derived dataset scripts (`33_reference_year_indicators.py` and `36_global_gini_averages.py`,
+> see "Reference-year indicators" below). Running them by hand still works if you need one in isolation:
 >
 > ```bash
 > python data/scripts/20_cache_from_etl.py            # the ETL cache
@@ -80,6 +80,7 @@
 > python data/scripts/31_fig_top1_share_scatter.py     # top-1% shares, PIP chain vs WID
 > python data/scripts/33_reference_year_indicators.py  # the reference-year DATASET (not a figure)
 > python data/scripts/34_fig_refyear_scatter.py        # year-vs-year scatters with selectable years, from 33_
+> python data/scripts/36_global_gini_averages.py       # average country Gini by year, a DATASET + its figure, from 33_
 > ```
 >
 > One script is deliberately NOT part of the refresh: `python data/scripts/35_fit_consinc_wb.py`
@@ -100,6 +101,16 @@
 > the local pipeline. Each reference year is matched on its own; use `refyears.pair()` to
 > compare two of them under the ETL's same-welfare rule. Provenance and caveats are in
 > the script's docstring; the matcher and the indicator code are `data/scripts/refyears.py`.
+>
+> **Global Gini averages** (`data/processed/global_gini_averages.csv`, `36_global_gini_averages.py`)
+> averages that dataset's country Ginis for every reference year and series, unweighted and
+> weighted by population at the reference year (one yardstick for every series: the WID
+> per-capita bins' population), over four country samples: the countries PIP matches that year
+> (WID restricted to them), a balanced panel of the 77 countries PIP matches every year, each
+> source's own coverage, and the common sample without China and India. It is an average of
+> within-country inequality, not the Gini of the world distribution. The same script writes
+> `data/figures/fig_global_gini_average.json` for `components/fig-global-gini-average.js`
+> (appendix slides `slide-global-gini-unweighted`, `-weighted`, `-ex-china-india`).
 >
 > **One trap the refresh cannot catch for you.** `etl_source.ETL_VERSION` pins the
 > dataset version (currently `2026-08-25`). New data flowing through the *same*

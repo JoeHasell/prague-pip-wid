@@ -13,6 +13,7 @@
     "fig-between-share-trend.js",
     "fig-means-scatter.js",
     "fig-refyear-scatter.js",
+    "fig-global-gini-average.js",
     "demo-line-chart.js",
     "demo-sortable-table.js",
     "demo-scrubber.js"
