@@ -396,12 +396,13 @@ Full detail in `CLAUDE.md`. Everything runs on Joe's Mac.
   the two the weighted series are back within 0.02. The notes of slides 117/118 still quoted the
   paper's raw Wollburg constants; corrected to the 2021-PPP refit.
   **Follow-up, on Pablo's sketch ("show the charts next to each other"):** the component gained
-  `layout: "panels"` — PIP left, WID right, each with its unweighted (dark blue) and
-  population-weighted (red) average on one shared y axis, selectors for the PIP series, the WID
+  `layout: "panels"` — two panels on one shared y axis, selectors for the PIP series, the WID
   series and the sample. New slide `slide-global-gini-panels` ("Is inequality rising in most
   places? / PIP vs WID") in front of the three; the without-China-and-India slide uses the same
-  layout. Reading: PIP's unweighted average falls below its weighted one after the early 2000s,
-  WID's weighted average climbs above its flat unweighted one.
+  layout. Reworked the next day on Pablo's correction ("PIP vs WID in each panel"): the panels are
+  the two WEIGHTINGS (unweighted left, population-weighted right) and each draws the PIP series
+  against the WID series. Reading: unweighted they fall together, PIP faster; weighted WID climbs
+  to 2010 and holds while PIP eases.
 - **DONE 2026-09-22 — the Wollburg consumption→income model re-fitted at 2021 PPP; the
   deck's `_wb` chain now runs on its own constants.** The paper's 0.93 / 0.68 / 0.26 are
   2017-PPP numbers and the formula is not scale-free, so `35_fit_consinc_wb.py` (a network
