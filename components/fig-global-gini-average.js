@@ -20,10 +20,10 @@
  *   sample     starting sample: common | balanced | own | common_ex_ci
  *   sources    ordered array of series keys to draw (default: all seven)
  *   controls   false hides the selectors (a fixed talk slide)
- *   layout     "panels": PIP and WID side by side instead of one chart of every series.
- *              Each panel draws its series' unweighted AND population-weighted average on
- *              a y axis shared by both panels; the selectors then pick the PIP series, the
- *              WID series and the country sample.
+ *   layout     "panels": the unweighted and the population-weighted average side by side
+ *              instead of one chart of every series. Each panel draws one PIP series against
+ *              one WID series, on a y axis shared by both panels; the selectors then pick
+ *              the PIP series, the WID series and the country sample.
  *   pipSeries  panels only: starting PIP series (default PIP_topadj)
  *   widSeries  panels only: starting WID series (default WID_posttax_per_capita)
  *   height     viewBox height (default 540)
@@ -43,8 +43,6 @@
     WID_posttax_per_capita: '#009E73',
   };
   const DASHED = new Set(['PIP_consinc_wb', 'PIP_topadj_wb']);
-  // Panels layout: the two weightings, not the series, carry the colour.
-  const WCOLOR = { unweighted: '#1D3D63', weighted: '#C8102E' };
   const CHROME = { grid: 'rgb(238,241,245)', tick: 'rgb(87,114,145)', axis: 'rgb(63,96,138)', faint: 'rgb(140,155,175)' };
 
   function styles(p) {
@@ -302,14 +300,14 @@
         note.textContent = s.note;
         const cov = data.coverage[sample];
         const fmt = v => v.toFixed(3);
-        const wkeys = meta.weightings.map(w => w.key);
-        const wlabel = k => meta.weightings.find(w => w.key === k).label;
-        const sides = [
-          { key: pipSeries, name: 'PIP', cov: cov.pip },
-          { key: widSeries, name: 'WID', cov: cov.wid },
+        const lines = [
+          { key: pipSeries, c: COLOR[pipSeries] || '#D55E00', cov: cov.pip, dash: DASHED.has(pipSeries) },
+          { key: widSeries, c: COLOR[widSeries] || '#0072B2', cov: cov.wid, dash: false },
         ];
+        // One panel per weighting; PIP and WID are the two lines inside each.
+        const sides = meta.weightings.map(w => ({ w: w.key, name: w.label, sub: w.note }));
 
-        const padL = 70, gap = 70, labelW = 190, padT = 58, padB = 64;
+        const padL = 70, gap = 70, labelW = 200, padT = 58, padB = 64;
         const pw = (W - padL - gap) / 2;
         const y0 = padT, y1 = H - padB;
         sides.forEach((sd, j) => {
@@ -318,17 +316,16 @@
         });
         const xOf = (sd, i) => sd.x0 + (years.length === 1 ? 0 : (i / (years.length - 1)) * (sd.x1 - sd.x0));
 
-        // One y axis for both panels, so the two sources' levels compare directly.
-        const vals = sides.flatMap(sd => wkeys.flatMap(w => data.data[sample][w][sd.key]));
+        // One y axis for both panels, so the weightings compare directly too.
+        const vals = sides.flatMap(sd => lines.flatMap(l => data.data[sample][sd.w][l.key]));
         const lo = Math.floor((Math.min(...vals) - 0.005) * 50) / 50;
         const hi = Math.ceil((Math.max(...vals) + 0.005) * 50) / 50;
         const yOf = v => y1 - ((v - lo) / (hi - lo)) * (y1 - y0);
 
         const parts = [];
-        sides.forEach((sd, j) => {
+        sides.forEach(sd => {
           parts.push(`<text class="${prefix}-ptitle" x="${sd.x0}" y="${padT - 30}">${esc(sd.name)}</text>`);
-          parts.push(`<text class="${prefix}-psub" x="${sd.x0}" y="${padT - 12}">${esc(shortOf(sd.key))} · ` +
-                     `${Math.min(...sd.cov.n)}-${Math.max(...sd.cov.n)} countries</text>`);
+          parts.push(`<text class="${prefix}-psub" x="${sd.x0}" y="${padT - 12}">${esc(sd.sub)}</text>`);
           const ticks = niceTicks(lo, hi, 5), tf = tickFormatter(ticks);
           ticks.forEach(v => {
             const y = yOf(v);
@@ -341,11 +338,12 @@
           });
           parts.push(`<line class="${prefix}-grid" x1="${sd.x0}" x2="${sd.x1}" y1="${y1}" y2="${y1}"/>`);
           const ends = [];
-          wkeys.forEach(w => {
-            const v = data.data[sample][w][sd.key];
+          lines.forEach(l => {
+            const v = data.data[sample][sd.w][l.key];
             const pts = v.map((x, i) => `${xOf(sd, i).toFixed(1)},${yOf(x).toFixed(1)}`).join(' ');
-            parts.push(`<polyline points="${pts}" fill="none" stroke="${WCOLOR[w]}" stroke-width="3" stroke-linejoin="round"/>`);
-            ends.push({ y: yOf(v[v.length - 1]), label: wlabel(w), c: WCOLOR[w], v: v[v.length - 1] });
+            const dash = l.dash ? ' stroke-dasharray="7 5"' : '';
+            parts.push(`<polyline points="${pts}" fill="none" stroke="${l.c}" stroke-width="3" stroke-linejoin="round"${dash}/>`);
+            ends.push({ y: yOf(v[v.length - 1]), label: shortOf(l.key), c: l.c, v: v[v.length - 1] });
           });
           ends.sort((a, b) => a.y - b.y);
           if (ends.length > 1 && ends[1].y - ends[0].y < 18) ends[1].y = ends[0].y + 18;
@@ -353,10 +351,13 @@
             parts.push(`<text class="${prefix}-label" x="${sd.x1 + 10}" y="${e.y + 4}" fill="${e.c}">${esc(e.label)} ${fmt(e.v)}</text>`);
           });
         });
+        const n = cov.pip.n, nw = cov.wid.n;
+        const range = a => `${Math.min(...a)}-${Math.max(...a)}`;
+        const covText = sample === 'own' ? `PIP ${range(n)} countries, WID ${range(nw)}` : `${range(n)} countries`;
         parts.push(`<text class="${prefix}-axis" transform="translate(${padL - 52},${(y0 + y1) / 2}) rotate(-90)" text-anchor="middle">Average Gini across countries</text>`);
         parts.push(
           `<text class="${prefix}-source" x="${padL}" y="${H - 8}">` +
-          `Deck calculation from the ETL's harmonized bins · ${esc(s.label)} · ` +
+          `Deck calculation from the ETL's harmonized bins · ${esc(s.label)}: ${covText} · ` +
           `PIP: nearest survey within 5 years · population at the reference year</text>`
         );
         svg.innerHTML = parts.join('');
@@ -375,10 +376,13 @@
           line.setAttribute('x1', xOf(sd, i)); line.setAttribute('x2', xOf(sd, i));
           line.setAttribute('y1', y0); line.setAttribute('y2', y1);
           svg.appendChild(line);
-          const rows = wkeys.map(w => `<span class="sw" style="background:${WCOLOR[w]}"></span>${esc(wlabel(w))} ` +
-                                      `<b>${fmt(data.data[sample][w][sd.key][i])}</b>`);
-          tip.innerHTML = `<b>${esc(sd.name)} ${years[i]}</b> · ${sd.cov.n[i]} countries, ` +
-                          `${Math.round(sd.cov.pop[i] * 100)}% of world population<br>${rows.join('<br>')}`;
+          const rows = lines.map(l => `<span class="sw" style="background:${l.c}"></span>${esc(shortOf(l.key))} ` +
+                                      `<b>${fmt(data.data[sample][sd.w][l.key][i])}</b>`);
+          const pct = v => Math.round(v * 100) + '%';
+          const head = sample === 'own'
+            ? `PIP ${n[i]} countries (${pct(cov.pip.pop[i])} of people), WID ${nw[i]}`
+            : `${n[i]} countries, ${pct(cov.pip.pop[i])} of world population`;
+          tip.innerHTML = `<b>${esc(sd.name)}, ${years[i]}</b> · ${head}<br>${rows.join('<br>')}`;
           placeTip(svg, tip, { x0: sd.x0, x1: sd.x1, y0, y1 }, xOf(sd, i), loc.y);
           tip.style.opacity = 1;
         };
