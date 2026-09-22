@@ -70,10 +70,11 @@ PROVENANCE — READ THIS BEFORE USING THE FILE
   does not offer them.
 - `PIP_consinc_wb` / `PIP_topadj_wb` are a PARALLEL comparison chain: consumption
   countries put on PIP's own disposable-income basis by inverting Wollburg,
-  Hallegatte & Mahler (2023)'s income->consumption fit (consinc.py, "A SECOND
-  METHOD"), floored at $0.28/day, then the same top-1% append. The deck's
-  baseline is still the WID profile; these two exist only here and on the
-  year-vs-year scatters (34_).
+  Hallegatte & Mahler (2023)'s income->consumption model, re-fitted at 2021 PPP
+  on PIP's dual country-years (consinc.py, "A SECOND METHOD";
+  35_fit_consinc_wb.py), floored at $0.28/day, then the same top-1% append. The
+  deck's baseline is still the WID profile; these two exist only here and on
+  the year-vs-year scatters (34_).
 - One survey serves up to eleven reference years. For a comparison between two
   reference years use refyears.pair(), which enforces the ETL's same-welfare rule
   and refuses to compare a survey with itself. The ETL's own 1993/2019 table

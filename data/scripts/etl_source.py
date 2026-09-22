@@ -211,12 +211,12 @@ DECK_SERIES_LABELS = {
     # (consinc.py, "A SECOND METHOD"). Never in BRIDGING_ORDER: it exists only on
     # the reference-year dataset and the year-vs-year scatters.
     "PIP_consinc_wb": (
-        "PIP on a disposable-income basis via the Wollburg et al. (2023) inverse "
-        "(comparison method, not the bridging column)"
+        "PIP on a disposable-income basis via the Wollburg et al. (2023) model, re-fitted at "
+        "2021 PPP (comparison method, not the bridging column)"
     ),
     "PIP_topadj_wb": (
-        "PIP on the Wollburg et al. (2023) income basis, with WID's top 1% appended "
-        "(comparison method, not the bridging column)"
+        "PIP on the Wollburg et al. (2023) income basis (2021-PPP fit), with WID's top 1% "
+        "appended (comparison method, not the bridging column)"
     ),
     "PIP": "PIP (disposable income or consumption, per capita)",
 }
@@ -571,7 +571,7 @@ def load_bins(table, source="cache", branch=None):
         "consumption countries do not match the correction profile"
 
     # The same guards for the parallel Wollburg et al. chain: bins intact, income
-    # countries untouched, and the paper's forward model reproducing each
+    # countries untouched, and the (re-fitted) forward model reproducing each
     # consumption country's bins from the inverse (consinc.wb_verify_inverse).
     ci_wb = res[res["series"] == "PIP_consinc_wb"].set_index(["country", "year", "percentile"])
     assert len(pip.index.intersection(ci_wb.index)) == len(ci_wb) == len(pip), \

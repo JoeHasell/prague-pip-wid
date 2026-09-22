@@ -2,8 +2,9 @@
 # Install:  pip install -r data/requirements.txt
 #
 # The network-fetching scripts (01_fetch_pip.py, 04_fit_consinc.py,
-# 13_fig_consinc_explainer.py) read feather/parquet straight off
-# catalog.ourworldindata.org via pandas — pyarrow is what makes that work.
+# 13_fig_consinc_explainer.py, 20_cache_from_etl.py, 35_fit_consinc_wb.py)
+# read feather/parquet straight off catalog.ourworldindata.org via pandas —
+# pyarrow is what makes that work.
 # The owid-catalog library is NOT required.
 #
 # 00_fetch_wid.py additionally needs Stata with the `wid` package installed;

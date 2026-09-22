@@ -379,14 +379,34 @@ Full detail in `CLAUDE.md`. Everything runs on Joe's Mac.
   predate a critical PPP bug fix and are stale). New chart components must
   fetch their data from per-figure files produced by pipeline scripts — no
   hard-coded data arrays in component JS.
+- **DONE 2026-09-22 — the Wollburg consumption→income model re-fitted at 2021 PPP; the
+  deck's `_wb` chain now runs on its own constants.** The paper's 0.93 / 0.68 / 0.26 are
+  2017-PPP numbers and the formula is not scale-free, so `35_fit_consinc_wb.py` (a network
+  one-off, NOT in `refresh_from_etl.py`) re-runs the paper's estimation on today's PIP
+  catalog — the 88 national dual country-years (19 countries), income and consumption bin
+  averages at the same percentile, the median as `consinc.wb_median`, nonlinear least squares
+  in logs by a numpy Levenberg–Marquardt — at 2017 PPP (replication) and 2021 PPP, writing
+  `data/processed/consinc_wb_fit.json`. **Finding:** weighting decides whether the paper comes
+  back. Country-years weighted equally → a = 0.905, g0 = 0.363, g1 = 0.334 (adj R² 0.928; Poland
+  is 17 of the 88); each COUNTRY weighted equally → a = 0.929, g0 = 0.612, g1 = 0.381 with
+  weighted R² 0.966 and 0.66 below the poverty line, i.e. the paper's exponent and R². The deck
+  uses the **country-balanced 2021-PPP fit, a = 0.932, g0 = 0.632, g1 = 0.411** (Pablo's call,
+  after seeing both): inverted on PIP's dual surveys it also predicts the income percentiles
+  best (log-RMSE 0.27, bottom five percentiles on target, top five +9%). `WB_PAPER_2017` keeps
+  the paper's constants for reference; `consinc.main()` asserts the hardcoded values against
+  the results file. 2023 consequences: 394 bins in 61 consumption countries at the $0.28 floor;
+  WB-basis Gini 0.463 vs baseline 0.478; means within 2% of consumption. Only the `_wb` rows of
+  consumption countries moved in `reference_year_indicators.csv` and `fig_refyear_scatter.json`;
+  every other figure rebuilt identically. README caveat 5 rewritten.
 - **DONE 2026-09-21 — a second consumption→income method (Wollburg et al. inverse),
   in parallel, on the reference-year scatters only.** Prompted by the concept gap:
   the baseline's WID profile was estimated on pre-tax income, PIP's income countries
   are disposable income. `consinc.py` ("A SECOND METHOD") inverts Wollburg,
-  Hallegatte & Mahler (2023, PRWP 10318) — `inc = (con − γ)^(1/0.93)`,
-  γ = 0.68 + 0.26 ln(median income), the median solved by bisection from the median
-  bin, floored at $0.28/day (PIP's bottom code), constants applied to the 2021-PPP
-  values without re-basing (Pablo's call). `etl_source.load_bins()` builds
+  Hallegatte & Mahler (2023, PRWP 10318) — `inc = (con − γ)^(1/a)`,
+  γ = g0 + g1 ln(median income), the median solved by bisection from the median
+  bin, floored at $0.28/day (PIP's bottom code); the paper's constants were first
+  applied to the 2021-PPP values without re-basing (superseded 2026-09-22 by the
+  deck's own 2021-PPP fit, see above). `etl_source.load_bins()` builds
   `PIP_consinc_wb` → `PIP_topadj_wb` beside the baseline chain, with its own guard
   (forward model reproduces the bins; income countries untouched); `refyears.PIP_SIDE`,
   `33_`, `34_` and `fig-refyear-scatter.js` carry the two series, the gate now decided
