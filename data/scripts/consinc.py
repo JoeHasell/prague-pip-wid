@@ -7,7 +7,8 @@ TWO METHODS (2026-09-21)
 The deck's BASELINE is WID's scaled-logit correction profile — see the block
 "THE METHOD, since 2026-09-09" below; everything on the bridging slides uses it.
 A SECOND method runs in parallel as a comparison series, PIP_consinc_wb: the
-inverse of Wollburg, Hallegatte & Mahler (2023)'s income->consumption fit, whose
+inverse of Wollburg, Hallegatte & Mahler (2023)'s income->consumption MODEL,
+re-fitted at 2021 PPP on PIP's dual country-years (35_fit_consinc_wb.py), whose
 income concept is PIP's own disposable income — see "A SECOND METHOD" below. It
 appears only on the reference-year dataset (33_) and the year-vs-year scatters
 (34_), never in the bridging column. The section "THE METHOD" that follows
@@ -44,6 +45,9 @@ CAVEATS (documented, accepted)
 - Monotonicity of the adjusted series is checked but NOT enforced; with
   beta_p varying smoothly it holds in practice.
 """
+
+import json
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -167,33 +171,70 @@ def build_pip_consinc_profile(bins, welfare_types, a=WID_PROFILE_A, b=WID_PROFIL
 # nothing from Sub-Saharan Africa or South Asia, where the conversion is
 # applied. In-sample, on the deck's 19 cached dual surveys, the inverse still
 # predicts PIP's income percentiles from consumption better than the WID
-# profile does; main() prints that table.
+# profile does overall, while over-predicting the top; main() prints that table.
 #
 # THE INVERSE, per country-year on the 100-bin grid:
 #
-#       gamma = 0.68 + 0.26 ln m,   m solved from   con_median = m**0.93 + gamma(m)
-#       inc_p = max( clip(con_p - gamma, 0)**(1/0.93), WB_INCOME_FLOOR )
+#       gamma = g0 + g1 ln m,   m solved from   con_median = m**a + gamma(m)
+#       inc_p = max( clip(con_p - gamma, 0)**(1/a), WB_INCOME_FLOOR )
 #
-# The root is unique: the right-hand side is strictly increasing in m and goes
-# to -inf as m -> 0. Bins whose consumption is at or below gamma have no real
-# income under the formula, and bins just above it invert to near zero. They
-# are floored at PIP's own bottom code, $0.28/day — the smallest value PIP
+# The root is unique: the right-hand side is strictly increasing in m (g1 > 0)
+# and goes to -inf as m -> 0. Bins whose consumption is at or below gamma have
+# no real income under the formula, and bins just above it invert to near zero.
+# They are floored at PIP's own bottom code, $0.28/day — the smallest value PIP
 # publishes, and already the deck's PIP floor (etl_mld.py) — not at the MLD's
-# $0.01 zero replacement, which a single bin can dominate. In 2023 this touches
-# 44 of the 103 consumption countries (Zambia and South Sudan 16 bins each,
-# Mozambique 13, DR Congo 12): their bottoms become a flat run at $0.28.
+# $0.01 zero replacement, which a single bin can dominate. In 2023, with the
+# constants below, the bins the floor catches sit in the poorest consumption
+# countries — main() prints the count — and those bottoms become a flat run
+# at $0.28.
 #
-# UNITS. The paper's constants are in 2017 PPP $/day per capita; the deck's
-# bins are 2021 PPP $/day. The formula is not scale-free (an additive floor and
-# an exponent), so strictly the constants belong to 2017 prices. By decision
-# (2026-09-21) they are applied to the 2021-price values as they are — no
-# re-basing. The pure US price factor 2017 -> 2021 is 1.1055, should that ever
-# be revisited.
-WB_EXPONENT = 0.93            # sigma_con / sigma_inc
-WB_FLOOR_INTERCEPT = 0.68     # gamma = WB_FLOOR_INTERCEPT + WB_FLOOR_SLOPE * ln(median income)
-WB_FLOOR_SLOPE = 0.26
-WB_INCOME_FLOOR = 0.28        # $/day: PIP's own bottom code (see above)
-WB_MEDIAN_BINS = (49, 50)     # p49p50 and p50p51: the two bins straddling rank 0.5
+# RE-ESTIMATED AT 2021 PPP (2026-09-22). The paper's constants are in 2017 PPP
+# $/day per capita and the deck's bins are 2021 PPP $/day; the formula is not
+# scale-free (an additive floor and an exponent), so the paper's constants do not
+# belong on the deck's values. 35_fit_consinc_wb.py re-runs the paper's exercise
+# on today's PIP catalog: the 88 national country-years with both welfare types
+# (19 countries — the paper's 16 plus Kosovo, Saint Lucia and Turkey), income
+# and consumption bin AVERAGES at the same percentile, the median income as
+# wb_median() computes it, nonlinear least squares in logs, EACH COUNTRY
+# WEIGHTED EQUALLY (Poland alone is 17 of the 88 country-years). The constants
+# below are that fit at 2021 PPP; WB_PAPER_2017 keeps the paper's for reference
+# and main() checks the hardcoded values against the results file,
+# data/processed/consinc_wb_fit.json.
+#
+# WHY COUNTRY-BALANCED. Weighting decides whether the paper comes back. Every
+# country-year weighted equally gives, at 2017 PPP, a = 0.905, g0 = 0.363,
+# g1 = 0.334 (adj. R2 0.928) — not the paper's 0.93 / 0.68 / 0.26 (0.965) — and a
+# poor fit below the poverty line; each country weighted equally gives
+# a = 0.929, g0 = 0.612, g1 = 0.381 with weighted fit statistics of 0.966 and
+# 0.66 below the line, i.e. the paper's exponent and the paper's R2 (g0 and g1
+# trade off, correlation -0.9, so the floor they imply agrees better than the two
+# numbers do). Inverted on PIP's own dual surveys the balanced constants also
+# predict the income percentiles best (main() prints the table). So: the deck's
+# constants are ITS OWN country-balanced estimate of the paper's model, at 2021
+# PPP, and are described as such everywhere.
+WB_PAPER_2017 = (0.93, 0.68, 0.26)   # the paper's appendix-A constants, 2017 PPP: reference only, never applied
+WB_ROUND_SIG = 3                     # significant digits hardcoded below (SE of the exponent is ~0.002)
+WB_FIT_PPP, WB_FIT_SAMPLE = 2021, "all_country_balanced"   # the record of the results file the constants come from
+WB_EXPONENT = 0.932                  # a = sigma_con / sigma_inc, 2021 PPP, country-balanced fit
+WB_FLOOR_INTERCEPT = 0.632           # gamma = WB_FLOOR_INTERCEPT + WB_FLOOR_SLOPE * ln(median income)
+WB_FLOOR_SLOPE = 0.411
+WB_INCOME_FLOOR = 0.28               # $/day: PIP's own bottom code (see above)
+WB_MEDIAN_BINS = (49, 50)            # p49p50 and p50p51: the two bins straddling rank 0.5
+WB_FIT_FILE = Path(__file__).resolve().parents[1] / "processed" / "consinc_wb_fit.json"
+# wb_median_income()'s uniqueness proof needs a rising floor and its bracket a
+# floor intercept above -1.
+assert WB_FLOOR_SLOPE > 0 and WB_FLOOR_INTERCEPT > -1.0, "the Wollburg constants break the root-finder's proofs"
+
+
+def wb_round(x):
+    """The rounding rule the hardcoded constants follow: WB_ROUND_SIG significant digits."""
+    return float(f"{x:.{WB_ROUND_SIG}g}")
+
+
+def wb_fitted_constants(path=WB_FIT_FILE, ppp=WB_FIT_PPP, sample=WB_FIT_SAMPLE):
+    """One fit record of 35_fit_consinc_wb.py's results file."""
+    fits = json.loads(Path(path).read_text())["fits"]
+    return next(f for f in fits if f["ppp"] == ppp and f["sample"] == sample)
 
 
 def wb_median(avg):
@@ -205,7 +246,7 @@ def wb_median(avg):
 
 
 def wb_consumption_floor(median_income):
-    """gamma(m) = 0.68 + 0.26 ln m."""
+    """gamma(m) = g0 + g1 ln m."""
     return WB_FLOOR_INTERCEPT + WB_FLOOR_SLOPE * np.log(median_income)
 
 
@@ -215,12 +256,12 @@ def wb_consumption_from_income(inc, median_income):
 
 
 def wb_median_income(median_consumption, tol=1e-12, max_iter=200):
-    """Solve con_median = m**0.93 + 0.68 + 0.26 ln m for the median income m, by bisection.
+    """Solve con_median = m**a + g0 + g1 ln m for the median income m, by bisection.
 
-    g(m) = m**0.93 + gamma(m) - con_median is strictly increasing, g -> -inf as m -> 0+,
-    and g((c + 1)**(1/0.93) + 1) > 0, so the bracket below always holds and the root is
-    unique. Bisection rather than scipy: the pipeline's only dependencies are pandas and
-    pyarrow.
+    g(m) = m**a + gamma(m) - con_median is strictly increasing (g1 > 0), g -> -inf as
+    m -> 0+, and g((c + 1)**(1/a) + 1) > 0 (g0 > -1), so the bracket below always holds and
+    the root is unique. Bisection rather than scipy: the pipeline's only dependencies are
+    pandas and pyarrow.
     """
     c = float(median_consumption)
     assert c > 0, "median consumption must be positive"
@@ -359,7 +400,9 @@ def main():
     """Offline self-check of the Wollburg inverse:  python data/scripts/consinc.py
 
     1. the root-finder recovers a known median income;
-    2. on PIP's own dual surveys (both welfare types the same year, the cached
+    2. the hardcoded constants are the rounded 2021-PPP fit in WB_FIT_FILE (so a re-run of
+       35_fit_consinc_wb.py that moves them fails here, loudly);
+    3. on PIP's own dual surveys (both welfare types the same year, the cached
        pip_dual_percentiles) both methods predict the INCOME percentiles from the
        CONSUMPTION ones, against the income PIP actually published.
     """
@@ -369,6 +412,16 @@ def main():
         c = m ** WB_EXPONENT + wb_consumption_floor(m)
         assert abs(wb_median_income(c) / m - 1) < 1e-9, m
     print("root recovery: ok for a median income of 0.5, 2, 10 and 100 $/day")
+
+    fit = wb_fitted_constants()
+    for name, const, key in (("WB_EXPONENT", WB_EXPONENT, "a"), ("WB_FLOOR_INTERCEPT", WB_FLOOR_INTERCEPT, "g0"),
+                             ("WB_FLOOR_SLOPE", WB_FLOOR_SLOPE, "g1")):
+        assert const == wb_round(fit[key]), (
+            f"{name} = {const} but the 2021 fit in {WB_FIT_FILE.name} rounds to {wb_round(fit[key])} — "
+            "re-run 35_fit_consinc_wb.py and update the constant")
+    print(f"constants match the {WB_FIT_PPP} PPP {WB_FIT_SAMPLE} fit: a = {fit['a']:.4f}, g0 = {fit['g0']:.4f}, "
+          f"g1 = {fit['g1']:.4f} (paper, 2017 PPP: {WB_PAPER_2017}); {fit['n_country_years']} country-years, "
+          f"weighted adj R2 {fit['adj_r2']:.3f}, unweighted R2 {fit['unweighted']['r2']:.3f}")
 
     dual = es.load("pip_dual_percentiles")
     p = (np.arange(100) + 0.5) / 100

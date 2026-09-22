@@ -110,9 +110,10 @@ def main():
                 "top 1% appended (Anand-Segal), and for WID's two per-capita series.",
                 "The two `_wb` PIP series are a parallel comparison chain: consumption countries put on "
                 "PIP's own disposable-income basis by inverting Wollburg, Hallegatte & Mahler (2023)'s "
-                "income->consumption fit, inc = (con - g)^(1/0.93) with g = 0.68 + 0.26 ln(median income), "
-                "floored at $0.28/day, then the same top-1% append. The deck's baseline remains the WID "
-                "profile; see consinc.py and data/README.md caveat 5.",
+                "income->consumption model, inc = (con - g)^(1/a) with g = g0 + g1 ln(median income), the "
+                "constants re-fitted at 2021 PPP on PIP's 88 dual country-years (35_fit_consinc_wb.py, "
+                "data/processed/consinc_wb_fit.json), floored at $0.28/day, then the same top-1% append. "
+                "The deck's baseline remains the WID profile; see consinc.py and data/README.md caveat 5.",
                 "The component pairs two years with the rules of refyears.pair(): a PIP pair keeps only "
                 "the same welfare concept on both ends, and the two survey years must differ. The ETL's "
                 "inequality_comparison instead re-matches a country to a same-welfare pair further away, "
