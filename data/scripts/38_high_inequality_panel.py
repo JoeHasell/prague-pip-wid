@@ -70,12 +70,14 @@ THRESHOLD_COUNTRY, THRESHOLD_YEAR = "United States", 2022
 OLD_AFTER = 5                      # years to the nearest survey beyond which data counts as old
 MAX_DISTANCE = 99                  # no cap: every country is matched to its nearest survey
 POP_SERIES = "WID_pretax_per_capita"
-# The five series of the Figma strip, in its order. Both WID series are per capita, so the labels
+# The five series of the Figma strip, in its order. The Prague deck converts consumption to
+# income with the Wollburg et al. method (consinc.py, "A SECOND METHOD"), so its two adjusted
+# PIP series are the _wb chain. Both WID series are per capita, so the labels
 # name the income concept: post-tax vs pre-tax (the Figma's first "WID" / "WID original").
 SERIES = {
     "PIP": "PIP (original)",
-    "PIP_consinc": "PIP (cons→inc)",
-    "PIP_topadj": "PIP (+ top adjustment)",
+    "PIP_consinc_wb": "PIP (cons→inc)",
+    "PIP_topadj_wb": "PIP (+ top adjustment)",
     "WID_posttax_per_capita": "WID (post-tax)",
     "WID_pretax_per_capita": "WID (pre-tax)",
 }

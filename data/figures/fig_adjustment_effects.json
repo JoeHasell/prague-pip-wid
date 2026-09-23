@@ -36,36 +36,36 @@
   },
   "consinc": {
    "label": "Consumption -> income alone",
-   "gini_pct_mean": 34.0,
-   "gini_pct_min": 16.4,
-   "gini_pct_max": 51.6,
+   "gini_pct_mean": 27.7,
+   "gini_pct_min": 15.9,
+   "gini_pct_max": 43.8,
    "gini_mean_before": 0.357,
-   "gini_mean_after": 0.474,
-   "top10_pts_mean": 8.0,
-   "top10_pts_min": 6.7,
-   "top10_pts_max": 9.2,
-   "top1_pts_mean": 3.0,
+   "gini_mean_after": 0.456,
+   "top10_pts_mean": 6.0,
+   "top10_pts_min": 2.2,
+   "top10_pts_max": 12.0,
+   "top1_pts_mean": 2.1,
    "top1_mean_before": 6.3,
-   "top1_mean_after": 9.3,
+   "top1_mean_after": 8.3,
    "n_changed": 78,
    "by_welfare": {
     "consumption": {
      "n": 78,
-     "gini_pct_mean": 34.0,
-     "top10_pts_mean": 8.0
+     "gini_pct_mean": 27.7,
+     "top10_pts_mean": 6.0
     }
    }
   },
   "both": {
    "label": "Both adjustments",
-   "gini_pct_mean": 38.6,
+   "gini_pct_mean": 35.7,
    "gini_pct_min": 9.3,
-   "gini_pct_max": 112.1,
+   "gini_pct_max": 100.6,
    "gini_mean_before": 0.356,
-   "gini_mean_after": 0.49,
-   "top10_pts_mean": 12.5,
+   "gini_mean_after": 0.482,
+   "top10_pts_mean": 11.6,
    "top10_pts_min": 3.1,
-   "top10_pts_max": 32.8,
+   "top10_pts_max": 30.4,
    "top1_pts_mean": 8.3,
    "top1_mean_before": 6.1,
    "top1_mean_after": 14.4,
@@ -73,8 +73,8 @@
    "by_welfare": {
     "consumption": {
      "n": 78,
-     "gini_pct_mean": 53.4,
-     "top10_pts_mean": 16.1
+     "gini_pct_mean": 48.3,
+     "top10_pts_mean": 14.6
     },
     "income": {
      "n": 59,

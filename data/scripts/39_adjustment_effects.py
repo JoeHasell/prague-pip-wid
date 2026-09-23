@@ -20,8 +20,9 @@ and top-1% share of:
 
     PIP            PIP as published
     PIP_top1only   PIP with WID's top 1% appended, no consumption -> income step
-    PIP_consinc    PIP on an income basis (the deck's WID profile), no top adjustment
-    PIP_topadj     both: the deck's chain
+    PIP_consinc_wb PIP on an income basis (Wollburg et al., the method the Prague deck uses),
+                   no top adjustment
+    PIP_topadj_wb  both: the Wollburg chain
 
 and the change each step makes relative to PIP.
 
@@ -31,7 +32,7 @@ HOW TO READ THE TOP-1%-ONLY SERIES
   distribution: two concepts in one distribution. That is the point of the exercise — it isolates
   the top adjustment — but the level is not an estimate of anything a survey could measure.
 - The gate is decided on PIP itself (append only where WID's top-1% share exceeds PIP's own), so
-  it can differ from the chain's gate, which is decided on PIP_consinc.
+  it can differ from the chain's gate, which is decided on PIP_consinc_wb.
 - The top-1% share comes from WID at the PIP survey year, like the chain.
 
 INPUTS: the ETL cache (reference_year_bins, pip_welfare_basis) through etl_source.load_bins, and
@@ -56,13 +57,13 @@ OUT_FILE = DATA_DIR / "processed" / "adjustment_effects.csv"
 FIG_FILE = DATA_DIR / "figures" / "fig_adjustment_effects.json"
 
 REF_YEAR = 2022
-SERIES = ["PIP", "PIP_top1only", "PIP_consinc", "PIP_topadj"]
+SERIES = ["PIP", "PIP_top1only", "PIP_consinc_wb", "PIP_topadj_wb"]
 MEASURES = ["gini", "top10_share", "top1_share"]
 # What each step is compared with, for the summary.
 STEPS = {
     "top1only": ("PIP", "PIP_top1only", "Top 1% adjustment alone"),
-    "consinc": ("PIP", "PIP_consinc", "Consumption -> income alone"),
-    "both": ("PIP", "PIP_topadj", "Both adjustments"),
+    "consinc": ("PIP", "PIP_consinc_wb", "Consumption -> income alone"),
+    "both": ("PIP", "PIP_topadj_wb", "Both adjustments"),
 }
 
 
