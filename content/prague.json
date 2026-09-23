@@ -231,7 +231,7 @@
           "props": {
             "layout": "panels",
             "sample": "common",
-            "pipSeries": "PIP_topadj",
+            "pipSeries": "PIP_topadj_wb",
             "widSeries": "WID_posttax_per_capita",
             "title": "",
             "controls": false,
@@ -751,7 +751,7 @@
           "props": {
             "compare": [
               "PIP",
-              "PIP_consinc"
+              "PIP_consinc_wb"
             ],
             "height": 440,
             "view": "change",
@@ -777,7 +777,7 @@
           "component": "high-inequality-count",
           "props": {
             "compare": [
-              "PIP_topadj",
+              "PIP_topadj_wb",
               "WID_posttax_per_capita"
             ],
             "height": 440,

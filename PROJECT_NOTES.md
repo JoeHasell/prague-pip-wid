@@ -379,6 +379,16 @@ Full detail in `CLAUDE.md`. Everything runs on Joe's Mac.
   predate a critical PPP bug fix and are stale). New chart components must
   fetch their data from per-figure files produced by pipeline scripts — no
   hard-coded data arrays in component JS.
+- **DONE 2026-09-24 — the Prague deck is on the Wollburg chain throughout.** Every adjusted-PIP
+  series the Prague talk shows now uses the Wollburg et al. consumption→income conversion
+  (`PIP_consinc_wb`, `PIP_topadj_wb`) instead of WID's correction profile (`PIP_consinc`,
+  `PIP_topadj`): `38_high_inequality_panel.py` (rising charts, since-1990 tables), `39_adjustment_effects.py`
+  (slide 43 "What shifts?", now consistent with slide 40) and `content/prague.json` (global Gini
+  averages, rising compares). Effects vs PIP, 2022: consumption→income alone Gini +28% (+16% to +44%,
+  78 countries), top 10% +6 pts; both together +36% (+9% to +101%; +48% consumption, +19% income),
+  top 10% +12 pts. The top-1%-only series is unchanged. The Figma file is now the only Prague deck;
+  `prague.html` is no longer maintained, and this repo keeps the data behind it. The 60-min deck
+  (`content/slides.json`) still uses the WID-profile chain.
 - **DONE 2026-09-23 — the top-1% adjustment on its own (Prague slides 42–43).** `39_adjustment_effects.py`
   → `data/processed/adjustment_effects.csv` + `data/figures/fig_adjustment_effects.json`: for the 142
   countries with a national survey within five years of 2022, the Gini, top-10% and top-1% shares of PIP,
