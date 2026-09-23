@@ -393,6 +393,12 @@ Full detail in `CLAUDE.md`. Everything runs on Joe's Mac.
   carries `gini_pts_*` (with the min/max countries). Consumption→income +0.10 (+0.04 Belarus to +0.16
   Malawi); top 1% alone +0.08 (+0.03 Netherlands to +0.26 Iraq); both +0.13 (+0.03 to +0.30;
   consumption +0.17, income +0.07).
+  Slide 43 then became cumulative (step 1 + step 2 = total), so the middle panel shows the top-1%
+  append as the chain applies it, after consumption→income: the new step `top1_after_consinc`
+  (PIP_topadj_wb vs PIP_consinc_wb, 137 countries) is Gini +0.07 (+0.03 Netherlands to +0.23 Iraq;
+  consumption +0.07, income +0.07), top 10% +8 pts (consumption +9, income +8), top 1% 7% → 14%.
+  By survey type the steps add up exactly; the headline averages don't, since step 1 covers 78 countries.
+  The top-1%-alone step (`top1only`) still feeds slide 42.
 - **DONE 2026-09-23 — the top-1% adjustment on its own (Prague slides 42–43).** `39_adjustment_effects.py`
   → `data/processed/adjustment_effects.csv` + `data/figures/fig_adjustment_effects.json`: for the 142
   countries with a national survey within five years of 2022, the Gini, top-10% and top-1% shares of PIP,

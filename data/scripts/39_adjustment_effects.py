@@ -64,6 +64,8 @@ STEPS = {
     "top1only": ("PIP", "PIP_top1only", "Top 1% adjustment alone"),
     "consinc": ("PIP", "PIP_consinc_wb", "Consumption -> income alone"),
     "both": ("PIP", "PIP_topadj_wb", "Both adjustments"),
+    # The chain's second step as applied: what the top-1% append adds on top of consumption -> income.
+    "top1_after_consinc": ("PIP_consinc_wb", "PIP_topadj_wb", "Top 1% adjustment after consumption -> income"),
 }
 
 
