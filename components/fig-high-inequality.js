@@ -6,8 +6,7 @@
  *
  *   level view    red = at least as unequal as the United States in 2022 (same series, same
  *                 measure), navy = below; the light part of each colour = countries whose nearest
- *                 survey is more than five years away (PIP series only). The line is the share of
- *                 the covered population living in the red countries (right axis).
+ *                 survey is more than five years away (PIP series only).
  *   change view   red = rising, grey = stable, navy = falling between a base year and each year:
  *                 stable = within +-2 Gini points, or +-5% for the top-10%, top-1% and Palma
  *                 measures. Light = either end more than five years from a survey. A pair resting
@@ -33,7 +32,7 @@
 (function () {
   const DATA_URL = 'data/figures/fig_high_inequality.json';
   const C = {
-    high: '#D62E2E', low: '#1D3D63', stable: '#9AA5B1', line: '#B4250F',
+    high: '#D62E2E', low: '#1D3D63', stable: '#9AA5B1',
     grid: 'rgb(238,241,245)', tick: 'rgb(87,114,145)', axis: 'rgb(63,96,138)', faint: 'rgb(140,155,175)',
   };
   const LIGHT = 0.42;               // opacity of the "old data" part of each colour
@@ -55,7 +54,6 @@
       .${p}-svg { width: 100%; height: 100%; display: block; }
       .${p}-legend { display: flex; flex-wrap: wrap; gap: 4px 16px; font: 12px var(--font-body); color: ${C.axis}; padding: 2px 2px 0; }
       .${p}-legend i { display: inline-block; width: 11px; height: 11px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
-      .${p}-legend b { display: inline-block; width: 16px; height: 0; border-top: 2px solid ${C.line}; margin-right: 5px; vertical-align: 3px; }
       .${p}-source { font: 11px var(--font-body); color: ${C.faint}; padding: 2px 2px 0; }
       .${p}-tip { position: absolute; pointer-events: none; z-index: 5; opacity: 0; background: rgb(0,33,71); color: #fff;
         font: 12.5px var(--font-body); padding: 6px 9px; border-radius: 6px; white-space: nowrap; line-height: 1.4;
@@ -124,7 +122,6 @@
       { k: 'rising_old', c: C.high, o: LIGHT, label: 'Rising, an end more than 5 years from a survey' },
     ],
   };
-  const RED = { level: ['high', 'high_old'], change: ['rising', 'rising_old'] };
 
   Deck.registerComponent('high-inequality-count', (el, props) => {
     const p = 'hi' + Math.random().toString(36).slice(2, 7);
@@ -185,7 +182,7 @@
           ? `Countries with a ${mLabel} at least as high as the United States in ${meta.threshold.year}${st.region !== 'World' ? ' · ' + st.region : ''}`
           : `Countries where the ${mLabel} rose, held or fell since ${st.baseYear} (stable: ${bandText})${st.region !== 'World' ? ' · ' + st.region : ''}`;
 
-        const ser = panels(), stacks = STACKS[st.view], red = RED[st.view];
+        const ser = panels(), stacks = STACKS[st.view];
         // The change view starts the year after its base year.
         const first = st.view === 'change' ? years.indexOf(st.baseYear) + 1 : 0;
         const shown = years.slice(first);
@@ -193,7 +190,7 @@
         const shareMode = st.mode === 'share';
         const maxN = Math.max(1, ...rows.flat().filter(r => r.show).map(r => r.total));
         const yMax = shareMode ? 1 : niceMax(maxN);
-        const padL = 56, padR = 56, padT = 18, padB = 40, gap = 60;
+        const padL = 56, padR = 16, padT = 18, padB = 40, gap = 60;
         const pw = (W - padL - padR - gap * (ser.length - 1)) / ser.length;
         const y0 = padT, y1 = H - padB;
         const yOf = v => y1 - (v / yMax) * (y1 - y0);
@@ -226,28 +223,14 @@
             }
             hits.push({ s, i, r, x: xOf(i), w: bw, x0, x1 });
           });
-          // population-share line of the red category (count mode only; in share mode it IS the red stack)
-          if (!shareMode) {
-            const pts = rows[j].map((r, i) => r.show && r.totalPop
-              ? `${(xOf(i) + bw / 2).toFixed(1)},${(y1 - (red.reduce((a, k) => a + (r.pop[k] || 0), 0) / r.totalPop) * (y1 - y0)).toFixed(1)}` : null).filter(Boolean);
-            if (pts.length > 1) parts.push(`<polyline points="${pts.join(' ')}" fill="none" stroke="${C.line}" stroke-width="2.2" stroke-linejoin="round"/>`);
-            if (j === ser.length - 1) {
-              for (let t = 0; t <= 4; t++) {
-                const y = y1 - (t / 4) * (y1 - y0);
-                parts.push(`<text x="${x1 + 8}" y="${y + 4}" font-size="12" fill="${C.line}">${t * 25}%</text>`);
-              }
-            }
-          }
           parts.push(`<line x1="${x0}" x2="${x1}" y1="${y1}" y2="${y1}" stroke="rgb(200,210,222)"/>`);
         });
         parts.push(`<text transform="translate(16,${(y0 + y1) / 2}) rotate(-90)" text-anchor="middle" font-size="12.5" font-weight="600" fill="${C.axis}">${shareMode ? 'Share of the covered population' : 'Number of countries'}</text>`);
-        if (!shareMode) parts.push(`<text transform="translate(${W - 8},${(y0 + y1) / 2}) rotate(90)" text-anchor="middle" font-size="12.5" font-weight="600" fill="${C.line}">Population share, ${st.view === 'level' ? 'red countries' : 'rising'}</text>`);
         svg.innerHTML = parts.join('');
 
         const anyPip = ser.some(s => s.startsWith('PIP'));
         legend.innerHTML = stacks.filter(sk => anyPip || !sk.k.endsWith('_old'))
-          .slice().reverse().map(sk => `<span><i style="background:${sk.c};opacity:${sk.o}"></i>${esc(sk.label)}</span>`).join('')
-          + (shareMode ? '' : `<span><b></b>Share of population in the ${st.view === 'level' ? 'red' : 'rising'} countries (right axis)</span>`);
+          .slice().reverse().map(sk => `<span><i style="background:${sk.c};opacity:${sk.o}"></i>${esc(sk.label)}</span>`).join('');
         const thr = ser.map(s => `${labelOf(s)} ${fmtVal(meta.threshold.values[s][st.metric])}`).join(' · ');
         source.textContent = `171 countries with a national PIP survey. PIP: each country's nearest survey (either side, any distance); WID: the year itself. ` +
           `US ${meta.threshold.year} threshold: ${thr}. Deck calculation from the ETL's harmonized bins.`;

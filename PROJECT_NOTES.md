@@ -379,14 +379,18 @@ Full detail in `CLAUDE.md`. Everything runs on Joe's Mac.
   predate a critical PPP bug fix and are stale). New chart components must
   fetch their data from per-figure files produced by pipeline scripts — no
   hard-coded data arrays in component JS.
+- **DONE 2026-09-23 — Prague deck re-synced again (59 slides).** The Figma gained "This presentation"
+  (slide 2), two WID-overview build slides, a second "Key takeaways" slide, logos on the PIP/WID
+  overview slides, and numbered "Q1)/Q2)" question titles; one WID-overview slide was dropped. The
+  high-inequality chart (now slides 52–54) no longer draws the population-share line on the count
+  bars; population share remains as the "Share of population" mode.
 - **DONE 2026-09-23 — the World Bank's "countries with high inequality" chart, and the Prague deck
   re-synced to the updated Figma (57 slides).** `38_high_inequality_panel.py` → `data/processed/
   high_inequality_panel.csv` + `data/figures/fig_high_inequality.json`: every year 1990–2024, the 171
   surveyed countries, PIP series from the nearest survey at any distance (old = > 5 years away), WID at
   the year; high = at least the US 2022 value in the same series and measure (Gini: PIP 0.413, PIP top
   adj 0.484, WID post-tax 0.461, WID pre-tax 0.587). `components/fig-high-inequality.js`
-  (`high-inequality-count`): stacked columns per year (red ≥ US, navy below, light = old data), the
-  red countries' population-share line, a rising / stable / falling view vs a start year (stable
+  (`high-inequality-count`): stacked columns per year (red ≥ US, navy below, light = old data), a rising / stable / falling view vs a start year (stable
   ±2 Gini points, ±5% for top-10%, top-1%, Palma), series tabs, measure / region / count-vs-share
   controls, a two-panel `compare` mode. Findings: the World Bank blog's "most recent survey at the time"
   wording does not reproduce its own numbers — backward matching gives 59 high-inequality countries in

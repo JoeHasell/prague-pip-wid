@@ -141,7 +141,7 @@
 > series from the country's nearest survey at any distance (either side; `old` = more than 5 years
 > away) and WID at the year, with high = at least the United States' 2022 value in the same series
 > and measure (PIP Gini 0.413). It drives `high-inequality-count` on the Prague deck (slides
-> 50–52). Only a two-sided match reproduces the Bank's own 2000 count (77; the strictly backward
+> 52–54). Only a two-sided match reproduces the Bank's own 2000 count (77; the strictly backward
 > "most recent survey" rule gives 59); on the Bank's definition (Gini > 0.40) our PIP gives 73 in
 > 2000 and 46 in 2022 against its 77 and 52 (different PIP vintage).
 >
