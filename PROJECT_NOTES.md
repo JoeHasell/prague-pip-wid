@@ -379,6 +379,13 @@ Full detail in `CLAUDE.md`. Everything runs on Joe's Mac.
   predate a critical PPP bug fix and are stale). New chart components must
   fetch their data from per-figure files produced by pipeline scripts — no
   hard-coded data arrays in component JS.
+- **DONE 2026-09-23 — the top-1% adjustment on its own (Prague slides 42–43).** `39_adjustment_effects.py`
+  → `data/processed/adjustment_effects.csv` + `data/figures/fig_adjustment_effects.json`: for the 142
+  countries with a national survey within five years of 2022, the Gini, top-10% and top-1% shares of PIP,
+  PIP_consinc, PIP_topadj and a new PIP_top1only (the chain's top-1% append applied to PIP as published,
+  gate decided on PIP itself; 137 adjusted). Averages vs PIP: top 1% alone Gini +22% (0 to +87%, Iraq),
+  top 10% +8 pts; consumption→income alone +19% (+34% in the 78 consumption countries); both +37%
+  (+53% in consumption countries). PIP_top1only is not part of the bridging chain.
 - **DONE 2026-09-23 — WID series named by income concept; "rising" slides open on the change view.**
   `38_high_inequality_panel.py` labelled the two WID series with the Figma strip's "WID" and "WID
   original", which read as adjusted vs unadjusted; both are WID per capita, differing only in the

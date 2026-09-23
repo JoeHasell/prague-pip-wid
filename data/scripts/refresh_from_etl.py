@@ -80,9 +80,10 @@ PROCESSED = SCRIPTS.parent / "processed"
 # survey-year check.
 DATASET_SCRIPTS = ["33_reference_year_indicators.py", "37_filled_year_indicators.py",
                    "34_fig_refyear_scatter.py", "36_global_gini_averages.py",
-                   "38_high_inequality_panel.py"]
+                   "38_high_inequality_panel.py", "39_adjustment_effects.py"]
 DATASET_FILES = [PROCESSED / "reference_year_indicators.csv", PROCESSED / "filled_year_indicators.csv",
-                 PROCESSED / "global_gini_averages.csv", PROCESSED / "high_inequality_panel.csv"]
+                 PROCESSED / "global_gini_averages.csv", PROCESSED / "high_inequality_panel.csv",
+                 PROCESSED / "adjustment_effects.csv"]
 
 
 def run(script: str, *args: str) -> None:
