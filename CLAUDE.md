@@ -143,8 +143,8 @@ python data/scripts/99_verify.py                                          # any 
   `body.deck-prague`). Its slides are one html block each, a `.pg-canvas` of absolutely
   positioned elements at Figma coordinates x 2/3; edit them in place (the browser editor
   saves to `content/prague.json`), don't reflow them into the kicker/heading pattern.
-  Re-converted from the updated 57-slide Figma on 2026-09-23: slide 16 mounts
-  `fig-global-gini-average` in place of the Figma sketch, slides 50–52 mount
+  Re-converted from the updated 59-slide Figma on 2026-09-23: slide 17 mounts
+  `fig-global-gini-average` in place of the Figma sketch, slides 52–54 mount
   `high-inequality-count` (`components/fig-high-inequality.js`, data from
   `38_high_inequality_panel.py`) in place of the Figma's placeholder boxes.
 - `content/slides.json` is the single source of truth: slides → ordered `blocks`
