@@ -14,6 +14,7 @@
     "fig-means-scatter.js",
     "fig-refyear-scatter.js",
     "fig-global-gini-average.js",
+    "fig-high-inequality.js",
     "demo-line-chart.js",
     "demo-sortable-table.js",
     "demo-scrubber.js"

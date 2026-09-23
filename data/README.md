@@ -83,6 +83,7 @@
 > python data/scripts/34_fig_refyear_scatter.py        # year-vs-year scatters with selectable years, from 33_
 > python data/scripts/37_filled_year_indicators.py     # the FILLED PIP panel, every country-year (DATASET), after 33_
 > python data/scripts/36_global_gini_averages.py       # average country Gini by year, a DATASET + its figure, from 33_ and 37_
+> python data/scripts/38_high_inequality_panel.py      # countries at least as unequal as the US in 2022, by year (Prague deck), from 37_
 > ```
 >
 > One script is deliberately NOT part of the refresh: `python data/scripts/35_fit_consinc_wb.py`
@@ -133,6 +134,16 @@
 > The adjusted series do move in extrapolated years, but only through WID's top-1% share and the
 > Wollburg inverse. The global averages and the year-vs-year scatters offer both bases through a
 > "PIP data" selector.
+>
+> **High-inequality panel** (`data/processed/high_inequality_panel.csv`, `38_high_inequality_panel.py`)
+> is the World Bank's "number of countries with high inequality" (its June 2024 blog, Figure 2) on the
+> deck's series: for every year 1990–2024 and the 171 countries with a national survey, each PIP
+> series from the country's nearest survey at any distance (either side; `old` = more than 5 years
+> away) and WID at the year, with high = at least the United States' 2022 value in the same series
+> and measure (PIP Gini 0.413). It drives `high-inequality-count` on the Prague deck (slides
+> 50–52). Only a two-sided match reproduces the Bank's own 2000 count (77; the strictly backward
+> "most recent survey" rule gives 59); on the Bank's definition (Gini > 0.40) our PIP gives 73 in
+> 2000 and 46 in 2022 against its 77 and 52 (different PIP vintage).
 >
 > **One trap the refresh cannot catch for you.** `etl_source.ETL_VERSION` pins the
 > dataset version (currently `2026-08-25`). New data flowing through the *same*
