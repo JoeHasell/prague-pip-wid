@@ -109,18 +109,20 @@ def main():
                     "n_consumption": int((out["welfare_type"] == "consumption").sum()),
                     "n_top1_adjusted": int(out["top1_adjusted"].sum()),
                     "generated_by": "39_adjustment_effects.py"},
-           "steps": {}}
-    # Averages and ranges are over the countries each step CHANGES (the slides quote these): the
-    # consumption -> income step leaves income countries as they are, and the top-1% gate leaves
-    # five income countries whose surveys already show a larger top-1% share than WID.
-    for key, (a, b, label) in STEPS.items():
+           "steps": {}, "steps_all": {}}
+    # Two scopes. "steps": averages and ranges over the countries each step CHANGES (slide 42 quotes
+    # these): the consumption -> income step leaves income countries as they are, and the top-1% gate
+    # leaves five income countries whose surveys already show a larger top-1% share than WID.
+    # "steps_all": over all countries, unchanged ones counting as zero, so that in points the
+    # chain's steps add up (consinc + top1_after_consinc = both; slide 43 quotes these).
+    for scope, key, (a, b, label) in [(sc, k, v) for sc in ("steps", "steps_all") for k, v in STEPS.items()]:
         changed = (out[f"gini__{b}"] - out[f"gini__{a}"]).abs() > 1e-9
-        o = out[changed]
+        o = out[changed] if scope == "steps" else out
         g = o[f"gini__{b}"] / o[f"gini__{a}"] - 1
         gp = o[f"gini__{b}"] - o[f"gini__{a}"]
         t10 = o[f"top10_share__{b}"] - o[f"top10_share__{a}"]
         t1 = o[f"top1_share__{b}"] - o[f"top1_share__{a}"]
-        fig["steps"][key] = {
+        fig[scope][key] = {
             "label": label,
             "gini_pct_mean": round(100 * float(g.mean()), 1), "gini_pct_min": round(100 * float(g.min()), 1),
             "gini_pct_max": round(100 * float(g.max()), 1),

@@ -137,5 +137,143 @@
     }
    }
   }
+ },
+ "steps_all": {
+  "top1only": {
+   "label": "Top 1% adjustment alone",
+   "gini_pct_mean": 21.7,
+   "gini_pct_min": 0.0,
+   "gini_pct_max": 87.1,
+   "gini_pts_mean": 0.075,
+   "gini_pts_min": 0.0,
+   "gini_pts_max": 0.259,
+   "gini_pts_min_country": "Cyprus",
+   "gini_pts_max_country": "Iraq",
+   "gini_mean_before": 0.355,
+   "gini_mean_after": 0.43,
+   "top10_pts_mean": 8.5,
+   "top10_pts_min": 0.0,
+   "top10_pts_max": 28.3,
+   "top1_pts_mean": 8.1,
+   "top1_mean_before": 6.1,
+   "top1_mean_after": 14.1,
+   "n_changed": 137,
+   "by_welfare": {
+    "consumption": {
+     "n": 78,
+     "gini_pct_mean": 25.1,
+     "gini_pts_mean": 0.086,
+     "top10_pts_mean": 9.6
+    },
+    "income": {
+     "n": 64,
+     "gini_pct_mean": 17.5,
+     "gini_pts_mean": 0.062,
+     "top10_pts_mean": 7.2
+    }
+   }
+  },
+  "consinc": {
+   "label": "Consumption -> income alone",
+   "gini_pct_mean": 15.2,
+   "gini_pct_min": 0.0,
+   "gini_pct_max": 43.8,
+   "gini_pts_mean": 0.054,
+   "gini_pts_min": 0.0,
+   "gini_pts_max": 0.156,
+   "gini_pts_min_country": "Australia",
+   "gini_pts_max_country": "Malawi",
+   "gini_mean_before": 0.355,
+   "gini_mean_after": 0.409,
+   "top10_pts_mean": 3.3,
+   "top10_pts_min": 0.0,
+   "top10_pts_max": 12.0,
+   "top1_pts_mean": 1.1,
+   "top1_mean_before": 6.1,
+   "top1_mean_after": 7.2,
+   "n_changed": 78,
+   "by_welfare": {
+    "consumption": {
+     "n": 78,
+     "gini_pct_mean": 27.7,
+     "gini_pts_mean": 0.099,
+     "top10_pts_mean": 6.0
+    },
+    "income": {
+     "n": 64,
+     "gini_pct_mean": 0.0,
+     "gini_pts_mean": 0.0,
+     "top10_pts_mean": 0.0
+    }
+   }
+  },
+  "both": {
+   "label": "Both adjustments",
+   "gini_pct_mean": 34.4,
+   "gini_pct_min": 0.0,
+   "gini_pct_max": 100.6,
+   "gini_pts_mean": 0.121,
+   "gini_pts_min": 0.0,
+   "gini_pts_max": 0.299,
+   "gini_pts_min_country": "Cyprus",
+   "gini_pts_max_country": "Iraq",
+   "gini_mean_before": 0.355,
+   "gini_mean_after": 0.475,
+   "top10_pts_mean": 11.2,
+   "top10_pts_min": 0.0,
+   "top10_pts_max": 30.4,
+   "top1_pts_mean": 8.1,
+   "top1_mean_before": 6.1,
+   "top1_mean_after": 14.1,
+   "n_changed": 137,
+   "by_welfare": {
+    "consumption": {
+     "n": 78,
+     "gini_pct_mean": 48.3,
+     "gini_pts_mean": 0.169,
+     "top10_pts_mean": 14.6
+    },
+    "income": {
+     "n": 64,
+     "gini_pct_mean": 17.5,
+     "gini_pts_mean": 0.062,
+     "top10_pts_mean": 7.2
+    }
+   }
+  },
+  "top1_after_consinc": {
+   "label": "Top 1% adjustment after consumption -> income",
+   "gini_pct_mean": 16.8,
+   "gini_pct_min": 0.0,
+   "gini_pct_max": 64.2,
+   "gini_pts_mean": 0.066,
+   "gini_pts_min": 0.0,
+   "gini_pts_max": 0.233,
+   "gini_pts_min_country": "Cyprus",
+   "gini_pts_max_country": "Iraq",
+   "gini_mean_before": 0.409,
+   "gini_mean_after": 0.475,
+   "top10_pts_mean": 7.9,
+   "top10_pts_min": 0.0,
+   "top10_pts_max": 26.8,
+   "top1_pts_mean": 6.9,
+   "top1_mean_before": 7.2,
+   "top1_mean_after": 14.1,
+   "n_changed": 137,
+   "by_welfare": {
+    "consumption": {
+     "n": 78,
+     "gini_pct_mean": 16.3,
+     "gini_pts_mean": 0.07,
+     "top10_pts_mean": 8.5
+    },
+    "income": {
+     "n": 64,
+     "gini_pct_mean": 17.5,
+     "gini_pts_mean": 0.062,
+     "top10_pts_mean": 7.2
+    }
+   }
+  }
  }
 }
