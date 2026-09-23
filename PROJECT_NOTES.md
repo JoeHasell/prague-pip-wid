@@ -25,8 +25,8 @@ Until owid/etl#6806 merges the catalog modes stop with an error, because
 or `--local <path to an owid/etl checkout>` in which the branch has been built (the
 staging server was already gone on 2026-09-21; the committed cache was rebuilt that way).
 
-Commit `data/raw/etl/`, `data/figures/`, `data/processed/reference_year_indicators.csv` and
-`data/processed/global_gini_averages.csv` together. `python data/scripts/refresh_from_etl.py --check` reports staleness without
+Commit `data/raw/etl/`, `data/figures/`, `data/processed/reference_year_indicators.csv`,
+`data/processed/filled_year_indicators.csv` and `data/processed/global_gini_averages.csv` together. `python data/scripts/refresh_from_etl.py --check` reports staleness without
 changing anything (non-zero exit when the figures or the dataset are behind).
 
 Full detail, including the `ETL_VERSION` pin the refresh cannot check for you, in
@@ -379,6 +379,22 @@ Full detail in `CLAUDE.md`. Everything runs on Joe's Mac.
   predate a critical PPP bug fix and are stale). New chart components must
   fetch their data from per-figure files produced by pipeline scripts — no
   hard-coded data arrays in component JS.
+- **DONE 2026-09-23 — the reference-year exercise on PIP's FILLED series.** `37_filled_year_indicators.py`
+  → `data/processed/filled_year_indicators.csv`: Gini, top-10%, top-1%, Palma and mean from the
+  thousand bins at every year 1990–2024, for PIP and its four adjusted series (171 countries with a
+  national survey) and WID. The chain is rebuilt at cache time (new cache table
+  `pip_filled_year_indicators`, `etl_source.build_chain` split out of `load_bins`, the top-1% gate
+  moved to `refyears.topadj_gate`); at the 2,201 survey years it equals 33_'s dataset exactly
+  (asserted). `36_` gained a `basis` dimension (nearest_survey | filled; nearest-survey values
+  unchanged), `34_` a `series_filled` block; both components a "PIP data" selector (hollow scatter
+  dots where either year is extrapolated); new appendix slide `slide-global-gini-filled`.
+  Readings: the filled averages track the nearest-survey ones (median difference 0.002 unweighted,
+  0.000 weighted; the largest, unweighted 2024, 0.497 vs 0.477, is coverage: 171 countries vs 126).
+  Not possible with the filled data: the 40 no-survey countries (regional placeholder bins, 31 with a
+  constant Gini, Argentina urban-only) are left out; extrapolated years (73% of countries in 1990,
+  86% in 2024) keep the edge survey's Gini (exactly in 68%, within 0.01 in 96%); interpolated years
+  are blends; the welfare concept of filled years is the ETL's inference; nothing published to
+  validate filled-year Gini against.
 - **DONE 2026-09-23 — a second deck, `prague.html`, from the Figma "Inequality presentation
   in Prague".** 35 slides in `content/prague.json` (one Figma section, same order), each an html
   block of elements at the Figma positions x 2/3; text kept as editable HTML (Playfair/Lato/Inter),
