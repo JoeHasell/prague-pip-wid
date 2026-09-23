@@ -70,13 +70,14 @@ THRESHOLD_COUNTRY, THRESHOLD_YEAR = "United States", 2022
 OLD_AFTER = 5                      # years to the nearest survey beyond which data counts as old
 MAX_DISTANCE = 99                  # no cap: every country is matched to its nearest survey
 POP_SERIES = "WID_pretax_per_capita"
-# The five series of the Figma strip, in its order, with its labels.
+# The five series of the Figma strip, in its order. Both WID series are per capita, so the labels
+# name the income concept: post-tax vs pre-tax (the Figma's first "WID" / "WID original").
 SERIES = {
     "PIP": "PIP original",
     "PIP_consinc": "PIP cons→inc",
     "PIP_topadj": "PIP top adj",
-    "WID_posttax_per_capita": "WID",
-    "WID_pretax_per_capita": "WID original",
+    "WID_posttax_per_capita": "WID post-tax",
+    "WID_pretax_per_capita": "WID pre-tax",
 }
 PIP_SERIES = [s for s in SERIES if s.startswith("PIP")]
 MEASURES = {"gini": ("Gini", 4), "top10_share": ("Top 10% share", 2),

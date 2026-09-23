@@ -699,7 +699,8 @@
           "component": "high-inequality-count",
           "props": {
             "series": "PIP",
-            "height": 470
+            "height": 470,
+            "view": "change"
           }
         }
       ]
@@ -724,7 +725,8 @@
               "PIP",
               "WID_pretax_per_capita"
             ],
-            "height": 440
+            "height": 440,
+            "view": "change"
           }
         }
       ]
@@ -745,8 +747,12 @@
           "type": "component",
           "component": "high-inequality-count",
           "props": {
-            "series": "PIP_topadj",
-            "height": 470
+            "compare": [
+              "PIP_topadj",
+              "WID_posttax_per_capita"
+            ],
+            "height": 440,
+            "view": "change"
           }
         }
       ]

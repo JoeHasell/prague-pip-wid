@@ -379,6 +379,15 @@ Full detail in `CLAUDE.md`. Everything runs on Joe's Mac.
   predate a critical PPP bug fix and are stale). New chart components must
   fetch their data from per-figure files produced by pipeline scripts — no
   hard-coded data arrays in component JS.
+- **DONE 2026-09-23 — WID series named by income concept; "rising" slides open on the change view.**
+  `38_high_inequality_panel.py` labelled the two WID series with the Figma strip's "WID" and "WID
+  original", which read as adjusted vs unadjusted; both are WID per capita, differing only in the
+  concept, so they are now "WID post-tax" (`WID_posttax_per_capita`) and "WID pre-tax"
+  (`WID_pretax_per_capita`). Only `meta.series[].label` changed in `fig_high_inequality.json`; the
+  panel CSV is byte-identical. Prague slides 52–54 ("Is inequality rising in most places?") now pass
+  `view: "change"`, opening on rising / stable / falling since 2000 instead of the level view, and
+  slide 54 compares PIP top adj with WID post-tax (`compare`) instead of showing PIP top adj alone.
+  The Figma slides 56–58 carry the same three charts, rendered from this deck.
 - **DONE 2026-09-23 — Prague deck re-synced again (59 slides).** The Figma gained "This presentation"
   (slide 2), two WID-overview build slides, a second "Key takeaways" slide, logos on the PIP/WID
   overview slides, and numbered "Q1)/Q2)" question titles; one WID-overview slide was dropped. The
