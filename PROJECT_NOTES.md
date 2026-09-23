@@ -399,6 +399,10 @@ Full detail in `CLAUDE.md`. Everything runs on Joe's Mac.
   consumption +0.07, income +0.07), top 10% +8 pts (consumption +9, income +8), top 1% 7% → 14%.
   By survey type the steps add up exactly; the headline averages don't, since step 1 covers 78 countries.
   The top-1%-alone step (`top1only`) still feeds slide 42.
+  Then slide 43 moved to all 142 countries (unchanged ones count as zero) so every line adds up:
+  `fig_adjustment_effects.json` gains `steps_all` next to `steps` (changed-only, still used by slide 42).
+  Gini +0.05 + 0.07 = +0.12 (consumption +0.10 + 0.07 = +0.17; income 0 + 0.06); top 10% +3 + 8 = +11
+  pts (consumption +6 + 9 = +15; income 0 + 7); top 1% share 6% → 7% → 14%.
 - **DONE 2026-09-23 — the top-1% adjustment on its own (Prague slides 42–43).** `39_adjustment_effects.py`
   → `data/processed/adjustment_effects.csv` + `data/figures/fig_adjustment_effects.json`: for the 142
   countries with a national survey within five years of 2022, the Gini, top-10% and top-1% shares of PIP,
