@@ -156,6 +156,12 @@ CACHE_DIR = Path(__file__).resolve().parents[1] / "raw" / "etl"
 #                         at EVERY country-year, computed at cache time by
 #                         refyears.indicators_from_bins on the deck's grid: the
 #                         1.6M WID bin rows behind them are too large to commit.
+#   pip_filled_year_indicators
+#                         the same measures for PIP and its four adjusted series at
+#                         EVERY country-year of the 171 surveyed countries (PIP's
+#                         lined-up thousand bins, filled between and beyond surveys),
+#                         the chain rebuilt at cache time by build_chain() — the 1.2M
+#                         bin rows behind it are too large to commit.
 CACHE_ONLY_TABLES = {
     "pip_observed_inequality",
     "wid_observed_inequality",
@@ -163,6 +169,7 @@ CACHE_ONLY_TABLES = {
     "display_year_bins",
     "reference_year_bins",
     "wid_reference_year_indicators",
+    "pip_filled_year_indicators",
     "pip_dual_percentiles",
     "country_regions",
     "inequality_comparison",
@@ -514,10 +521,21 @@ def load_bins(table, source="cache", branch=None):
     the method, the reasoning, and why PIP's dual pairs are not a usable
     estimation sample. Everything else in the frame is passed through untouched.
     """
-    import consinc, rescale, topadj
-
     bins = aggregate_to_percentiles(load(table, source=source, branch=branch))
     basis = load("pip_welfare_basis", source=source, branch=branch)
+    return build_chain(bins, basis)
+
+
+def build_chain(bins, basis):
+    """load_bins() on a frame already in memory: the deck's PIP-side chain, rebuilt per year.
+
+    `bins` must already be on the 100-percentile grid (aggregate_to_percentiles) and carry, for
+    every country-year to rebuild, PIP and WID_posttax_per_capita (the top-1% share's source).
+    `basis` is the ETL's pip_welfare_basis. 20_cache_from_etl.py calls this directly for the
+    filled PIP panel (every country-year, not a cached table); every figure goes through
+    load_bins(). Returns the input series plus the rebuilt chain, with the same guards.
+    """
+    import consinc, rescale, topadj
 
     # The PIP-side chain is rebuilt END TO END, because each step feeds the next:
     # PIP_consinc -> PIP_topadj (the top-1% method) -> WID_posttax_rescaled

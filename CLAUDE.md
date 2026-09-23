@@ -194,11 +194,13 @@ Full detail in `data/README.md`; the load-bearing ones:
   an owid/etl checkout>`, reads a checkout's built `data/garden/` directly — the same
   files a staging server serves — for an ETL developer with the branch built locally,
   or once the staging server is gone (it was, on 2026-09-21).
-- **The refresh also rebuilds two datasets**, `data/processed/reference_year_indicators.csv`
+- **The refresh also rebuilds three datasets**, `data/processed/reference_year_indicators.csv`
   (`33_reference_year_indicators.py`): inequality indicators from the deck's adjusted
   PIP bins at each country's nearest survey year to every reference year 1990–2024,
-  plus WID; and `data/processed/global_gini_averages.csv` (`36_global_gini_averages.py`):
-  those Ginis averaged across countries, unweighted and population-weighted. Both sit in
+  plus WID; `data/processed/filled_year_indicators.csv` (`37_filled_year_indicators.py`): the
+  same measures on PIP's filled (lined-up) series at every year, for the 171 countries with a
+  national survey; and `data/processed/global_gini_averages.csv` (`36_global_gini_averages.py`):
+  those Ginis averaged across countries on both bases. All three sit in
   `data/processed/` but are ETL-derived, not local-pipeline outputs; commit them with
   `data/raw/etl/` and `data/figures/`.
 - The deck's figures build on the ETL's `harmonized_income_distributions` (cached in

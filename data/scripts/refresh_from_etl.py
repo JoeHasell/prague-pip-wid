@@ -20,14 +20,15 @@ modes (including --check) stop with a message naming the missing path; use
 `--staging worktree-etl-data-wid-update` while that server is up, or `--local <path to an
 owid/etl checkout>` in which the branch has been built.
 
-Besides the figures this also rebuilds the two ETL-derived DATASETS the repo carries,
-data/processed/reference_year_indicators.csv (33_reference_year_indicators.py) and
-data/processed/global_gini_averages.csv (36_global_gini_averages.py, built from 33_'s).
+Besides the figures this also rebuilds the three ETL-derived DATASETS the repo carries,
+data/processed/reference_year_indicators.csv (33_reference_year_indicators.py),
+data/processed/filled_year_indicators.csv (37_filled_year_indicators.py, PIP's filled series at
+every year) and data/processed/global_gini_averages.csv (36_global_gini_averages.py, from both).
 
 AFTER RUNNING
 -------------
-Commit data/raw/etl/, data/figures/, data/processed/reference_year_indicators.csv and
-data/processed/global_gini_averages.csv together. The --check mode is the useful one in
+Commit data/raw/etl/, data/figures/, data/processed/reference_year_indicators.csv,
+data/processed/filled_year_indicators.csv and data/processed/global_gini_averages.csv together. The --check mode is the useful one in
 CI or before a talk: it rebuilds into a temporary directory and tells you whether the
 committed figures and datasets are stale, without touching them.
 
@@ -75,9 +76,12 @@ FIGURE_SCRIPTS = [
 # compare them byte for byte (they are written deterministically); 34_'s and 36_'s
 # JSON are in data/figures/ and are covered like every other figure.
 PROCESSED = SCRIPTS.parent / "processed"
-DATASET_SCRIPTS = ["33_reference_year_indicators.py", "34_fig_refyear_scatter.py",
-                   "36_global_gini_averages.py"]
-DATASET_FILES = [PROCESSED / "reference_year_indicators.csv", PROCESSED / "global_gini_averages.csv"]
+# 37_ (the filled PIP panel) runs before 34_ and 36_, which read it; it reads 33_'s dataset for its
+# survey-year check.
+DATASET_SCRIPTS = ["33_reference_year_indicators.py", "37_filled_year_indicators.py",
+                   "34_fig_refyear_scatter.py", "36_global_gini_averages.py"]
+DATASET_FILES = [PROCESSED / "reference_year_indicators.csv", PROCESSED / "filled_year_indicators.csv",
+                 PROCESSED / "global_gini_averages.csv"]
 
 
 def run(script: str, *args: str) -> None:
@@ -174,8 +178,8 @@ def main() -> None:
     run("20_cache_from_etl.py", *cache_args)
     for s in FIGURE_SCRIPTS + DATASET_SCRIPTS:
         run(s)
-    print("\nDone. Commit data/raw/etl/, data/figures/, data/processed/reference_year_indicators.csv "
-          "and data/processed/global_gini_averages.csv together.")
+    print("\nDone. Commit data/raw/etl/, data/figures/, data/processed/reference_year_indicators.csv, "
+          "filled_year_indicators.csv and global_gini_averages.csv together.")
 
 
 if __name__ == "__main__":

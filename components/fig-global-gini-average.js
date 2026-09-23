@@ -17,7 +17,10 @@
  *   dataUrl    override the JSON path
  *   title      chart title; pass "" to omit it
  *   weighting  starting weighting: unweighted | weighted
- *   sample     starting sample: common | balanced | own | common_ex_ci
+ *   basis      the PIP side: nearest_survey (default; each country's nearest survey within
+ *              five years) | filled (PIP's lined-up estimate for every year, 37_)
+ *   sample     starting sample: common | balanced | own | common_ex_ci (balanced exists only
+ *              for nearest_survey; an unknown sample falls back to the basis' first)
  *   sources    ordered array of series keys to draw (default: all seven)
  *   controls   false hides the selectors (a fixed talk slide)
  *   layout     "panels": the unweighted and the population-weighted average side by side
@@ -144,10 +147,30 @@
 
     function init(data) {
       const meta = data.meta;
+      const opts = (list, cur) => list.map(o =>
+        `<option value="${o.key}"${o.key === cur ? ' selected' : ''}>${esc(o.label)}</option>`).join('');
       const years = meta.years;
-      const sampleKeys = meta.samples.map(s => s.key);
+      const baseKeys = meta.bases.map(b => b.key);
+      let basis = baseKeys.includes(props.basis) ? props.basis : baseKeys[0];
+      const samplesOf = b => meta.samples[b];
+      const pickSample = (b, want) => {
+        const ks = samplesOf(b).map(x => x.key);
+        return ks.includes(want) ? want : ks[0];
+      };
       const weightKeys = meta.weightings.map(w => w.key);
-      let sample = sampleKeys.includes(props.sample) ? props.sample : sampleKeys[0];
+      let sample = pickSample(basis, props.sample);
+      const basisSelect = `
+            <label for="${prefix}-b">PIP data</label>
+            <select id="${prefix}-b" class="${prefix}-select">${opts(meta.bases, basis)}</select>`;
+      // What the source line and tooltip say about the PIP side of the current basis.
+      const basisText = () => (basis === 'filled'
+        ? 'PIP: lined-up estimate every year' : 'PIP: nearest survey within 5 years');
+      const kindLine = (cov, i) => {
+        if (basis !== 'filled' || !cov.kinds) return '';
+        const pct = v => Math.round(v * 100) + '%';
+        return `<br>PIP years by population: ${pct(cov.kinds.survey[i])} survey, ` +
+          `${pct(cov.kinds.interpolated[i])} interpolated, ${pct(cov.kinds.extrapolated[i])} extrapolated`;
+      };
       let weighting = weightKeys.includes(props.weighting) ? props.weighting : weightKeys[0];
 
       const order = meta.series.map(s => s.key);
@@ -163,8 +186,6 @@
       const shortOf = k => (meta.series.find(s => s.key === k) || { short: k }).short;
       const title = props.title === undefined ? meta.title : (props.title || '');
       const showControls = props.controls !== false;
-      const opts = (list, cur) => list.map(o =>
-        `<option value="${o.key}"${o.key === cur ? ' selected' : ''}>${esc(o.label)}</option>`).join('');
 
       el.innerHTML = `
         <style>${styles(prefix)}</style>
@@ -176,15 +197,17 @@
             <select id="${prefix}-p" class="${prefix}-select">${opts(seriesOpts(pipKeys), pipSeries)}</select>
             <label for="${prefix}-d">WID</label>
             <select id="${prefix}-d" class="${prefix}-select">${opts(seriesOpts(widKeys), widSeries)}</select>
+${basisSelect}
             <label for="${prefix}-s">Countries</label>
-            <select id="${prefix}-s" class="${prefix}-select">${opts(meta.samples, sample)}</select>
+            <select id="${prefix}-s" class="${prefix}-select">${opts(samplesOf(basis), sample)}</select>
           </div>` : ''}
           ${showControls && !panels ? `
           <div class="${prefix}-controls">
             <label for="${prefix}-w">Average</label>
             <select id="${prefix}-w" class="${prefix}-select">${opts(meta.weightings, weighting)}</select>
+${basisSelect}
             <label for="${prefix}-s">Countries</label>
-            <select id="${prefix}-s" class="${prefix}-select">${opts(meta.samples, sample)}</select>
+            <select id="${prefix}-s" class="${prefix}-select">${opts(samplesOf(basis), sample)}</select>
           </div>` : ''}
           <div class="${prefix}-note"></div>
           <div class="${prefix}-chart">
@@ -198,15 +221,16 @@
       const note = el.querySelector(`.${prefix}-note`);
       const selW = el.querySelector(`#${prefix}-w`);
       const selS = el.querySelector(`#${prefix}-s`);
+      const selB = el.querySelector(`#${prefix}-b`);
       const selP = el.querySelector(`#${prefix}-p`);
       const selD = el.querySelector(`#${prefix}-d`);
 
       function draw() {
         const w = meta.weightings.find(x => x.key === weighting);
-        const s = meta.samples.find(x => x.key === sample);
+        const s = samplesOf(basis).find(x => x.key === sample);
         note.textContent = `${w.label}. ${w.note} ${s.note}`;
-        const series = data.data[sample][weighting];
-        const cov = data.coverage[sample];
+        const series = data.data[basis][sample][weighting];
+        const cov = data.coverage[basis][sample];
         const fmt = v => v.toFixed(3);
 
         const padL = 78, padR = 290, padT = 22, padB = 64;
@@ -214,7 +238,8 @@
         const xOf = i => x0 + (years.length === 1 ? 0 : (i / (years.length - 1)) * (x1 - x0));
 
         // A fixed range across selections keeps levels comparable when switching.
-        const all = Object.values(data.data).flatMap(bw => Object.values(bw).flatMap(bs => sources.flatMap(k => bs[k])));
+        const all = Object.values(data.data).flatMap(bb => Object.values(bb).flatMap(
+          bw => Object.values(bw).flatMap(bs => sources.flatMap(k => bs[k]))));
         const lo = Math.floor(Math.min(...all) * 20) / 20, hi = Math.ceil(Math.max(...all) * 20) / 20;
         const yOf = v => y1 - ((v - lo) / (hi - lo)) * (y1 - y0);
 
@@ -251,14 +276,14 @@
         });
 
         const n = cov.pip.n, nw = cov.wid.n;
-        const range = a => `${Math.min(...a)}-${Math.max(...a)}`;
+        const range = a => (Math.min(...a) === Math.max(...a) ? `${a[0]}` : `${Math.min(...a)}-${Math.max(...a)}`);
         const covText = sample === 'own'
           ? `PIP ${range(n)} countries, WID ${range(nw)}`
           : `${range(n)} countries`;
         parts.push(
           `<text class="${prefix}-source" x="${padL}" y="${H - 8}">` +
           `Deck calculation from the ETL's harmonized bins · ${esc(s.label)}: ${covText} · ` +
-          `PIP: nearest survey within 5 years · population at the reference year</text>`
+          `${basisText()} · population at the reference year</text>`
         );
         svg.innerHTML = parts.join('');
 
@@ -285,7 +310,7 @@
           const head = sample === 'own'
             ? `PIP ${n[i]} countries (${pct(cov.pip.pop[i])} of people), WID ${nw[i]}`
             : `${n[i]} countries, ${pct(cov.pip.pop[i])} of world population`;
-          tip.innerHTML = `<b>${years[i]}</b> · ${head}<br>${rows.join('<br>')}`;
+          tip.innerHTML = `<b>${years[i]}</b> · ${head}${kindLine(cov, i)}<br>${rows.join('<br>')}`;
           placeTip(svg, tip, { x0, x1, y0, y1 }, xOf(i), loc.y);
           tip.style.opacity = 1;
         };
@@ -296,9 +321,9 @@
       }
 
       function drawPanels() {
-        const s = meta.samples.find(x => x.key === sample);
+        const s = samplesOf(basis).find(x => x.key === sample);
         note.textContent = s.note;
-        const cov = data.coverage[sample];
+        const cov = data.coverage[basis][sample];
         const fmt = v => v.toFixed(3);
         const lines = [
           { key: pipSeries, c: COLOR[pipSeries] || '#D55E00', cov: cov.pip, dash: DASHED.has(pipSeries) },
@@ -317,7 +342,7 @@
         const xOf = (sd, i) => sd.x0 + (years.length === 1 ? 0 : (i / (years.length - 1)) * (sd.x1 - sd.x0));
 
         // One y axis for both panels, so the weightings compare directly too.
-        const vals = sides.flatMap(sd => lines.flatMap(l => data.data[sample][sd.w][l.key]));
+        const vals = sides.flatMap(sd => lines.flatMap(l => data.data[basis][sample][sd.w][l.key]));
         const lo = Math.floor((Math.min(...vals) - 0.005) * 50) / 50;
         const hi = Math.ceil((Math.max(...vals) + 0.005) * 50) / 50;
         const yOf = v => y1 - ((v - lo) / (hi - lo)) * (y1 - y0);
@@ -339,7 +364,7 @@
           parts.push(`<line class="${prefix}-grid" x1="${sd.x0}" x2="${sd.x1}" y1="${y1}" y2="${y1}"/>`);
           const ends = [];
           lines.forEach(l => {
-            const v = data.data[sample][sd.w][l.key];
+            const v = data.data[basis][sample][sd.w][l.key];
             const pts = v.map((x, i) => `${xOf(sd, i).toFixed(1)},${yOf(x).toFixed(1)}`).join(' ');
             const dash = l.dash ? ' stroke-dasharray="7 5"' : '';
             parts.push(`<polyline points="${pts}" fill="none" stroke="${l.c}" stroke-width="3" stroke-linejoin="round"${dash}/>`);
@@ -352,13 +377,13 @@
           });
         });
         const n = cov.pip.n, nw = cov.wid.n;
-        const range = a => `${Math.min(...a)}-${Math.max(...a)}`;
+        const range = a => (Math.min(...a) === Math.max(...a) ? `${a[0]}` : `${Math.min(...a)}-${Math.max(...a)}`);
         const covText = sample === 'own' ? `PIP ${range(n)} countries, WID ${range(nw)}` : `${range(n)} countries`;
         parts.push(`<text class="${prefix}-axis" transform="translate(${padL - 52},${(y0 + y1) / 2}) rotate(-90)" text-anchor="middle">Average Gini across countries</text>`);
         parts.push(
           `<text class="${prefix}-source" x="${padL}" y="${H - 8}">` +
           `Deck calculation from the ETL's harmonized bins · ${esc(s.label)}: ${covText} · ` +
-          `PIP: nearest survey within 5 years · population at the reference year</text>`
+          `${basisText()} · population at the reference year</text>`
         );
         svg.innerHTML = parts.join('');
 
@@ -377,12 +402,12 @@
           line.setAttribute('y1', y0); line.setAttribute('y2', y1);
           svg.appendChild(line);
           const rows = lines.map(l => `<span class="sw" style="background:${l.c}"></span>${esc(shortOf(l.key))} ` +
-                                      `<b>${fmt(data.data[sample][sd.w][l.key][i])}</b>`);
+                                      `<b>${fmt(data.data[basis][sample][sd.w][l.key][i])}</b>`);
           const pct = v => Math.round(v * 100) + '%';
           const head = sample === 'own'
             ? `PIP ${n[i]} countries (${pct(cov.pip.pop[i])} of people), WID ${nw[i]}`
             : `${n[i]} countries, ${pct(cov.pip.pop[i])} of world population`;
-          tip.innerHTML = `<b>${esc(sd.name)}, ${years[i]}</b> · ${head}<br>${rows.join('<br>')}`;
+          tip.innerHTML = `<b>${esc(sd.name)}, ${years[i]}</b> · ${head}${kindLine(cov, i)}<br>${rows.join('<br>')}`;
           placeTip(svg, tip, { x0: sd.x0, x1: sd.x1, y0, y1 }, xOf(sd, i), loc.y);
           tip.style.opacity = 1;
         };
@@ -396,6 +421,12 @@
       render();
       if (selW) selW.addEventListener('change', () => { weighting = selW.value; render(); });
       if (selS) selS.addEventListener('change', () => { sample = selS.value; render(); });
+      if (selB) selB.addEventListener('change', () => {
+        basis = selB.value;
+        sample = pickSample(basis, sample);
+        if (selS) selS.innerHTML = opts(samplesOf(basis), sample);
+        render();
+      });
       if (selP) selP.addEventListener('change', () => { pipSeries = selP.value; render(); });
       if (selD) selD.addEventListener('change', () => { widSeries = selD.value; render(); });
     }

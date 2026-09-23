@@ -22,6 +22,13 @@
  *   - unless switched off, both surveys use the same welfare concept —
  * the rules of refyears.pair(). WID has every year, so its pairs are always exact.
  *
+ * FILLED basis (`basis: "filled"` or the "PIP data" switch): the PIP side instead reads
+ * `series_filled` — PIP's lined-up estimate at every year for the 171 countries with a
+ * national survey (37_filled_year_indicators.py). Every country with both years is drawn
+ * (the same-welfare filter still applies); there is no "different surveys" rule, so a dot
+ * is drawn HOLLOW when either year is extrapolated — its distribution is mostly the edge
+ * survey's, so the change is largely mechanical. The tooltip names each year's kind.
+ *
  * Props (all optional):
  *   metric       "gini" (default) | "top10" | "top1" | "palma"
  *   metrics      which of those to offer (default all four)
@@ -30,6 +37,7 @@
  *                "PIP_topadj_wb" (the same chain on the Wollburg et al. income basis)
  *   widSeries    "WID_pretax_per_capita" | "WID_posttax_per_capita" (default)
  *   sameWelfare  false to allow income-vs-consumption pairs on the PIP side (default true)
+ *   basis        "nearest_survey" (default) | "filled" — the PIP side's data (see above)
  *   mode         change scatter only: "abs" (default) | "rel"
  *   controls     false to hide the control bar (a fixed talk slide)
  *   source       the source line under the chart
@@ -70,6 +78,12 @@
     WID_pretax_per_capita: 'WID pre-tax', WID_posttax_per_capita: 'WID post-tax',
   };
   const WELFARE = { i: 'income', c: 'consumption', '-': '' };
+  const KIND = { s: 'survey', i: 'interpolated', e: 'extrapolated' };
+  const BASES = { nearest_survey: 'Nearest survey', filled: 'Filled' };
+  const SOURCE = {
+    nearest_survey: 'Data: World Bank PIP and WID.world via Our World in Data; measures computed from the harmonized distributions. PIP matched to its nearest survey within five years of each year shown.',
+    filled: "Data: World Bank PIP and WID.world via Our World in Data; measures computed from the harmonized distributions. PIP's lined-up estimate at each year (171 countries with a national survey); hollow dots: an extrapolated year at either end.",
+  };
   const REGIONS = ['Sub-Saharan Africa', 'Other high income countries', 'Europe and Central Asia',
     'East Asia and Pacific', 'Middle East and North Africa', 'South Asia', 'Latin America and the Caribbean'];
   const PALETTE = ['#0072B2', '#E69F00', '#009E73', '#CC79A7', '#56B4E9', '#D55E00', '#7A3E9D'];
@@ -128,32 +142,50 @@
     return present.map(r => `<span class="k"><i style="background:${colorOf(r)}"></i>${r}</span>`).join('');
   }
 
+  // The PIP side switches block with the basis; WID is the same under both.
+  const filledOn = (D, series, basis) => basis === 'filled' && D.series_filled && D.series_filled[series];
+  const block = (D, series, basis) => (filledOn(D, series, basis) ? D.series_filled[series] : D.series[series]);
+
   // A country's value for `series`/`metric` at reference year index i, or null.
-  function slot(D, series, c, metric, i) {
-    const s = D.series[series][c];
+  function slot(D, series, c, metric, i, basis) {
+    const s = block(D, series, basis)[c];
     if (!s || s[metric][i] == null) return null;
-    return { v: s[metric][i], y: s.y[i], w: s.w[i] };
+    return { v: s[metric][i], y: s.y ? s.y[i] : null, w: s.w[i], k: s.k ? s.k[i] : null, d: s.d ? s.d[i] : null };
   }
 
   // The pairs the rules allow: both years present, survey years differ, and (PIP
   // side, when asked) the same welfare concept at both ends.
-  function pairs(D, series, metric, ia, ib, sameWelfare) {
+  function pairs(D, series, metric, ia, ib, sameWelfare, basis) {
     const out = [];
-    Object.keys(D.series[series]).forEach(c => {
-      const a = slot(D, series, c, metric, ia), b = slot(D, series, c, metric, ib);
+    const filled = filledOn(D, series, basis);
+    Object.keys(block(D, series, basis)).forEach(c => {
+      const a = slot(D, series, c, metric, ia, basis), b = slot(D, series, c, metric, ib, basis);
       if (!a || !b) return;
-      if (a.y === b.y) return;
+      if (!filled && a.y === b.y) return;
       if (sameWelfare && a.w !== '-' && b.w !== '-' && a.w !== b.w) return;
-      out.push({ c, r: D.countries[c].r, a: a.v, b: b.v, ya: a.y, yb: b.y, wa: a.w, wb: b.w });
+      out.push({ c, r: D.countries[c].r, a: a.v, b: b.v, ya: a.y, yb: b.y, wa: a.w, wb: b.w,
+        ka: a.k, kb: b.k, da: a.d, db: b.d, ext: filled && (a.k === 'e' || b.k === 'e') });
     });
     return out;
   }
 
   function surveyNote(d, side) {
-    // "survey 1995 (income)" for PIP; nothing for WID, whose year IS the reference year
+    // "survey 1995 (income)" for PIP; on the filled basis the kind of year instead
+    // ("extrapolated, 4 yrs from a survey"); nothing for WID, whose year IS the reference year
     const y = side === 'a' ? d.ya : d.yb, w = side === 'a' ? d.wa : d.wb;
-    return w === '-' ? '' : ` <span style="opacity:.7">— survey ${y}${WELFARE[w] ? ' (' + WELFARE[w] + ')' : ''}</span>`;
+    const k = side === 'a' ? d.ka : d.kb, dist = side === 'a' ? d.da : d.db;
+    const wl = WELFARE[w] ? ' (' + WELFARE[w] + ')' : '';
+    if (k) {
+      const what = k === 's' ? 'survey' : `${KIND[k]}, ${dist} yr${dist === 1 ? '' : 's'} from a survey`;
+      return ` <span style="opacity:.7">— ${what}${wl}</span>`;
+    }
+    return w === '-' ? '' : ` <span style="opacity:.7">— survey ${y}${wl}</span>`;
   }
+
+  // Hollow for a filled pair with an extrapolated end, solid otherwise.
+  const dotPaint = (d, color) => (d.ext
+    ? `fill="#fff" fill-opacity="1" stroke="${color}" stroke-width="1.8"`
+    : `fill="${color}" fill-opacity="0.82" stroke="#fff" stroke-width="1.2"`);
 
   function yearSelect(name, years, value) {
     return `<select name="${name}">${years.map(y => `<option value="${y}" ${y === value ? 'selected' : ''}>${y}</option>`).join('')}</select>`;
@@ -169,7 +201,8 @@
       <span class="grp"><span class="grp-label">Metric</span>${
         keys.map(k => `<label><input type="radio" name="ry-metric" value="${k}" ${k === st.metric ? 'checked' : ''}>${METRICS[k].label}</label>`).join('')}</span>
       <span class="grp"><span class="grp-label">Years</span>${yearSelect('ry-a', D.meta.years, st.yearA)}<span>vs</span>${yearSelect('ry-b', D.meta.years, st.yearB)}</span>
-      <span class="grp"><span class="grp-label">PIP</span>${seriesSelect('ry-pip', D.meta.pip_series, st.pip)}</span>
+      <span class="grp"><span class="grp-label">PIP</span>${seriesSelect('ry-pip', D.meta.pip_series, st.pip)}${
+        D.series_filled ? `<select name="ry-basis">${Object.entries(BASES).map(([k, l]) => `<option value="${k}" ${k === st.basis ? 'selected' : ''}>${l}</option>`).join('')}</select>` : ''}</span>
       <span class="grp"><span class="grp-label">WID</span>${seriesSelect('ry-wid', D.meta.wid_series, st.wid)}</span>
       <span class="grp"><label title="PIP pairs only where both surveys use the same welfare concept (income or consumption)"><input type="checkbox" name="ry-welfare" ${st.sameWelfare ? 'checked' : ''}>same welfare</label></span>
       ${withMode ? `<span class="grp"><span class="grp-label">Change</span>
@@ -185,6 +218,7 @@
     on('select[name=ry-b]', t => { st.yearB = +t.value; });
     on('select[name=ry-pip]', t => { st.pip = t.value; });
     on('select[name=ry-wid]', t => { st.wid = t.value; });
+    on('select[name=ry-basis]', t => { st.basis = t.value; });
     on('input[name=ry-welfare]', t => { st.sameWelfare = t.checked; });
     on('input[name=ry-mode]', t => { st.mode = t.value; });
   }
@@ -200,6 +234,7 @@
       wid: D.meta.wid_series.includes(props.widSeries) ? props.widSeries : 'WID_posttax_per_capita',
       sameWelfare: props.sameWelfare !== false,
       mode: props.mode === 'rel' ? 'rel' : 'abs',
+      basis: props.basis === 'filled' && D.series_filled ? 'filled' : 'nearest_survey',
     };
   }
 
@@ -222,7 +257,7 @@
         ${props.controls === false ? '' : controlsHTML(D, st, st.keys, withMode)}
         <div class="ry-plot"><svg class="ry-svg" viewBox="${viewBox}" preserveAspectRatio="xMidYMid meet"></svg></div>
         <div class="ry-legend"></div>
-        <div class="ry-source">${props.source || 'Data: World Bank PIP and WID.world via Our World in Data; measures computed from the harmonized distributions. PIP matched to its nearest survey within five years of each year shown.'}</div>
+        <div class="ry-source">${props.source || SOURCE[st.basis]}</div>
         <div class="ry-tip"></div>
       </div>`;
   }
@@ -257,7 +292,7 @@
       if (!rows.length) s += `<text class="ry-empty" x="${ox + PANEL.w / 2}" y="${(PANEL.y0 + PANEL.y1) / 2}" text-anchor="middle">no country has both years under these rules</text>`;
       rows.forEach((d, i) => {
         s += `<circle class="ry-dot" data-baser="5" data-side="${series === st.pip ? 'pip' : 'wid'}" data-i="${i}" `
-          + `cx="${px(d.a)}" cy="${py(d.b)}" r="5" fill="${colorOf(d.r)}" fill-opacity="0.82" stroke="#fff" stroke-width="1.2"/>`;
+          + `cx="${px(d.a)}" cy="${py(d.b)}" r="5" ${dotPaint(d, colorOf(d.r))}/>`;
       });
       return s;
     }
@@ -269,7 +304,8 @@
         svg.innerHTML = `<text class="ry-empty" x="600" y="250" text-anchor="middle">Pick two different years.</text>`;
         legend.innerHTML = ''; last = { pip: [], wid: [] }; return;
       }
-      last = { pip: pairs(D, st.pip, st.metric, ia, ib, st.sameWelfare), wid: pairs(D, st.wid, st.metric, ia, ib, false) };
+      last = { pip: pairs(D, st.pip, st.metric, ia, ib, st.sameWelfare, st.basis), wid: pairs(D, st.wid, st.metric, ia, ib, false, st.basis) };
+      if (!props.source) el.querySelector('.ry-source').textContent = SOURCE[st.basis];
       const all = last.pip.concat(last.wid).flatMap(d => [d.a, d.b]);
       const dom = axis(Math.min(...all), Math.max(...all), 5);
       svg.innerHTML =
@@ -308,10 +344,10 @@
 
     function rows() {
       const ia = D.meta.years.indexOf(st.yearA), ib = D.meta.years.indexOf(st.yearB);
-      const wid = {}; pairs(D, st.wid, st.metric, ia, ib, false).forEach(d => { wid[d.c] = d; });
-      return pairs(D, st.pip, st.metric, ia, ib, st.sameWelfare)
+      const wid = {}; pairs(D, st.wid, st.metric, ia, ib, false, st.basis).forEach(d => { wid[d.c] = d; });
+      return pairs(D, st.pip, st.metric, ia, ib, st.sameWelfare, st.basis)
         .filter(d => wid[d.c] && (st.mode !== 'rel' || (d.a !== 0 && wid[d.c].a !== 0)))
-        .map(d => ({ c: d.c, r: d.r, p: d, w: wid[d.c], x: change(d.a, d.b), y: change(wid[d.c].a, wid[d.c].b) }));
+        .map(d => ({ c: d.c, r: d.r, p: d, w: wid[d.c], ext: d.ext, x: change(d.a, d.b), y: change(wid[d.c].a, wid[d.c].b) }));
     }
 
     function draw() {
@@ -321,6 +357,7 @@
         legend.innerHTML = ''; last = []; return;
       }
       last = rows();
+      if (!props.source) el.querySelector('.ry-source').textContent = SOURCE[st.basis];
       const vals = last.flatMap(d => [d.x, d.y]);
       const mag = vals.length ? Math.max(Math.abs(Math.min(...vals)), Math.abs(Math.max(...vals))) : 1;
       const dom = axis(-mag, mag, 6), lo = dom.lo, hi = dom.hi;
@@ -345,7 +382,7 @@
       if (!last.length) s += `<text class="ry-empty" x="${(P.x0 + P.x1) / 2}" y="${(P.y0 + P.y1) / 2}" text-anchor="middle">no country has both years in both sources under these rules</text>`;
       last.forEach((d, i) => {
         s += `<circle class="ry-dot" data-baser="5.5" data-i="${i}" cx="${px(d.x)}" cy="${py(d.y)}" r="5.5" `
-          + `fill="${colorOf(d.r)}" fill-opacity="0.82" stroke="#fff" stroke-width="1.2"/>`;
+          + `${dotPaint(d, colorOf(d.r))}/>`;
       });
       svg.innerHTML = s;
       legend.innerHTML = legendHTML(last);

@@ -57,7 +57,8 @@
 > the merge, `refresh_from_etl.py` with no arguments is the normal route again.
 >
 > Then **commit `data/raw/etl/`, `data/figures/`,
-> `data/processed/reference_year_indicators.csv` and `data/processed/global_gini_averages.csv` together**. `--check` rebuilds into a
+> `data/processed/reference_year_indicators.csv`, `data/processed/filled_year_indicators.csv` and
+> `data/processed/global_gini_averages.csv` together**. `--check` rebuilds into a
 > temporary directory, restores the committed figures and dataset whatever happens, and
 > exits non-zero when they no longer match the ETL — so it is safe to run any time and
 > works as a pre-talk sanity check.
@@ -80,7 +81,8 @@
 > python data/scripts/31_fig_top1_share_scatter.py     # top-1% shares, PIP chain vs WID
 > python data/scripts/33_reference_year_indicators.py  # the reference-year DATASET (not a figure)
 > python data/scripts/34_fig_refyear_scatter.py        # year-vs-year scatters with selectable years, from 33_
-> python data/scripts/36_global_gini_averages.py       # average country Gini by year, a DATASET + its figure, from 33_
+> python data/scripts/37_filled_year_indicators.py     # the FILLED PIP panel, every country-year (DATASET), after 33_
+> python data/scripts/36_global_gini_averages.py       # average country Gini by year, a DATASET + its figure, from 33_ and 37_
 > ```
 >
 > One script is deliberately NOT part of the refresh: `python data/scripts/35_fit_consinc_wb.py`
@@ -110,9 +112,27 @@
 > source's own coverage, and the common sample without China and India. It is an average of
 > within-country inequality, not the Gini of the world distribution. The same script writes
 > `data/figures/fig_global_gini_average.json` for `components/fig-global-gini-average.js`
-> (appendix slides `slide-global-gini-panels`, `-unweighted`, `-weighted`, `-ex-china-india`; the
+> (appendix slides `slide-global-gini-panels`, `-unweighted`, `-weighted`, `-ex-china-india`, `-filled`; the
 > first and last use the component's `layout: "panels"`: the unweighted and the population-weighted
 > average side by side, PIP against WID in each).
+>
+> **Filled-year indicators** (`data/processed/filled_year_indicators.csv`, `37_filled_year_indicators.py`)
+> is the same set of measures on PIP's FILLED series: the lined-up thousand-bins estimate at every
+> year 1990–2024 for the 171 countries with a national survey, the deck's chain rebuilt on it at
+> cache time (`pip_filled_year_indicators`, via `etl_source.build_chain`), WID beside it. PIP
+> publishes no Gini for interpolated or extrapolated years, so everything is computed from the bins.
+> Each row carries `kind` (survey / interpolated / extrapolated), the survey it draws its concept
+> from, and the distance to the nearest survey; at survey years it equals the reference-year
+> dataset exactly (the script asserts it). What the filled data cannot give: (1) anything for the
+> 40 countries without a national survey — their bins are regional placeholders, 31 with one
+> Gini for all 35 years — so they are left out; (2) measured change in extrapolated years —
+> PIP scales one survey, so its Gini there is that survey's (exactly in two thirds of them, within
+> 0.01 in 96%), and those years are 73% of countries in 1990 and 86% in 2024; (3) independent
+> movement in interpolated years, which blend two surveys; (4) a published welfare concept for
+> filled years (the ETL infers it) or a published benchmark to check filled-year Gini against.
+> The adjusted series do move in extrapolated years, but only through WID's top-1% share and the
+> Wollburg inverse. The global averages and the year-vs-year scatters offer both bases through a
+> "PIP data" selector.
 >
 > **One trap the refresh cannot catch for you.** `etl_source.ETL_VERSION` pins the
 > dataset version (currently `2026-08-25`). New data flowing through the *same*

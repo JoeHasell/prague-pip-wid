@@ -99,7 +99,6 @@ import pandas as pd
 
 import etl_source as es
 import refyears
-import topadj
 
 OUT_FILE = Path(__file__).resolve().parents[1] / "processed" / "reference_year_indicators.csv"
 
@@ -118,17 +117,9 @@ EXCLUDED_YEARS = ()
 CSV_INDICATORS = ["gini", "top10_share", "top1_share", "palma", "mean"]
 COLUMNS = ["country", "series", "ref_year", "year", "distance", "tie", "welfare_type",
            "top1_adjusted", "wid_extrapolated"] + CSV_INDICATORS
-TOPADJ_SERIES = ("PIP_topadj", "PIP_topadj_wb")     # the only rows where top1_adjusted means something
-
-# The top-1% gate is decided per CHAIN, on the income-basis series the append is
-# built on (topadj.top1_shares): the baseline chain on PIP_consinc, the Wollburg
-# et al. chain on PIP_consinc_wb. `top1_adjusted` therefore differs between the
-# two chains for the same country-year.
-GATE_BASE = {
-    "PIP": "PIP_consinc", "PIP_consinc": "PIP_consinc", "PIP_topadj": "PIP_consinc",
-    "PIP_consinc_wb": "PIP_consinc_wb", "PIP_topadj_wb": "PIP_consinc_wb",
-}
-assert set(GATE_BASE) == set(refyears.PIP_SIDE), "every PIP-side series needs a gate base"
+# The top-1% gate's per-chain bases live in refyears (GATE_BASE), shared with 20_'s filled panel.
+TOPADJ_SERIES = refyears.TOPADJ_SERIES
+GATE_BASE = refyears.GATE_BASE
 
 
 def main():
@@ -145,14 +136,7 @@ def main():
 
     # ---- PIP side: indicators at every survey year, then matched to reference years
     ind = refyears.indicators_from_bins(bins[bins["series"].isin(refyears.PIP_SIDE)])
-    gate = []
-    for y, gy in bins.groupby("year", observed=True):
-        for base in sorted(set(GATE_BASE.values())):
-            g8 = topadj.top1_shares(gy, base)
-            for s in [s for s, b in GATE_BASE.items() if b == base]:
-                gate.append(pd.DataFrame({"country": g8.index, "year": int(y), "series": s,
-                                          "top1_adjusted": g8["adjust"].to_numpy()}))
-    gate = pd.concat(gate, ignore_index=True)
+    gate = refyears.topadj_gate(bins)
 
     matches = refyears.match_reference_years(surveys, REFERENCE_YEARS, maximum_distance=MAXIMUM_DISTANCE,
                                              tie_break_strategy=TIE_BREAK_STRATEGY,

@@ -39,6 +39,9 @@ import refyears
 FIGURES_DIR = Path(__file__).resolve().parents[1] / "figures"
 OUT_FILE = FIGURES_DIR / "fig_refyear_scatter.json"
 IN_FILE = Path(__file__).resolve().parents[1] / "processed" / "reference_year_indicators.csv"
+# The filled PIP panel (37_): every year, no survey matching. WID is the same in both bases.
+FILLED_FILE = Path(__file__).resolve().parents[1] / "processed" / "filled_year_indicators.csv"
+KIND_CODE = {"survey": "s", "interpolated": "i", "extrapolated": "e"}
 
 METRICS = {"gini": ("gini", 4), "top10": ("top10_share", 2), "top1": ("top1_share", 2), "palma": ("palma", 3)}
 SERIES_LABELS = {
@@ -119,14 +122,53 @@ def main():
                 "inequality_comparison instead re-matches a country to a same-welfare pair further away, "
                 "so its 1993/2019 country set differs slightly.",
                 "Regions are PIP's old seven-region scheme (country_regions), as on the other scatters.",
+                "`series_filled` is the PIP side on the FILLED basis (data/processed/filled_year_indicators.csv, "
+                "37_): PIP's lined-up estimate at every year for the 171 countries with a national survey. "
+                "`k` is the kind of each year (s = survey, i = interpolated, e = extrapolated), `d` the years to "
+                "the nearest survey. Extrapolated years mostly carry the edge survey's distribution, so a change "
+                "to or from one is largely mechanical; the component draws those dots hollow.",
             ],
+            "kind_codes": {v: k for k, v in KIND_CODE.items()},
         },
         "countries": {c: {"r": str(regions[c])} for c in countries},
         "series": out_series,
+        "series_filled": filled_block(years, index, countries),
     }
     FIGURES_DIR.mkdir(parents=True, exist_ok=True)
     OUT_FILE.write_text(json.dumps(out, separators=(",", ":")))
     print(f"\nSaved: {OUT_FILE.name} ({OUT_FILE.stat().st_size / 1024:.0f} KB)")
+
+
+
+def filled_block(years, index, countries):
+    """The PIP side on the filled basis, in the slot shape of `series` (w, metrics) plus k and d."""
+    fd = pd.read_csv(FILLED_FILE, keep_default_na=False, na_values=[""])
+    fd = fd[fd["series"].isin(refyears.PIP_SIDE)]
+    missing = sorted(set(fd["country"]) - set(countries))
+    assert not missing, f"filled countries missing from the scatter's country list: {missing[:5]}"
+    block = {}
+    for s in refyears.PIP_SIDE:
+        rows = {}
+        for c, g in fd[fd["series"] == s].groupby("country", sort=True):
+            slots = {"w": ["-"] * len(years), "k": ["-"] * len(years), "d": [None] * len(years)}
+            for key in METRICS:
+                slots[key] = [None] * len(years)
+            for r in g.itertuples(index=False):
+                if int(r.year) not in index:
+                    continue
+                i = index[int(r.year)]
+                slots["w"][i] = WELFARE_CODE.get(r.welfare_type, "-") if isinstance(r.welfare_type, str) else "-"
+                slots["k"][i] = KIND_CODE[r.kind]
+                slots["d"][i] = int(r.distance_to_survey)
+                for key, (col, nd) in METRICS.items():
+                    v = getattr(r, col)
+                    slots[key][i] = None if pd.isna(v) else round(float(v), nd)
+            slots["w"], slots["k"] = "".join(slots["w"]), "".join(slots["k"])
+            rows[c] = slots
+        block[s] = rows
+        n = sum(sum(v is not None for v in b["gini"]) for b in rows.values())
+        print(f"  filled {s:<17} {len(rows):>3} countries, {n:>5} country-years")
+    return block
 
 
 if __name__ == "__main__":

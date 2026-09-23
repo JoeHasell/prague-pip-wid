@@ -51,6 +51,12 @@ and the figures do not need all of it. What they need is:
                                                   deck's grid — the 1.6M bin rows behind
                                                   them are too large to commit, and 33_
                                                   proves the table still matches the bins
+  pip_filled_year_indicators          ~30k rows   the same measures for PIP and its four
+                                                  adjusted series at EVERY country-year of
+                                                  the 171 surveyed countries (PIP's filled,
+                                                  lined-up bins), the chain rebuilt here by
+                                                  etl_source.build_chain; 37_ proves the
+                                                  survey years match 33_'s dataset
 
 The scatter slides read `inequality_comparison` rather than recomputing their
 measures from the bins. That dataset already does the reference-year matching
@@ -194,6 +200,24 @@ def main():
     print(f"  {'wid_reference_year_indicators':<38} {len(ind):>7,} rows -> "
           f"{es.write_cache('wid_reference_year_indicators', ind).name}")
 
+    # 5. The FILLED PIP panel: PIP's lined-up thousand bins at EVERY year for the countries with at
+    #    least one national survey (the 171 pip_welfare_basis labels; the 40 without one carry
+    #    regional placeholder distributions and no concept). The deck's chain is rebuilt here
+    #    (es.build_chain, the body of load_bins) and reduced to indicators, because the 1.2M bin
+    #    rows behind it are too many to commit. 37_ checks the survey years against 33_'s dataset.
+    labelled = set(basis["country"].unique())
+    fb = bins[bins["country"].isin(labelled) & bins["series"].isin(["PIP", "WID_posttax_per_capita"])]
+    fb = es.aggregate_to_percentiles(fb[BIN_COLUMNS].reset_index(drop=True))
+    chain = es.build_chain(fb, basis)
+    pip_side = chain[chain["series"].isin(refyears.PIP_SIDE)]
+    fill = refyears.indicators_from_bins(pip_side)
+    fill = fill.merge(refyears.topadj_gate(chain), on=["series", "country", "year"], how="left")
+    assert fill["top1_adjusted"].notna().all(), "a filled country-year has no top-1% gate"
+    n_expected = len(labelled) * len(years) * len(refyears.PIP_SIDE)
+    assert len(fill) == n_expected, f"pip_filled_year_indicators: {len(fill)} rows, expected {n_expected}"
+    print(f"  {'pip_filled_year_indicators':<38} {len(fill):>7,} rows -> "
+          f"{es.write_cache('pip_filled_year_indicators', fill).name}  ({len(labelled)} countries x {len(years)} years)")
+
     # ------------------------------------------------------------------
     # PIP's own percentiles (the consumption->income explainer), the cross-source
     # comparison table (the scatters), and the regions used to colour countries.
@@ -227,7 +251,7 @@ def main():
     print(f"  {'treemap_regions':<38} {len(treemap_regions):>7,} rows -> "
           f"{es.write_cache('treemap_regions', treemap_regions).name}")
 
-    print("\nDone. Now re-run the figure scripts (21_ onwards) and 33_reference_year_indicators.py.")
+    print("\nDone. Now re-run the figure scripts (21_ onwards) and the dataset scripts (33_, 37_, 34_, 36_).")
     return 0
 
 

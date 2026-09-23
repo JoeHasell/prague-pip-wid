@@ -68,6 +68,8 @@ bin data supports; a window edge at 0.4 or 0.9 splits a bin pro rata.
 import numpy as np
 import pandas as pd
 
+import topadj
+
 # Well above float32 rounding (~6e-8 at these magnitudes), well below the
 # narrowest bin width (0.001 on the ETL's own grid).
 RANK_EPS = 1e-6
@@ -81,6 +83,16 @@ RANK_EPS = 1e-6
 # on the first three moves.
 PIP_SIDE = ("PIP", "PIP_consinc", "PIP_topadj", "PIP_consinc_wb", "PIP_topadj_wb")
 WID_SIDE = ("WID_pretax_per_capita", "WID_posttax_per_capita")
+
+# The top-1% gate is decided per CHAIN, on the income-basis series the append is built on
+# (topadj.top1_shares): the baseline chain on PIP_consinc, the Wollburg et al. chain on
+# PIP_consinc_wb. `top1_adjusted` is only meaningful on TOPADJ_SERIES.
+TOPADJ_SERIES = ("PIP_topadj", "PIP_topadj_wb")
+GATE_BASE = {
+    "PIP": "PIP_consinc", "PIP_consinc": "PIP_consinc", "PIP_topadj": "PIP_consinc",
+    "PIP_consinc_wb": "PIP_consinc_wb", "PIP_topadj_wb": "PIP_consinc_wb",
+}
+assert set(GATE_BASE) == set(PIP_SIDE), "every PIP-side series needs a gate base"
 
 # Shares are in PERCENT, as PIP and WID publish them.
 INDICATORS = ["gini", "top10_share", "bottom40_share", "top1_share", "palma", "mean", "population"]
@@ -279,3 +291,19 @@ def pair(tb, ref_a, ref_b, same_welfare=True, min_interval=1):
     m.insert(2, "ref_year_b", ref_b)
     m.insert(2, "ref_year_a", ref_a)
     return m.sort_values(["series", "country"]).reset_index(drop=True)
+
+
+def topadj_gate(bins):
+    """The top-1% gate per (country, year, series) of PIP_SIDE, from load_bins()/build_chain() output.
+
+    One row per country-year and PIP-side series: `top1_adjusted` is True where WID's top-1% share
+    exceeds the chain's own, i.e. where the append raised the top (topadj.top1_shares).
+    """
+    out = []
+    for y, gy in bins.groupby("year", observed=True):
+        for base in sorted(set(GATE_BASE.values())):
+            g8 = topadj.top1_shares(gy, base)
+            for s in [s for s, b in GATE_BASE.items() if b == base]:
+                out.append(pd.DataFrame({"country": g8.index, "year": int(y), "series": s,
+                                         "top1_adjusted": g8["adjust"].to_numpy()}))
+    return pd.concat(out, ignore_index=True)
