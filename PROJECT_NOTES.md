@@ -379,6 +379,22 @@ Full detail in `CLAUDE.md`. Everything runs on Joe's Mac.
   predate a critical PPP bug fix and are stale). New chart components must
   fetch their data from per-figure files produced by pipeline scripts — no
   hard-coded data arrays in component JS.
+- **DONE 2026-09-23 — the World Bank's "countries with high inequality" chart, and the Prague deck
+  re-synced to the updated Figma (57 slides).** `38_high_inequality_panel.py` → `data/processed/
+  high_inequality_panel.csv` + `data/figures/fig_high_inequality.json`: every year 1990–2024, the 171
+  surveyed countries, PIP series from the nearest survey at any distance (old = > 5 years away), WID at
+  the year; high = at least the US 2022 value in the same series and measure (Gini: PIP 0.413, PIP top
+  adj 0.484, WID post-tax 0.461, WID pre-tax 0.587). `components/fig-high-inequality.js`
+  (`high-inequality-count`): stacked columns per year (red ≥ US, navy below, light = old data), the
+  red countries' population-share line, a rising / stable / falling view vs a start year (stable
+  ±2 Gini points, ±5% for top-10%, top-1%, Palma), series tabs, measure / region / count-vs-share
+  controls, a two-panel `compare` mode. Findings: the World Bank blog's "most recent survey at the time"
+  wording does not reproduce its own numbers — backward matching gives 59 high-inequality countries in
+  2000 against its 77, two-sided nearest gives 79 — so the chart matches two-sided; on the Bank's
+  definition our PIP gives 73 (2000) and 46 (2022) vs 77 and 52. `content/prague.json` re-converted
+  from the 57-slide Figma (fresh layout dump; 25 new image exports, shared screenshots exported once
+  with CSS opacity; 14 images the Figma dropped removed); the chart replaces the placeholders on
+  slides 50–52, the global-average panels stay on slide 16.
 - **DONE 2026-09-23 — the reference-year exercise on PIP's FILLED series.** `37_filled_year_indicators.py`
   → `data/processed/filled_year_indicators.csv`: Gini, top-10%, top-1%, Palma and mean from the
   thousand bins at every year 1990–2024, for PIP and its four adjusted series (171 countries with a

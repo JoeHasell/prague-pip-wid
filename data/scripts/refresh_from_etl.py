@@ -79,9 +79,10 @@ PROCESSED = SCRIPTS.parent / "processed"
 # 37_ (the filled PIP panel) runs before 34_ and 36_, which read it; it reads 33_'s dataset for its
 # survey-year check.
 DATASET_SCRIPTS = ["33_reference_year_indicators.py", "37_filled_year_indicators.py",
-                   "34_fig_refyear_scatter.py", "36_global_gini_averages.py"]
+                   "34_fig_refyear_scatter.py", "36_global_gini_averages.py",
+                   "38_high_inequality_panel.py"]
 DATASET_FILES = [PROCESSED / "reference_year_indicators.csv", PROCESSED / "filled_year_indicators.csv",
-                 PROCESSED / "global_gini_averages.csv"]
+                 PROCESSED / "global_gini_averages.csv", PROCESSED / "high_inequality_panel.csv"]
 
 
 def run(script: str, *args: str) -> None:

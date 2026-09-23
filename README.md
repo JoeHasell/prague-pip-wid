@@ -31,7 +31,7 @@ The repo carries a second deck, the Prague offsite talk, on the same engine and 
 `prague.html` (view: `http://localhost:4173/prague.html`, edit: `/prague.html?edit`) reads
 `content/prague.json` instead of `content/slides.json` and adds `src/prague.css` for its own look.
 Its Save writes `content/prague.json`; the main deck is untouched. It was converted on 2026-09-23
-from the Figma Slides file "Inequality presentation in Prague": each slide is one html block whose
+(and re-converted the same day when the Figma grew to 57 slides) from the Figma Slides file "Inequality presentation in Prague": each slide is one html block whose
 elements sit at the Figma positions scaled to the 1280x720 stage, with Figma's screenshots and
 diagrams exported to `content/images/prague/`. Any page can do the same: point
 `<body data-content="content/<name>.json">` at its own file; the dev server saves only to
