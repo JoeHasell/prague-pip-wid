@@ -8,8 +8,8 @@
  *                 measure), navy = below; the light part of each colour = countries whose nearest
  *                 survey is more than five years away (PIP series only).
  *   change view   red = rising, grey = stable, navy = falling between a base year and each year:
- *                 stable = within +-2 Gini points, or +-5% for the top-10%, top-1% and Palma
- *                 measures. Light = either end more than five years from a survey. A pair resting
+ *                 stable = within +-5% of the base-year value (about +-0.02 at a Gini of 0.40)
+ *                 Light = either end more than five years from a survey. A pair resting
  *                 on the SAME survey at both ends is stable by construction; the tooltip counts them.
  *
  * DATA IS NOT EMBEDDED. Fetches data/figures/fig_high_inequality.json, written by
@@ -32,7 +32,7 @@
 (function () {
   const DATA_URL = 'data/figures/fig_high_inequality.json';
   const C = {
-    high: '#D62E2E', low: '#1D3D63', stable: '#9AA5B1',
+    high: '#D62E2E', low: '#1D3D63', stable: '#D8BE82',
     grid: 'rgb(238,241,245)', tick: 'rgb(87,114,145)', axis: 'rgb(63,96,138)', faint: 'rgb(140,155,175)',
   };
   const LIGHT = 0.42;               // opacity of the "old data" part of each colour
@@ -114,12 +114,12 @@
       { k: 'high_old', c: C.high, o: LIGHT, label: 'At least as high as the US, survey more than 5 years away' },
     ],
     change: [
-      { k: 'falling_old', c: C.low, o: LIGHT, label: 'Falling, an end more than 5 years from a survey' },
-      { k: 'falling', c: C.low, o: 1, label: 'Falling' },
+      { k: 'falling_old', c: C.low, o: LIGHT, label: 'Decreased, an end more than 5 years from a survey' },
+      { k: 'falling', c: C.low, o: 1, label: 'Decreased' },
       { k: 'stable_old', c: C.stable, o: LIGHT, label: 'Stable, an end more than 5 years from a survey' },
       { k: 'stable', c: C.stable, o: 1, label: 'Stable' },
-      { k: 'rising', c: C.high, o: 1, label: 'Rising' },
-      { k: 'rising_old', c: C.high, o: LIGHT, label: 'Rising, an end more than 5 years from a survey' },
+      { k: 'rising', c: C.high, o: 1, label: 'Increased' },
+      { k: 'rising_old', c: C.high, o: LIGHT, label: 'Increased, an end more than 5 years from a survey' },
     ],
   };
 
@@ -158,7 +158,7 @@
           ${showStrip ? `<div class="${p}-strip">${keys.map(k => `<button class="${p}-tab" data-k="${k}"${compare ? ' disabled' : ''}>${esc(labelOf(k))}</button>`).join('')}</div>` : ''}
           ${showControls ? `<div class="${p}-controls">
             <label>Measure</label><select data-c="metric">${opt(meta.measures.map(m => [m.key, m.label]), st.metric)}</select>
-            <label>View</label><select data-c="view">${opt([['level', 'At least as high as the US in 2022'], ['change', 'Rising / stable / falling']], st.view)}</select>
+            <label>View</label><select data-c="view">${opt([['level', 'At least as high as the US in 2022'], ['change', 'Increased / stable / decreased']], st.view)}</select>
             <label class="${p}-base">since</label><select class="${p}-base" data-c="baseYear">${opt(years.slice(0, -1).map(y => [y, String(y)]), st.baseYear)}</select>
             <label>Show</label><select data-c="mode">${opt([['count', 'Number of countries'], ['share', 'Share of population']], st.mode)}</select>
             <label>Region</label><select data-c="region">${opt([['World', 'World'], ...meta.regions.map(r => [r, r])], st.region)}</select>
@@ -177,10 +177,10 @@
         el.querySelectorAll(`.${p}-base`).forEach(n => { n.style.display = st.view === 'change' ? '' : 'none'; });
         const mLabel = { gini: 'Gini', top10_share: 'top 10% share', top1_share: 'top 1% share', palma: 'Palma ratio' }[st.metric];
         const band = meta.stable[st.metric];
-        const bandText = band.type === 'abs' ? `±${Math.round(band.band * 100)} Gini points` : `±${Math.round(band.band * 100)}%`;
+        const bandText = band.type === 'abs' ? `±${Math.round(band.band * 100)} Gini points` : `±${Math.round(band.band * 100)}%${st.metric === 'gini' ? ', about ±0.02 at a Gini of 0.40' : ''}`;
         title.textContent = st.view === 'level'
           ? `Countries with a ${mLabel} at least as high as the United States in ${meta.threshold.year}${st.region !== 'World' ? ' · ' + st.region : ''}`
-          : `Countries where the ${mLabel} rose, held or fell since ${st.baseYear} (stable: ${bandText})${st.region !== 'World' ? ' · ' + st.region : ''}`;
+          : `Countries where the ${mLabel} increased, stayed stable or decreased since ${st.baseYear} (stable: ${bandText})${st.region !== 'World' ? ' · ' + st.region : ''}`;
 
         const ser = panels(), stacks = STACKS[st.view];
         // The change view starts the year after its base year.
