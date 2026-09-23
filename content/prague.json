@@ -699,7 +699,9 @@
           "component": "high-inequality-count",
           "props": {
             "series": "PIP",
-            "height": 470
+            "height": 470,
+            "view": "change",
+            "baseYear": 1990
           }
         }
       ]
@@ -724,7 +726,36 @@
               "PIP",
               "WID_pretax_per_capita"
             ],
-            "height": 440
+            "height": 440,
+            "view": "change",
+            "baseYear": 1990
+          }
+        }
+      ]
+    },
+    {
+      "id": "pg-53-consinc",
+      "layout": "default",
+      "class": "pg pg-hi",
+      "notes": "- number of countries with rising, number of countries with falling - weighted average\n\n[Figma spec] Bar chart of # countries (+ share of pop) with >= US in 2022, 1990 - ?; low opacity for countries where the survey is > 5 years away. # countries; Rising (> +2 points); Stable (2 points); Falling (> -2 points).\n\n[Deck] The live chart (components/fig-high-inequality.js, data/scripts/38_high_inequality_panel.py): one column per year 1990-2024 for the 171 countries with a national PIP survey. Red = at least as unequal as the United States in 2022 in the same series and measure (US Gini 2022: PIP 0.413, PIP + WID top 1% 0.484, WID post-tax 0.461, WID pre-tax 0.587), navy = below; the light shade = the nearest survey is more than 5 years away (PIP series only). 'Rising / stable / falling' compares each year with a start year (default 2000): stable within +-2 Gini points, or +-5% for the top-10%, top-1% and Palma measures. Tabs switch series; the controls switch measure, view, start year, countries vs population share, and region.\n\nHow it differs from the World Bank's 'number of countries with high inequality' (June 2024 blog, Figure 2): the Bank uses a fixed Gini > 40 and 'the most recent survey at the time'. Only a two-sided nearest-survey match reproduces its own 2000 count (77; the strictly backward rule gives 59), so the chart uses the nearest survey either side, at any distance. On the Bank's own definition our PIP gives 73 in 2000 and 46 in 2022 (blog: 77 and 52; different PIP vintage). Caveats: old data dominate the early 1990s and the last years; a change resting on the same survey at both ends is zero by construction (the tooltip counts them); WID bars are always solid although most WID country-years are WID's own extrapolations; the 40 countries without a national survey are left out.\n\n[Figma node 176:160]",
+      "blocks": [
+        {
+          "id": "b-pg-53-consinc",
+          "type": "html",
+          "html": "<div class=\"pg-canvas\"><img class=\"pg-logo\" src=\"content/images/prague/owid-logo.png\" alt=\"owid logo\" style=\"left:1117.3px;top:677.3px;width:77.3px;height:42.7px\"><div class=\"pg-t\" style=\"left:85.3px;top:46px;width:534.2px;line-height:1.20;color:#46688f;font-size:32px;white-space:nowrap;\"><div><span style=\"font-family:var(--font-display);font-weight:700;font-size:32px\">Is inequality rising in most places?</span></div></div></div>"
+        },
+        {
+          "id": "b-pg-53-consinc-chart",
+          "type": "component",
+          "component": "high-inequality-count",
+          "props": {
+            "compare": [
+              "PIP",
+              "PIP_consinc"
+            ],
+            "height": 440,
+            "view": "change",
+            "baseYear": 1990
           }
         }
       ]
@@ -745,8 +776,13 @@
           "type": "component",
           "component": "high-inequality-count",
           "props": {
-            "series": "PIP_topadj",
-            "height": 470
+            "compare": [
+              "PIP_topadj",
+              "WID_posttax_per_capita"
+            ],
+            "height": 440,
+            "view": "change",
+            "baseYear": 1990
           }
         }
       ]

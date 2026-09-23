@@ -21,7 +21,7 @@ top-10% share, top-1% share and Palma ratio:
 A country counts as HIGH-INEQUALITY in a year when its value is at least the United States' value
 in 2022 in the same series and measure (printed below; PIP's US 2022 Gini is 0.41, next to the
 World Bank's own 0.40 line). The component also shows the change view: rising / stable / falling
-between a base year and each year, stable being within +-2 Gini points or +-5% for the others.
+between a base year and each year, stable being within +-5% of the base-year value (about +-0.02 at a Gini of 0.40).
 
 WHY TWO-SIDED MATCHING, NOT "THE MOST RECENT SURVEY AT THE TIME"
 ----------------------------------------------------------------
@@ -70,19 +70,21 @@ THRESHOLD_COUNTRY, THRESHOLD_YEAR = "United States", 2022
 OLD_AFTER = 5                      # years to the nearest survey beyond which data counts as old
 MAX_DISTANCE = 99                  # no cap: every country is matched to its nearest survey
 POP_SERIES = "WID_pretax_per_capita"
-# The five series of the Figma strip, in its order, with its labels.
+# The five series of the Figma strip, in its order. Both WID series are per capita, so the labels
+# name the income concept: post-tax vs pre-tax (the Figma's first "WID" / "WID original").
 SERIES = {
-    "PIP": "PIP original",
-    "PIP_consinc": "PIP cons→inc",
-    "PIP_topadj": "PIP top adj",
-    "WID_posttax_per_capita": "WID",
-    "WID_pretax_per_capita": "WID original",
+    "PIP": "PIP (original)",
+    "PIP_consinc": "PIP (cons→inc)",
+    "PIP_topadj": "PIP (+ top adjustment)",
+    "WID_posttax_per_capita": "WID (post-tax)",
+    "WID_pretax_per_capita": "WID (pre-tax)",
 }
 PIP_SERIES = [s for s in SERIES if s.startswith("PIP")]
 MEASURES = {"gini": ("Gini", 4), "top10_share": ("Top 10% share", 2),
             "top1_share": ("Top 1% share", 2), "palma": ("Palma ratio", 3)}
-# The change view's stable band: absolute for the Gini, relative for the rest.
-STABLE = {"gini": ("abs", 0.02), "top10_share": ("rel", 0.05), "top1_share": ("rel", 0.05),
+# The change view's stable band: +-5% of the base-year value for every measure (for a Gini of
+# 0.40, roughly the US in PIP, that is +-0.02 points).
+STABLE = {"gini": ("rel", 0.05), "top10_share": ("rel", 0.05), "top1_share": ("rel", 0.05),
           "palma": ("rel", 0.05)}
 # The World Bank blog's own figures, for the cross-check.
 WB_BLOG = {2000: 77, 2022: 52}
