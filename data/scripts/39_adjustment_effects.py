@@ -107,19 +107,28 @@ def main():
                     "n_top1_adjusted": int(out["top1_adjusted"].sum()),
                     "generated_by": "39_adjustment_effects.py"},
            "steps": {}}
+    # Averages and ranges are over the countries each step CHANGES (the slides quote these): the
+    # consumption -> income step leaves income countries as they are, and the top-1% gate leaves
+    # five income countries whose surveys already show a larger top-1% share than WID.
     for key, (a, b, label) in STEPS.items():
-        g = out[f"gini__{b}"] / out[f"gini__{a}"] - 1
-        t10 = out[f"top10_share__{b}"] - out[f"top10_share__{a}"]
-        t1 = out[f"top1_share__{b}"] - out[f"top1_share__{a}"]
+        changed = (out[f"gini__{b}"] - out[f"gini__{a}"]).abs() > 1e-9
+        o = out[changed]
+        g = o[f"gini__{b}"] / o[f"gini__{a}"] - 1
+        t10 = o[f"top10_share__{b}"] - o[f"top10_share__{a}"]
+        t1 = o[f"top1_share__{b}"] - o[f"top1_share__{a}"]
         fig["steps"][key] = {
             "label": label,
             "gini_pct_mean": round(100 * float(g.mean()), 1), "gini_pct_min": round(100 * float(g.min()), 1),
             "gini_pct_max": round(100 * float(g.max()), 1),
-            "gini_mean_before": round(float(out[f"gini__{a}"].mean()), 3), "gini_mean_after": round(float(out[f"gini__{b}"].mean()), 3),
+            "gini_mean_before": round(float(o[f"gini__{a}"].mean()), 3), "gini_mean_after": round(float(o[f"gini__{b}"].mean()), 3),
             "top10_pts_mean": round(float(t10.mean()), 1), "top10_pts_min": round(float(t10.min()), 1), "top10_pts_max": round(float(t10.max()), 1),
             "top1_pts_mean": round(float(t1.mean()), 1),
-            "top1_mean_before": round(float(out[f"top1_share__{a}"].mean()), 1), "top1_mean_after": round(float(out[f"top1_share__{b}"].mean()), 1),
-            "n_changed": int((g.abs() > 1e-9).sum()),
+            "top1_mean_before": round(float(o[f"top1_share__{a}"].mean()), 1), "top1_mean_after": round(float(o[f"top1_share__{b}"].mean()), 1),
+            "n_changed": int(changed.sum()),
+            "by_welfare": {wt: {"n": int((o["welfare_type"] == wt).sum()),
+                                "gini_pct_mean": round(100 * float(g[o["welfare_type"] == wt].mean()), 1),
+                                "top10_pts_mean": round(float(t10[o["welfare_type"] == wt].mean()), 1)}
+                           for wt in ("consumption", "income") if (o["welfare_type"] == wt).any()},
         }
     FIG_FILE.write_text(json.dumps(fig, indent=1))
     print(f"Saved: {FIG_FILE.relative_to(DATA_DIR.parent)}")
