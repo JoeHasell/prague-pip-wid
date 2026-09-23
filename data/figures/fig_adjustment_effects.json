@@ -12,6 +12,11 @@
    "gini_pct_mean": 22.5,
    "gini_pct_min": 9.3,
    "gini_pct_max": 87.1,
+   "gini_pts_mean": 0.078,
+   "gini_pts_min": 0.03,
+   "gini_pts_max": 0.259,
+   "gini_pts_min_country": "Netherlands",
+   "gini_pts_max_country": "Iraq",
    "gini_mean_before": 0.356,
    "gini_mean_after": 0.435,
    "top10_pts_mean": 8.8,
@@ -25,11 +30,13 @@
     "consumption": {
      "n": 78,
      "gini_pct_mean": 25.1,
+     "gini_pts_mean": 0.086,
      "top10_pts_mean": 9.6
     },
     "income": {
      "n": 59,
      "gini_pct_mean": 19.0,
+     "gini_pts_mean": 0.068,
      "top10_pts_mean": 7.8
     }
    }
@@ -39,6 +46,11 @@
    "gini_pct_mean": 27.7,
    "gini_pct_min": 15.9,
    "gini_pct_max": 43.8,
+   "gini_pts_mean": 0.099,
+   "gini_pts_min": 0.044,
+   "gini_pts_max": 0.156,
+   "gini_pts_min_country": "Belarus",
+   "gini_pts_max_country": "Malawi",
    "gini_mean_before": 0.357,
    "gini_mean_after": 0.456,
    "top10_pts_mean": 6.0,
@@ -52,6 +64,7 @@
     "consumption": {
      "n": 78,
      "gini_pct_mean": 27.7,
+     "gini_pts_mean": 0.099,
      "top10_pts_mean": 6.0
     }
    }
@@ -61,6 +74,11 @@
    "gini_pct_mean": 35.7,
    "gini_pct_min": 9.3,
    "gini_pct_max": 100.6,
+   "gini_pts_mean": 0.125,
+   "gini_pts_min": 0.03,
+   "gini_pts_max": 0.299,
+   "gini_pts_min_country": "Netherlands",
+   "gini_pts_max_country": "Iraq",
    "gini_mean_before": 0.356,
    "gini_mean_after": 0.482,
    "top10_pts_mean": 11.6,
@@ -74,11 +92,13 @@
     "consumption": {
      "n": 78,
      "gini_pct_mean": 48.3,
+     "gini_pts_mean": 0.169,
      "top10_pts_mean": 14.6
     },
     "income": {
      "n": 59,
      "gini_pct_mean": 19.0,
+     "gini_pts_mean": 0.068,
      "top10_pts_mean": 7.8
     }
    }
