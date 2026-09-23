@@ -389,6 +389,10 @@ Full detail in `CLAUDE.md`. Everything runs on Joe's Mac.
   top 10% +12 pts. The top-1%-only series is unchanged. The Figma file is now the only Prague deck;
   `prague.html` is no longer maintained, and this repo keeps the data behind it. The 60-min deck
   (`content/slides.json`) still uses the WID-profile chain.
+  The same day the slides switched the Gini to points (0–1 scale): `fig_adjustment_effects.json` now also
+  carries `gini_pts_*` (with the min/max countries). Consumption→income +0.10 (+0.04 Belarus to +0.16
+  Malawi); top 1% alone +0.08 (+0.03 Netherlands to +0.26 Iraq); both +0.13 (+0.03 to +0.30;
+  consumption +0.17, income +0.07).
 - **DONE 2026-09-23 — the top-1% adjustment on its own (Prague slides 42–43).** `39_adjustment_effects.py`
   → `data/processed/adjustment_effects.csv` + `data/figures/fig_adjustment_effects.json`: for the 142
   countries with a national survey within five years of 2022, the Gini, top-10% and top-1% shares of PIP,

@@ -115,12 +115,17 @@ def main():
         changed = (out[f"gini__{b}"] - out[f"gini__{a}"]).abs() > 1e-9
         o = out[changed]
         g = o[f"gini__{b}"] / o[f"gini__{a}"] - 1
+        gp = o[f"gini__{b}"] - o[f"gini__{a}"]
         t10 = o[f"top10_share__{b}"] - o[f"top10_share__{a}"]
         t1 = o[f"top1_share__{b}"] - o[f"top1_share__{a}"]
         fig["steps"][key] = {
             "label": label,
             "gini_pct_mean": round(100 * float(g.mean()), 1), "gini_pct_min": round(100 * float(g.min()), 1),
             "gini_pct_max": round(100 * float(g.max()), 1),
+            # Gini points on the 0–1 scale (the slides quote these).
+            "gini_pts_mean": round(float(gp.mean()), 3), "gini_pts_min": round(float(gp.min()), 3),
+            "gini_pts_max": round(float(gp.max()), 3),
+            "gini_pts_min_country": o.loc[gp.idxmin(), "country"], "gini_pts_max_country": o.loc[gp.idxmax(), "country"],
             "gini_mean_before": round(float(o[f"gini__{a}"].mean()), 3), "gini_mean_after": round(float(o[f"gini__{b}"].mean()), 3),
             "top10_pts_mean": round(float(t10.mean()), 1), "top10_pts_min": round(float(t10.min()), 1), "top10_pts_max": round(float(t10.max()), 1),
             "top1_pts_mean": round(float(t1.mean()), 1),
@@ -128,6 +133,7 @@ def main():
             "n_changed": int(changed.sum()),
             "by_welfare": {wt: {"n": int((o["welfare_type"] == wt).sum()),
                                 "gini_pct_mean": round(100 * float(g[o["welfare_type"] == wt].mean()), 1),
+                                "gini_pts_mean": round(float(gp[o["welfare_type"] == wt].mean()), 3),
                                 "top10_pts_mean": round(float(t10[o["welfare_type"] == wt].mean()), 1)}
                            for wt in ("consumption", "income") if (o["welfare_type"] == wt).any()},
         }
